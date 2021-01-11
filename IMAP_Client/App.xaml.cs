@@ -11,12 +11,16 @@ namespace IMAP_Client
     {
         protected override Window CreateShell()
         {
+            
             return Container.Resolve<MainWindow>();
         }
 
         protected override void RegisterTypes(IContainerRegistry containerRegistry)
         {
-
+            containerRegistry.RegisterForNavigation<AnyStateView>();
+            containerRegistry.RegisterForNavigation<NoAuthStateView>();
+            containerRegistry.RegisterForNavigation<AuthStateView>();
+            containerRegistry.RegisterForNavigation<SelectedStateView>();
         }
     }
 }
