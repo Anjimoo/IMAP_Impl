@@ -3,9 +3,17 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30804.86
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IMAP_Server", "IMAP_Server\IMAP_Server.csproj", "{6E925CC7-200B-47C8-993C-0347DEFEECB1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IMAP_Server", "IMAP_Server\IMAP_Server.csproj", "{6E925CC7-200B-47C8-993C-0347DEFEECB1}"
+	ProjectSection(ProjectDependencies) = postProject
+		{45C3F58E-53A5-4A39-82CE-D846AD492820} = {45C3F58E-53A5-4A39-82CE-D846AD492820}
+	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IMAP_Client", "IMAP_Client\IMAP_Client.csproj", "{45C3F58E-53A5-4A39-82CE-D846AD492820}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IMAP_Client", "IMAP_Client\IMAP_Client.csproj", "{45C3F58E-53A5-4A39-82CE-D846AD492820}"
+	ProjectSection(ProjectDependencies) = postProject
+		{01B24637-4AFF-4409-9768-639FBD1ABA2E} = {01B24637-4AFF-4409-9768-639FBD1ABA2E}
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IMAP.Shared", "IMAP.Shared\IMAP.Shared.csproj", "{01B24637-4AFF-4409-9768-639FBD1ABA2E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +29,10 @@ Global
 		{45C3F58E-53A5-4A39-82CE-D846AD492820}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{45C3F58E-53A5-4A39-82CE-D846AD492820}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{45C3F58E-53A5-4A39-82CE-D846AD492820}.Release|Any CPU.Build.0 = Release|Any CPU
+		{01B24637-4AFF-4409-9768-639FBD1ABA2E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{01B24637-4AFF-4409-9768-639FBD1ABA2E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{01B24637-4AFF-4409-9768-639FBD1ABA2E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{01B24637-4AFF-4409-9768-639FBD1ABA2E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

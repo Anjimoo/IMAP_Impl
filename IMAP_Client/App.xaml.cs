@@ -16,8 +16,7 @@ namespace IMAP_Client
         }
 
         protected override void RegisterTypes(IContainerRegistry containerRegistry)
-        {
-            containerRegistry.RegisterForNavigation<AnyStateView>();
+        {  
             containerRegistry.RegisterForNavigation<NoAuthStateView>();
             containerRegistry.RegisterForNavigation<AuthStateView>();
             containerRegistry.RegisterForNavigation<SelectedStateView>();
