@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:wpfTool="clr-namespace:Xceed.Wpf.Toolkit;assembly=Xceed.Wpf.Toolkit"
              xmlns:local="clr-namespace:IMAP_Client.Views"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
@@ -27,30 +28,50 @@
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
+                <!--Row-0-->
                 <Button Grid.Column="0" Grid.Row="0" Content="CHECK" Margin="5" Padding="5"></Button>
-                <TextBox Grid.Column="0" Grid.Row="1"  Margin="5" Padding="5"></TextBox>
-
                 <Button Grid.Column="1" Grid.Row="0" Content="CLOSE" Margin="5" Padding="5"></Button>
-                <TextBox Grid.Column="1" Grid.Row="1"  Margin="5" Padding="5"></TextBox>
-
                 <Button Grid.Column="2" Grid.Row="0" Content="EXPUNGE" Margin="5" Padding="5"></Button>
-                <TextBox Grid.Column="2" Grid.Row="1"  Margin="5" Padding="5"></TextBox>
 
-                <Button Grid.Column="3" Grid.Row="0" Content="SEARCH" Margin="5" Padding="5"></Button>
-                <TextBox Grid.Column="3" Grid.Row="1"  Margin="5" Padding="5"></TextBox>
+                <Separator Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="4"/>
 
-                <Button Grid.Column="0" Grid.Row="2" Content="FETCH" Margin="5" Padding="5"></Button>
-                <TextBox Grid.Column="0" Grid.Row="3"  Margin="5" Padding="5"></TextBox>
+                <!--Row-2-->
+                <wpfTool:WatermarkTextBox Grid.Column="0" Grid.Row="2"  Margin="5" Padding="5" Watermark="search"></wpfTool:WatermarkTextBox>
+                <Button Grid.Column="1" Grid.Row="2" Content="SEARCH" Margin="5" Padding="5"></Button>
 
-                <Button Grid.Column="1" Grid.Row="2" Content="STORE" Margin="5" Padding="5"></Button>
-                <TextBox Grid.Column="1" Grid.Row="3"  Margin="5" Padding="5"></TextBox>
+                <Separator Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="4"/>
 
-                <Button Grid.Column="2" Grid.Row="2" Content="COPY" Margin="5" Padding="5"></Button>
-                <TextBox Grid.Column="2" Grid.Row="3"  Margin="5" Padding="5"></TextBox>
+                <!--Row-4-->
+                <wpfTool:WatermarkTextBox Grid.Column="0" Grid.Row="4"  Margin="5" Padding="5" Watermark="Sequence set"></wpfTool:WatermarkTextBox>
+                <wpfTool:WatermarkTextBox Grid.Column="1" Grid.Row="4" Grid.ColumnSpan="2"  Margin="5" Padding="5" Watermark="Message data item names or macro"></wpfTool:WatermarkTextBox>
+                <Button Grid.Column="3" Grid.Row="4" Content="FETCH" Margin="5" Padding="5"></Button>
 
-                <Button Grid.Column="3" Grid.Row="2" Content="UID" Margin="5" Padding="5"></Button>
-                <TextBox Grid.Column="3" Grid.Row="3"  Margin="5" Padding="5"></TextBox>
+                <Separator Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="4"/>
+                <!--Row-6-->
+                <wpfTool:WatermarkTextBox Grid.Column="0" Grid.Row="6"  Margin="5" Padding="5" Watermark="Sequence set"></wpfTool:WatermarkTextBox>
+                <wpfTool:WatermarkTextBox Grid.Column="1" Grid.Row="6"  Margin="5" Padding="5" Watermark="Message data item name"></wpfTool:WatermarkTextBox>
+                <wpfTool:WatermarkTextBox Grid.Column="2" Grid.Row="6"  Margin="5" Padding="5" Watermark="Value for message data item"></wpfTool:WatermarkTextBox>
+                <Button Grid.Column="3" Grid.Row="6" Content="STORE" Margin="5" Padding="5"></Button>
+
+                <Separator Grid.Row="7" Grid.Column="0" Grid.ColumnSpan="4"/>
+                <!--Row-8-->
+                <wpfTool:WatermarkTextBox Grid.Column="0" Grid.Row="8"  Margin="5" Padding="5" Watermark="Sequence set"></wpfTool:WatermarkTextBox>
+                <wpfTool:WatermarkTextBox Grid.Column="1" Grid.Row="8"  Margin="5" Padding="5" Watermark="Mailbox name"></wpfTool:WatermarkTextBox>
+                <Button Grid.Column="2" Grid.Row="8" Content="COPY" Margin="5" Padding="5"></Button>
+
+                <Separator Grid.Row="9" Grid.Column="0" Grid.ColumnSpan="4"/>
+                <!--Row-10-->
+                <wpfTool:WatermarkTextBox Grid.Column="0" Grid.Row="10"  Margin="5" Padding="5" Watermark="Command name"></wpfTool:WatermarkTextBox>
+                <wpfTool:WatermarkTextBox Grid.Column="1" Grid.Row="10"  Margin="5" Padding="5" Watermark="Command arguments"></wpfTool:WatermarkTextBox>
+                <Button Grid.Column="2" Grid.Row="10" Content="UID" Margin="5" Padding="5"></Button>
             </Grid>    
         </GroupBox>
         
