@@ -5,53 +5,64 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:IMAP_Client.Views"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800">
+             d:DesignHeight="180" d:DesignWidth="800">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        <Button Grid.Column="0" Grid.Row="0" Content="SELECT" Margin="5" Padding="5"></Button>
-        <TextBox Grid.Column="0" Grid.Row="1"  Margin="5" Padding="5"></TextBox>
+        <GroupBox Grid.Row="0" Grid.Column="0" Header="Auth Commands">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <Button Grid.Column="0" Grid.Row="0" Content="SELECT" Margin="5" Padding="5"></Button>
+                <TextBox Grid.Column="0" Grid.Row="1"  Margin="5" Padding="5"></TextBox>
+
+                <Button Grid.Column="1" Grid.Row="0" Content="EXAMINE" Margin="5" Padding="5"></Button>
+                <TextBox Grid.Column="1" Grid.Row="1"  Margin="5" Padding="5"></TextBox>
+
+                <Button Grid.Column="2" Grid.Row="0" Content="CREATE" Margin="5" Padding="5"></Button>
+                <TextBox Grid.Column="2" Grid.Row="1" Margin="5" Padding="5"></TextBox>
+
+                <Button Grid.Column="3" Grid.Row="0" Content="DELETE" Margin="5" Padding="5"></Button>
+                <TextBox Grid.Column="3" Grid.Row="1" Margin="5" Padding="5"></TextBox>
+
+                <Button Grid.Column="4" Grid.Row="0" Content="RENAME" Margin="5" Padding="5"></Button>
+                <TextBox Grid.Column="4" Grid.Row="1" Margin="5" Padding="5"></TextBox>
+
+                <Button Grid.Column="5" Grid.Row="0" Content="SUBSCRIBE" Margin="5" Padding="5"></Button>
+                <TextBox Grid.Column="5" Grid.Row="1" Margin="5" Padding="5"></TextBox>
+
+                <Button Grid.Column="0" Grid.Row="2" Content="UNSUBSCRIBE" Margin="5" Padding="5"></Button>
+                <TextBox Grid.Column="0" Grid.Row="3" Margin="5" Padding="5"></TextBox>
+
+                <Button Grid.Column="1" Grid.Row="2" Content="LIST" Margin="5" Padding="5"></Button>
+                <TextBox Grid.Column="1" Grid.Row="3"  Margin="5" Padding="5"></TextBox>
+
+                <Button Grid.Column="2" Grid.Row="2" Content="LSUB" Margin="5" Padding="5"></Button>
+                <TextBox Grid.Column="2" Grid.Row="3"  Margin="5" Padding="5"></TextBox>
+
+                <Button Grid.Column="3" Grid.Row="2" Content="STATUS" Margin="5" Padding="5"></Button>
+                <TextBox Grid.Column="3" Grid.Row="3"  Margin="5" Padding="5"></TextBox>
+
+                <Button Grid.Column="4" Grid.Row="2" Content="APPEND" Margin="5" Padding="5"></Button>
+                <TextBox Grid.Column="4" Grid.Row="3"  Margin="5" Padding="5"></TextBox>
+            </Grid>
+        </GroupBox>
         
-        <Button Grid.Column="1" Grid.Row="0" Content="EXAMINE" Margin="5" Padding="5"></Button>
-        <TextBox Grid.Column="1" Grid.Row="1"  Margin="5" Padding="5"></TextBox>
-        
-        <Button Grid.Column="2" Grid.Row="0" Content="CREATE" Margin="5" Padding="5"></Button>
-        <TextBox Grid.Column="2" Grid.Row="1" Margin="5" Padding="5"></TextBox>
-        
-        <Button Grid.Column="3" Grid.Row="0" Content="DELETE" Margin="5" Padding="5"></Button>
-        <TextBox Grid.Column="3" Grid.Row="1" Margin="5" Padding="5"></TextBox>
-        
-        <Button Grid.Column="4" Grid.Row="0" Content="RENAME" Margin="5" Padding="5"></Button>
-        <TextBox Grid.Column="4" Grid.Row="1" Margin="5" Padding="5"></TextBox>
-        
-        <Button Grid.Column="5" Grid.Row="0" Content="SUBSCRIBE" Margin="5" Padding="5"></Button>
-        <TextBox Grid.Column="5" Grid.Row="1" Margin="5" Padding="5"></TextBox>
-        
-        <Button Grid.Column="0" Grid.Row="2" Content="UNSUBSCRIBE" Margin="5" Padding="5"></Button>
-        <TextBox Grid.Column="0" Grid.Row="3" Margin="5" Padding="5"></TextBox>
-        
-        <Button Grid.Column="1" Grid.Row="2" Content="LIST" Margin="5" Padding="5"></Button>
-        <TextBox Grid.Column="1" Grid.Row="3"  Margin="5" Padding="5"></TextBox>
-        
-        <Button Grid.Column="2" Grid.Row="2" Content="LSUB" Margin="5" Padding="5"></Button>
-        <TextBox Grid.Column="2" Grid.Row="3"  Margin="5" Padding="5"></TextBox>
-        
-        <Button Grid.Column="3" Grid.Row="2" Content="STATUS" Margin="5" Padding="5"></Button>
-        <TextBox Grid.Column="3" Grid.Row="3"  Margin="5" Padding="5"></TextBox>
-        
-        <Button Grid.Column="4" Grid.Row="2" Content="APPEND" Margin="5" Padding="5"></Button>
-        <TextBox Grid.Column="4" Grid.Row="3"  Margin="5" Padding="5"></TextBox>
     </Grid>
 </UserControl>

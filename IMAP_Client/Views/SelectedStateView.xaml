@@ -9,39 +9,51 @@
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="*"/>
-            
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        <Button Grid.Column="0" Grid.Row="0" Content="CHECK" Margin="5" Padding="5"></Button>
-        <TextBox Grid.Column="0" Grid.Row="1"  Margin="5" Padding="5"></TextBox>
+        <GroupBox Grid.Row="0" Grid.Column="0" Header="Selected Commands">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <Button Grid.Column="0" Grid.Row="0" Content="CHECK" Margin="5" Padding="5"></Button>
+                <TextBox Grid.Column="0" Grid.Row="1"  Margin="5" Padding="5"></TextBox>
+
+                <Button Grid.Column="1" Grid.Row="0" Content="CLOSE" Margin="5" Padding="5"></Button>
+                <TextBox Grid.Column="1" Grid.Row="1"  Margin="5" Padding="5"></TextBox>
+
+                <Button Grid.Column="2" Grid.Row="0" Content="EXPUNGE" Margin="5" Padding="5"></Button>
+                <TextBox Grid.Column="2" Grid.Row="1"  Margin="5" Padding="5"></TextBox>
+
+                <Button Grid.Column="3" Grid.Row="0" Content="SEARCH" Margin="5" Padding="5"></Button>
+                <TextBox Grid.Column="3" Grid.Row="1"  Margin="5" Padding="5"></TextBox>
+
+                <Button Grid.Column="0" Grid.Row="2" Content="FETCH" Margin="5" Padding="5"></Button>
+                <TextBox Grid.Column="0" Grid.Row="3"  Margin="5" Padding="5"></TextBox>
+
+                <Button Grid.Column="1" Grid.Row="2" Content="STORE" Margin="5" Padding="5"></Button>
+                <TextBox Grid.Column="1" Grid.Row="3"  Margin="5" Padding="5"></TextBox>
+
+                <Button Grid.Column="2" Grid.Row="2" Content="COPY" Margin="5" Padding="5"></Button>
+                <TextBox Grid.Column="2" Grid.Row="3"  Margin="5" Padding="5"></TextBox>
+
+                <Button Grid.Column="3" Grid.Row="2" Content="UID" Margin="5" Padding="5"></Button>
+                <TextBox Grid.Column="3" Grid.Row="3"  Margin="5" Padding="5"></TextBox>
+            </Grid>    
+        </GroupBox>
         
-        <Button Grid.Column="1" Grid.Row="0" Content="CLOSE" Margin="5" Padding="5"></Button>
-        <TextBox Grid.Column="1" Grid.Row="1"  Margin="5" Padding="5"></TextBox>
-        
-        <Button Grid.Column="2" Grid.Row="0" Content="EXPUNGE" Margin="5" Padding="5"></Button>
-        <TextBox Grid.Column="2" Grid.Row="1"  Margin="5" Padding="5"></TextBox>
-
-        <Button Grid.Column="3" Grid.Row="0" Content="SEARCH" Margin="5" Padding="5"></Button>
-        <TextBox Grid.Column="3" Grid.Row="1"  Margin="5" Padding="5"></TextBox>
-
-        <Button Grid.Column="0" Grid.Row="2" Content="FETCH" Margin="5" Padding="5"></Button>
-        <TextBox Grid.Column="0" Grid.Row="3"  Margin="5" Padding="5"></TextBox>
-
-        <Button Grid.Column="1" Grid.Row="2" Content="STORE" Margin="5" Padding="5"></Button>
-        <TextBox Grid.Column="1" Grid.Row="3"  Margin="5" Padding="5"></TextBox>
-
-        <Button Grid.Column="2" Grid.Row="2" Content="COPY" Margin="5" Padding="5"></Button>
-        <TextBox Grid.Column="2" Grid.Row="3"  Margin="5" Padding="5"></TextBox>
-
-        <Button Grid.Column="3" Grid.Row="2" Content="UID" Margin="5" Padding="5"></Button>
-        <TextBox Grid.Column="3" Grid.Row="3"  Margin="5" Padding="5"></TextBox>
+            
     </Grid>
 </UserControl>
