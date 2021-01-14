@@ -6,7 +6,10 @@ namespace IMAP_Server
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
+
+            Server server = new Server();
+            server.StartListening();
+
         }
     }
 }

@@ -30,12 +30,13 @@
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
                 <TextBlock Grid.Column="0" Grid.Row="0" Margin="5" Padding="5" Text="Server IP:"></TextBlock>
-                <TextBox Grid.Column="1"  Grid.Row="0" MinWidth="200" Margin="5" Padding="5"></TextBox>
+                <TextBox Grid.Column="1"  Grid.Row="0" MinWidth="200" Margin="5" Padding="5" Text="{Binding IPAddress}"></TextBox>
                 <TextBlock Grid.Column="2" Grid.Row="0" Margin="5" Padding="5" Text="Port:"></TextBlock>
-                <TextBox Grid.Column="3"  Grid.Row="0" MinWidth="80" Margin="5" Padding="5"></TextBox>
+                <TextBox Grid.Column="3"  Grid.Row="0" MinWidth="80" Margin="5" Padding="5" Text="{Binding Port}"></TextBox>
                 <Button Grid.Column="4" Grid.Row="0" Width="100" Content="Connect" Margin="5" Padding="5" Background="LightSteelBlue"
-                        Command="{Binding NavigateCommand}" CommandParameter="AnyStateView"></Button>
-                <Button Grid.Column="5" Grid.Row="0" Width="100" Content="Disconnect" Margin="5" Padding="5" Background="LightSteelBlue"></Button>
+                        Command="{Binding Connect}"></Button>
+                <Button Grid.Column="5" Grid.Row="0" Width="100" Content="Disconnect" Margin="5" Padding="5" Background="LightSteelBlue"
+                        Command="{Binding Disconnect}"></Button>
             </Grid>
         </GroupBox>
         <GroupBox Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="2" Margin="5" Header="IMAP Commands">
@@ -62,11 +63,11 @@
                             <RowDefinition Height="Auto"/>
                         </Grid.RowDefinitions>
                         <Button Grid.Column="0" Grid.Row="0" Content="CAPABILITY" Margin="5" Padding="5" Background="AliceBlue"
-                        Command="{Binding ExecuteCopability}" CommandParameter="NoAuthStateView"></Button>
+                        Command="{Binding Copability}" CommandParameter="NoAuthStateView"></Button>
                         <Button Grid.Column="1" Grid.Row="0" Content="NOOP" Margin="5" Padding="5" Background="AliceBlue"
-                        Command="{Binding ExecuteNoop}" CommandParameter="NoAuthStateView"></Button>
+                        Command="{Binding Noop}" CommandParameter="NoAuthStateView"></Button>
                         <Button Grid.Column="2" Grid.Row="0" Content="LOGOUT" Margin="5" Padding="5" Background="AliceBlue"
-                        Command="{Binding ExecuteLogout}" CommandParameter="NoAuthStateView"></Button>
+                        Command="{Binding Logout}" CommandParameter="NoAuthStateView"></Button>
                     </Grid>
                 </GroupBox>
                 

@@ -6,5 +6,6 @@ namespace IMAP.Shared
 {
     public class Message
     {
+        public string Content { get; set; }
     }
 }
