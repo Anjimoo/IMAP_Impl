@@ -37,41 +37,44 @@
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
                 <!--Row-0-->
-                <Button Grid.Column="0" Grid.Row="0" Content="CHECK" Margin="5" Padding="5"></Button>
-                <Button Grid.Column="1" Grid.Row="0" Content="CLOSE" Margin="5" Padding="5"></Button>
-                <Button Grid.Column="2" Grid.Row="0" Content="EXPUNGE" Margin="5" Padding="5"></Button>
+                <Button Grid.Column="0" Grid.Row="0" Content="CHECK" Margin="5" Padding="5" Command="{Binding Check}"></Button>
+                <Button Grid.Column="1" Grid.Row="0" Content="CLOSE" Margin="5" Padding="5" Command="{Binding Close}"></Button>
+                <Button Grid.Column="2" Grid.Row="0" Content="EXPUNGE" Margin="5" Padding="5" Command="{Binding Expunge}"></Button>
 
                 <Separator Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="4"/>
 
                 <!--Row-2-->
-                <wpfTool:WatermarkTextBox Grid.Column="0" Grid.Row="2"  Margin="5" Padding="5" Watermark="search"></wpfTool:WatermarkTextBox>
-                <Button Grid.Column="1" Grid.Row="2" Content="SEARCH" Margin="5" Padding="5"></Button>
+                <wpfTool:WatermarkTextBox Grid.Column="0" Grid.Row="2"  Margin="5" Padding="5" Watermark="search" 
+                                          Text="{Binding SearchBox}"></wpfTool:WatermarkTextBox>
+                <Button Grid.Column="1" Grid.Row="2" Content="SEARCH" Margin="5" Padding="5" Command="{Binding Search}"></Button>
 
                 <Separator Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="4"/>
 
                 <!--Row-4-->
-                <wpfTool:WatermarkTextBox Grid.Column="0" Grid.Row="4"  Margin="5" Padding="5" Watermark="Sequence set"></wpfTool:WatermarkTextBox>
-                <wpfTool:WatermarkTextBox Grid.Column="1" Grid.Row="4" Grid.ColumnSpan="2"  Margin="5" Padding="5" Watermark="Message data item names or macro"></wpfTool:WatermarkTextBox>
-                <Button Grid.Column="3" Grid.Row="4" Content="FETCH" Margin="5" Padding="5"></Button>
+                <wpfTool:WatermarkTextBox Grid.Column="0" Grid.Row="4"  Margin="5" Padding="5" Watermark="Sequence set" 
+                                          Text="{Binding FetchSequenceSet}"></wpfTool:WatermarkTextBox>
+                <wpfTool:WatermarkTextBox Grid.Column="1" Grid.Row="4" Grid.ColumnSpan="2"  Margin="5" Padding="5"
+                                          Watermark="Message data item names or macro" Text="{Binding FetchMessageDataItem}"></wpfTool:WatermarkTextBox>
+                <Button Grid.Column="3" Grid.Row="4" Content="FETCH" Margin="5" Padding="5" Command="{Binding Fetch}"></Button>
 
                 <Separator Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="4"/>
                 <!--Row-6-->
-                <wpfTool:WatermarkTextBox Grid.Column="0" Grid.Row="6"  Margin="5" Padding="5" Watermark="Sequence set"></wpfTool:WatermarkTextBox>
-                <wpfTool:WatermarkTextBox Grid.Column="1" Grid.Row="6"  Margin="5" Padding="5" Watermark="Message data item name"></wpfTool:WatermarkTextBox>
-                <wpfTool:WatermarkTextBox Grid.Column="2" Grid.Row="6"  Margin="5" Padding="5" Watermark="Value for message data item"></wpfTool:WatermarkTextBox>
-                <Button Grid.Column="3" Grid.Row="6" Content="STORE" Margin="5" Padding="5"></Button>
+                <wpfTool:WatermarkTextBox Grid.Column="0" Grid.Row="6"  Margin="5" Padding="5" Watermark="Sequence set" Text="{Binding StoreSequenceSet}"></wpfTool:WatermarkTextBox>
+                <wpfTool:WatermarkTextBox Grid.Column="1" Grid.Row="6"  Margin="5" Padding="5" Watermark="Message data item name" Text="{Binding StoreMessageDataItemName}"></wpfTool:WatermarkTextBox>
+                <wpfTool:WatermarkTextBox Grid.Column="2" Grid.Row="6"  Margin="5" Padding="5" Watermark="Value for message data item" Text="{Binding ValueForMessage}"></wpfTool:WatermarkTextBox>
+                <Button Grid.Column="3" Grid.Row="6" Content="STORE" Margin="5" Padding="5" Command="{Binding Store}"></Button>
 
                 <Separator Grid.Row="7" Grid.Column="0" Grid.ColumnSpan="4"/>
                 <!--Row-8-->
-                <wpfTool:WatermarkTextBox Grid.Column="0" Grid.Row="8"  Margin="5" Padding="5" Watermark="Sequence set"></wpfTool:WatermarkTextBox>
-                <wpfTool:WatermarkTextBox Grid.Column="1" Grid.Row="8"  Margin="5" Padding="5" Watermark="Mailbox name"></wpfTool:WatermarkTextBox>
-                <Button Grid.Column="2" Grid.Row="8" Content="COPY" Margin="5" Padding="5"></Button>
+                <wpfTool:WatermarkTextBox Grid.Column="0" Grid.Row="8"  Margin="5" Padding="5" Watermark="Sequence set" Text="{Binding CopySequenceSet}"></wpfTool:WatermarkTextBox>
+                <wpfTool:WatermarkTextBox Grid.Column="1" Grid.Row="8"  Margin="5" Padding="5" Watermark="Mailbox name" Text="{Binding MailBox}"></wpfTool:WatermarkTextBox>
+                <Button Grid.Column="2" Grid.Row="8" Content="COPY" Margin="5" Padding="5" Command="{Binding Copy}"></Button>
 
                 <Separator Grid.Row="9" Grid.Column="0" Grid.ColumnSpan="4"/>
                 <!--Row-10-->
-                <wpfTool:WatermarkTextBox Grid.Column="0" Grid.Row="10"  Margin="5" Padding="5" Watermark="Command name"></wpfTool:WatermarkTextBox>
-                <wpfTool:WatermarkTextBox Grid.Column="1" Grid.Row="10"  Margin="5" Padding="5" Watermark="Command arguments"></wpfTool:WatermarkTextBox>
-                <Button Grid.Column="2" Grid.Row="10" Content="UID" Margin="5" Padding="5"></Button>
+                <wpfTool:WatermarkTextBox Grid.Column="0" Grid.Row="10"  Margin="5" Padding="5" Watermark="Command name" Text="{Binding CommandName}"></wpfTool:WatermarkTextBox>
+                <wpfTool:WatermarkTextBox Grid.Column="1" Grid.Row="10"  Margin="5" Padding="5" Watermark="Command arguments" Text="{Binding CommandArguments}"></wpfTool:WatermarkTextBox>
+                <Button Grid.Column="2" Grid.Row="10" Content="UID" Margin="5" Padding="5" Command="{Binding UID}"></Button>
             </Grid>    
         </GroupBox>
         

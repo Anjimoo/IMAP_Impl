@@ -37,40 +37,40 @@
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
                 <!--mailbox name group-->
-                <Button Grid.Column="0" Grid.Row="1" Content="SELECT" Margin="5" Padding="5"></Button>
-                <wpfTool:WatermarkTextBox Grid.Column="0" Grid.Row="0"  Margin="5" Padding="5" Watermark="mailbox name"/>
-                <Button Grid.Column="1" Grid.Row="1" Content="EXAMINE" Margin="5" Padding="5"></Button>
-                <Button Grid.Column="2" Grid.Row="1" Content="CREATE" Margin="5" Padding="5"></Button>
-                <Button Grid.Column="3" Grid.Row="1" Content="DELETE" Margin="5" Padding="5"></Button>
-                <Button Grid.Column="4" Grid.Row="1" Content="SUBSCRIBE" Margin="5" Padding="5"></Button>
-                <Button Grid.Column="5" Grid.Row="1" Content="UNSUBSCRIBE" Margin="5" Padding="5"></Button>
+                <Button Grid.Column="0" Grid.Row="1" Content="SELECT" Margin="5" Padding="5" Command="{Binding Select}"></Button>
+                <wpfTool:WatermarkTextBox Grid.Column="0" Grid.Row="0"  Margin="5" Padding="5" Watermark="mailbox name" Text="{Binding MailBox}"/>
+                <Button Grid.Column="1" Grid.Row="1" Content="EXAMINE" Margin="5" Padding="5" Command="{Binding Examine}"></Button>
+                <Button Grid.Column="2" Grid.Row="1" Content="CREATE" Margin="5" Padding="5" Command="{Binding Create}"></Button>
+                <Button Grid.Column="3" Grid.Row="1" Content="DELETE" Margin="5" Padding="5" Command="{Binding Delete}"></Button>
+                <Button Grid.Column="4" Grid.Row="1" Content="SUBSCRIBE" Margin="5" Padding="5" Command="{Binding Subscribe}"></Button>
+                <Button Grid.Column="5" Grid.Row="1" Content="UNSUBSCRIBE" Margin="5" Padding="5" Command="{Binding Unsubscribe}"></Button>
                 
                 <Separator Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="6"/>
-                
-                <Button Grid.Column="2" Grid.Row="3" Content="RENAME" Margin="5" Padding="5"></Button>
-                <wpfTool:WatermarkTextBox Grid.Column="0" Grid.Row="3" Margin="5" Padding="5" Watermark="Old mailbox name"></wpfTool:WatermarkTextBox>
-                <wpfTool:WatermarkTextBox Grid.Column="1" Grid.Row="3" Margin="5" Padding="5" Watermark="New mailbox name"></wpfTool:WatermarkTextBox>
+
+                <Button Grid.Column="2" Grid.Row="3" Content="RENAME" Margin="5" Padding="5" Command="{Binding Rename}"></Button>
+                <wpfTool:WatermarkTextBox Grid.Column="0" Grid.Row="3" Margin="5" Padding="5" Watermark="Old mailbox name" Text="{Binding OldMailBox}"></wpfTool:WatermarkTextBox>
+                <wpfTool:WatermarkTextBox Grid.Column="1" Grid.Row="3" Margin="5" Padding="5" Watermark="New mailbox name" Text="{Binding NewMailBox}"></wpfTool:WatermarkTextBox>
 
                 <Separator Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="6"/>
 
-                <wpfTool:WatermarkTextBox Grid.Column="0" Grid.Row="5"  Margin="5" Padding="5" Watermark="Reference name"></wpfTool:WatermarkTextBox>
+                <wpfTool:WatermarkTextBox Grid.Column="0" Grid.Row="5"  Margin="5" Padding="5" Watermark="Reference name" Text="{Binding ReferenceName}"></wpfTool:WatermarkTextBox>
                 <wpfTool:WatermarkTextBox Grid.Column="1" Grid.Row="5" Grid.ColumnSpan="2"  Margin="5" Padding="5" 
-                                          Watermark="Mailbox name and possible wildcard"></wpfTool:WatermarkTextBox>
-                <Button Grid.Column="3" Grid.Row="5" Content="LIST" Margin="5" Padding="5"></Button>
-                <Button Grid.Column="4" Grid.Row="5" Content="LSUB" Margin="5" Padding="5"></Button>
+                                          Watermark="Mailbox name and possible wildcard" Text="{Binding MailBoxNameAndWildCard}"></wpfTool:WatermarkTextBox>
+                <Button Grid.Column="3" Grid.Row="5" Content="LIST" Margin="5" Padding="5" Command="{Binding LIST}"></Button>
+                <Button Grid.Column="4" Grid.Row="5" Content="LSUB" Margin="5" Padding="5" Command="{Binding LSUB}"></Button>
 
                 <Separator Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="6"/>
 
-                <wpfTool:WatermarkTextBox Grid.Column="0" Grid.Row="7"  Margin="5" Padding="5" Watermark="Mailbox name"></wpfTool:WatermarkTextBox>
-                <wpfTool:WatermarkTextBox Grid.Column="1" Grid.Row="7"  Margin="5" Padding="5" Watermark="status date names"></wpfTool:WatermarkTextBox>
-                <Button Grid.Column="2" Grid.Row="7" Content="STATUS" Margin="5" Padding="5"></Button>
+                <wpfTool:WatermarkTextBox Grid.Column="0" Grid.Row="7"  Margin="5" Padding="5" Watermark="Mailbox name" Text="{Binding StatusMailBox}"></wpfTool:WatermarkTextBox>
+                <wpfTool:WatermarkTextBox Grid.Column="1" Grid.Row="7"  Margin="5" Padding="5" Watermark="status date names" Text="{Binding StatusDateNames}"></wpfTool:WatermarkTextBox>
+                <Button Grid.Column="2" Grid.Row="7" Content="STATUS" Margin="5" Padding="5" Command="{Binding Status}"></Button>
 
                 <Separator Grid.Row="8" Grid.Column="0" Grid.ColumnSpan="6"/>
-                <wpfTool:WatermarkTextBox Grid.Column="0" Grid.Row="9"  Margin="5" Padding="5" Watermark="Mailbox name"></wpfTool:WatermarkTextBox>
-                <wpfTool:WatermarkTextBox Grid.Column="1" Grid.Row="9"  Margin="5" Padding="5" Watermark="OPT: flag paranth list"></wpfTool:WatermarkTextBox>
-                <wpfTool:WatermarkTextBox Grid.Column="2" Grid.Row="9"  Margin="5" Padding="5" Watermark="OPT: date/time"></wpfTool:WatermarkTextBox>
-                <wpfTool:WatermarkTextBox Grid.Column="3" Grid.Row="9"  Margin="5" Padding="5" Watermark="Message literal"></wpfTool:WatermarkTextBox>
-                <Button Grid.Column="4" Grid.Row="9" Content="APPEND" Margin="5" Padding="5"></Button>
+                <wpfTool:WatermarkTextBox Grid.Column="0" Grid.Row="9"  Margin="5" Padding="5" Watermark="Mailbox name" Text="{Binding AppendMailBox}"></wpfTool:WatermarkTextBox>
+                <wpfTool:WatermarkTextBox Grid.Column="1" Grid.Row="9"  Margin="5" Padding="5" Watermark="OPT: flag paranth list" Text="{Binding Flag}"></wpfTool:WatermarkTextBox>
+                <wpfTool:WatermarkTextBox Grid.Column="2" Grid.Row="9"  Margin="5" Padding="5" Watermark="OPT: date/time" Text="{Binding DateTime}"></wpfTool:WatermarkTextBox>
+                <wpfTool:WatermarkTextBox Grid.Column="3" Grid.Row="9"  Margin="5" Padding="5" Watermark="Message literal" Text="{Binding MessageLiteral}"></wpfTool:WatermarkTextBox>
+                <Button Grid.Column="4" Grid.Row="9" Content="APPEND" Margin="5" Padding="5" Command="{Binding Append}"></Button>
                 
             </Grid>
         </GroupBox>
