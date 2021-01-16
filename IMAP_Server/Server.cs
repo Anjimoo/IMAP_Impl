@@ -7,15 +7,19 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
+
 namespace IMAP_Server
 {
     
     public class Server
     {
         private TcpListener _server = null;
+        private MessageHandler messageHandler;
+        private string _response;
         public Server()
         {
             IPAddress localAddress = IPAddress.Parse("127.0.0.1");
+            messageHandler = new MessageHandler();
             _server = new TcpListener(localAddress, 143);
             _server.Start();
            
@@ -60,10 +64,12 @@ namespace IMAP_Server
                     data = Encoding.ASCII.GetString(bytes, 0, i);
                     Console.WriteLine($"{data} received : {Thread.CurrentThread.ManagedThreadId}");
 
-                    string str = "Hello";
-                    Byte[] reply = System.Text.Encoding.ASCII.GetBytes(str);
+                    _response = messageHandler.HandleMessage(data);
+
+                    
+                    Byte[] reply = System.Text.Encoding.ASCII.GetBytes(_response);
                     stream.Write(reply, 0, reply.Length);
-                    Console.WriteLine($"{str} sent : {Thread.CurrentThread.ManagedThreadId}");
+                    Console.WriteLine($"{_response} sent : {Thread.CurrentThread.ManagedThreadId}");
                 }
             }catch(Exception e)
             {

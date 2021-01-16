@@ -1,4 +1,6 @@
-﻿using Prism.Commands;
+﻿using IMAP_Client.Services;
+using Prism.Commands;
+using Prism.Events;
 using Prism.Mvvm;
 using System;
 using System.Collections.Generic;
@@ -10,6 +12,8 @@ namespace IMAP_Client.ViewModels
 {
     public class NoAuthStateViewModel : BindableBase
     {
+        private IEventAggregator _eventAggregator;
+
         private string _authMechName;
         public string AuthMechName
         {
@@ -32,8 +36,9 @@ namespace IMAP_Client.ViewModels
         public DelegateCommand Authenticate { get; set; }
         public DelegateCommand Login { get; set; }
 
-        public NoAuthStateViewModel()
+        public NoAuthStateViewModel(IEventAggregator eventAggregator)
         {
+            _eventAggregator = eventAggregator;
             StartTLS = new DelegateCommand(ExecuteStartTLS);
             Authenticate = new DelegateCommand(ExecuteAuthenticate);
             Login = new DelegateCommand(ExecuteLogin);
@@ -41,6 +46,9 @@ namespace IMAP_Client.ViewModels
 
         private void ExecuteLogin()
         {
+            string response;
+            response = MainWindowViewModel._connection.SendMessage($"LOGIN {UserName} {Password}");
+            _eventAggregator.GetEvent<UpdateUserConsole>().Publish(response);
             //TODO
         }
 

@@ -4,8 +4,46 @@ using System.Text;
 
 namespace IMAP.Shared
 {
+    public enum ArgumentType{
+        USERNAME,
+        PASSWORD,
+        MAILBOX,
+        OLDMAILBOX,
+        NEWMAILBOX,
+        REFNAME,
+        MAILBOXWILDCARDS,
+        STATUSDATANAMES,
+        FLAGLIST,
+        DATETIME,
+        SEARCHCRIT,
+        SEQUENCE,
+        DATAORMACRO,
+        DATANAME,
+        VALUEDATA,
+        COMMANDNAME,
+        COMMANDARGS
+    }
     public class Message
     {
         public string Content { get; set; }
+        public Dictionary<ArgumentType, string> Arguments { get; set; }
+
+        public void ParseMessage(string _message)
+        {
+            string[] tempMessage = _message.Split(' ');
+            Arguments = new Dictionary<ArgumentType, string>();
+     
+            Content = tempMessage[0];
+
+            switch (Content)
+            {
+                case "LOGIN":
+                    Arguments.Add(ArgumentType.USERNAME, tempMessage[1]);
+                    Arguments.Add(ArgumentType.PASSWORD, tempMessage[2]);
+                    break;
+                default:
+                    break;
+            }
+        }
     }
 }

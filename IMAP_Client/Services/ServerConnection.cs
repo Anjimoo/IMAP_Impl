@@ -18,8 +18,9 @@ namespace IMAP_Client.Services
             networkStream = tcpClient.GetStream();
         }
 
-        public void Connect(String message)
+        public string SendMessage(String message)
         {
+            String response = String.Empty;
             try
             {
                 Byte[] data = System.Text.Encoding.ASCII.GetBytes(message);
@@ -30,7 +31,7 @@ namespace IMAP_Client.Services
 
                 // Bytes Array to receive Server Response.
                 data = new Byte[256];
-                String response = String.Empty;
+                
 
                 // Read the Tcp Server Response Bytes.
                 Int32 bytes = networkStream.Read(data, 0, data.Length);
@@ -41,8 +42,8 @@ namespace IMAP_Client.Services
             {
                 Console.WriteLine($"{e}");
             }
-            
 
+            return response;
         }
 
         public void Disconnect()

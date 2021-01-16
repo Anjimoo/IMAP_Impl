@@ -50,6 +50,7 @@
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
 
                 <GroupBox Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3" Header="Stateless commands">
@@ -79,6 +80,7 @@
                 <Button Grid.Column="2" Grid.Row="1" Content="Selected State" Margin="5" Padding="5"
                         Command="{Binding NavigateCommand}" CommandParameter="SelectedStateView"></Button>
                 <ContentControl Grid.Column="0" Grid.Row="2" Grid.ColumnSpan="3" prism:RegionManager.RegionName="ContentRegion" />
+                <TextBlock Grid.Column="0" Grid.Row="3" Grid.ColumnSpan="3" Text="{Binding Console}"/>
             </Grid>
         </GroupBox>
     </Grid>

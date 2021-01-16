@@ -1,6 +1,7 @@
 ﻿using IMAP_Client.Services;
 using IMAP_Client.Views;
 using Prism.Commands;
+using Prism.Events;
 using Prism.Mvvm;
 using Prism.Regions;
 using System;
@@ -11,14 +12,21 @@ namespace IMAP_Client.ViewModels
 {
     public class MainWindowViewModel : BindableBase
     {
-        private ServerConnection _connection;
+        public static ServerConnection _connection;
         private IRegionManager _regionManager;
+        private IEventAggregator _eventAggregator;
         #region Properties
         private string _title = "IMAP Client Application";
         public string Title
         {
             get { return _title; }
             set { SetProperty(ref _title, value); }
+        }
+        private string _console;
+        public string Console
+        {
+            get { return _console; }
+            set { SetProperty(ref _console, value); }
         }
         private string _ipAddress;
         public string IPAddress
@@ -42,15 +50,24 @@ namespace IMAP_Client.ViewModels
         public DelegateCommand Connect { get; set; }
         public DelegateCommand<string> NavigateCommand { get; set; }
         #endregion
-        public MainWindowViewModel(IRegionManager regionManager)
+        public MainWindowViewModel(IRegionManager regionManager, IEventAggregator eventAggregator)
         {
             _regionManager = regionManager;
+            _eventAggregator = eventAggregator;
             NavigateCommand = new DelegateCommand<string>(Navigate);
             Capability = new DelegateCommand(ExecuteCapability);
             Noop = new DelegateCommand(ExecuteNoop);
             Logout = new DelegateCommand(ExecuteLogout);
             Disconnect = new DelegateCommand(ExecuteDisconnect);
             Connect = new DelegateCommand(ExecuteConnect);
+            _eventAggregator.GetEvent<UpdateUserConsole>().Subscribe(UpdateConsole);
+            Port = 143;
+            IPAddress = "127.0.0.1";
+        }
+
+        private void UpdateConsole(string obj)
+        {
+            Console += $"{obj}\n";
         }
 
 
@@ -69,7 +86,8 @@ namespace IMAP_Client.ViewModels
         {
             //TODO
             //check connection to server
-            _connection.Connect("Hello world");
+            _connection.SendMessage("LOGOUT");
+
         }
 
         private void ExecuteNoop()
