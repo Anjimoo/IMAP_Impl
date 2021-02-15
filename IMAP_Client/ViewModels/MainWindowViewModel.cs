@@ -80,6 +80,7 @@ namespace IMAP_Client.ViewModels
         private void ExecuteDisconnect()
         {
             _connection.Disconnect();
+            UpdateConsole("Disconnected from server");
         }
 
         private void ExecuteLogout()
