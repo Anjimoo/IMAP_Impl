@@ -47,7 +47,7 @@ namespace IMAP_Client.ViewModels
         private void ExecuteLogin()
         {
             string response;
-            response = MainWindowViewModel._connection.SendMessage($"LOGIN {UserName} {Password}");
+            response = MainWindowViewModel._connection.SendMessage($"{TaggingService.Tag} LOGIN {UserName} {Password}");
             _eventAggregator.GetEvent<UpdateUserConsole>().Publish(response);
             //TODO
         }
