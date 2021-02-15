@@ -26,6 +26,7 @@ namespace IMAP.Shared
     public class Message
     {
         public string Content { get; set; }
+        public string Tag { get; set; }
         public Dictionary<ArgumentType, string> Arguments { get; set; }
         public string Response { get; set; }
 
