@@ -23,6 +23,7 @@ namespace IMAP_Client.Services
             String response = String.Empty;
             try
             {
+                
                 Byte[] data = System.Text.Encoding.ASCII.GetBytes(message);
 
                 // Send the message to the connected TcpServer. 

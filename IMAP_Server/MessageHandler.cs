@@ -19,6 +19,14 @@ namespace IMAP_Server
             message = new Message();
             message.ParseMessage(_message);
 
+            if(message.Content == "LOGOUT")
+            {
+                response = message.Response;
+                connectionState.Authentificated = false;
+                connectionState.SelectedMail = false;
+                return response;
+            }
+
             if (!connectionState.Connected && message.Content == "CONNECT")
             {
                 connectionState.Connected = true;
@@ -28,6 +36,7 @@ namespace IMAP_Server
             {
                 if(message.Arguments[ArgumentType.USERNAME] == "Anton" && message.Arguments[ArgumentType.PASSWORD] == "12345")
                 {
+                    connectionState.Authentificated = true;
                     response = "OK LOGIN Complited: now in authentificated state";
                 }
                 else
