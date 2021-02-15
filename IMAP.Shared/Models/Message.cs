@@ -45,6 +45,9 @@ namespace IMAP.Shared
                     Arguments.Add(ArgumentType.USERNAME, tempMessage[1]);
                     Arguments.Add(ArgumentType.PASSWORD, tempMessage[2]);
                     break;
+                case "LOGOUT":
+                    Response = "* BYE IMAP4rev1 Server logging out";
+                    break;
                 default:
                     break;
             }
