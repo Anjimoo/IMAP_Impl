@@ -75,7 +75,7 @@ namespace IMAP_Client.ViewModels
         private void ExecuteConnect()
         {
             _connection = new ServerConnection(IPAddress, Port);
-            
+            Console += $"{_connection.SendMessage($"CONNECT")}\n";
         }
         private void ExecuteDisconnect()
         {
