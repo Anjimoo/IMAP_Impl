@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace IMAP_Client.Interfaces
+namespace IMAP_Server.Interfaces
 {
     public interface ICommand
     {
@@ -11,9 +11,6 @@ namespace IMAP_Client.Interfaces
         int CommandSplits { get; }
         string CommandContent { get; set; }
         public bool Validated { get; set; }
-
-        public bool ValidateCommand();
-
-                  
+        public bool ValidateCommand();                  
     }
 }
