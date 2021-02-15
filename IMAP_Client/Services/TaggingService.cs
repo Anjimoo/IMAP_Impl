@@ -25,7 +25,7 @@ namespace IMAP_Client.Services
             }
         }
 
-        public static void NextTag()
+        private static void NextTag()
         {
             tagNumber++;
             Tag = tagNumber.ToString().PadLeft(4, '0');

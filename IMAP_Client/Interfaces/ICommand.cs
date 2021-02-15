@@ -2,13 +2,16 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace IMAP.Shared.Interfaces
+namespace IMAP_Client.Interfaces
 {
     public interface ICommand
     {
 
-        public string CommandContent { get; set; }
+        string Tag { get; }
+        int CommandSplits { get; }
+        string CommandContent { get; set; }
         public bool Validated { get; set; }
+
         public bool ValidateCommand();
 
                   

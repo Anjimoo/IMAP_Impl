@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
-using IMAP.Shared.Interfaces;
-using IMAP.Shared.Services;
+using IMAP_Client.Interfaces;
+using IMAP_Client.Services;
 
-namespace IMAP.Shared.CommandModels
+namespace IMAP_Client.CommandModels
 {
 
     //Prototype only. Possibility for commands to NOT look like this.
@@ -17,13 +17,15 @@ namespace IMAP.Shared.CommandModels
     public class LoginCommand : ICommand
 
     {
-        public const int commandSplits = 2;
+        public string Tag { get; private set; }
+        public int CommandSplits { get; private set; } = 2;
         public string CommandContent { get; set; }
         public bool Validated { get; set; }
 
 
         public LoginCommand(string command)
         {
+            Tag = TaggingService.Tag;
             this.CommandContent = command;
             //this.Validated = ValidateCommand();
         }
