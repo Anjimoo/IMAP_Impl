@@ -14,6 +14,7 @@ namespace IMAP.Shared.CommandModels
     public class LoginCommand : ICommand
 
     {
+
         public string CommandContent { get; set; }
         public bool Validated { get; set; }
 
