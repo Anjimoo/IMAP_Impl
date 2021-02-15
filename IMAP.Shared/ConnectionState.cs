@@ -14,10 +14,10 @@ namespace IMAP.Shared
 
         public ConnectionState()
         {
-            Timer = new Timer(10000);
-            Timer.Elapsed += OnTimedEvent;
-            Timer.AutoReset = true;
-            Timer.Enabled = true;
+            //Timer = new Timer(10000);
+            //Timer.Elapsed += OnTimedEvent;
+            //Timer.AutoReset = true;
+            //Timer.Enabled = true;
         }
 
         public void OnTimedEvent(Object source, ElapsedEventArgs e)

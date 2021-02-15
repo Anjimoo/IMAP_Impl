@@ -9,8 +9,9 @@ namespace IMAP_Server.Interfaces
 
         string Tag { get; }
         int CommandSplits { get; }
-        string CommandContent { get; set; }
+        string[] CommandContent { get; set; }
         public bool Validated { get; set; }
-        public bool ValidateCommand();                  
+        public void ValidateCommand();
+        public string GetResponse();
     }
 }

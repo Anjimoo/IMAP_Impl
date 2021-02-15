@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using IMAP.Shared;
+using IMAP_Server.CommandModels;
 
 namespace IMAP_Server
 {
@@ -35,7 +36,7 @@ namespace IMAP_Server
         }
         public string HandleMessage(string _message, string currentConnection)
         {  
-            ParseMessage(_message);
+            ParseMessage(_message, currentConnection);
 
             //if (message.Command == "LOGOUT")
             //{
@@ -79,7 +80,7 @@ namespace IMAP_Server
         //    }
         //}
 
-        private void ParseMessage(string _message)
+        private void ParseMessage(string _message, string currentConnection)
         {
             string[] tempMessage = _message.Split(' ');
 
@@ -92,11 +93,16 @@ namespace IMAP_Server
                     response = $"{tag} OK greetings";
                     break;
                 case "LOGIN":
-                    
-
+                    var loginCommand = new LoginCommand(tempMessage);
+                    response = loginCommand.GetResponse();
+                    if (loginCommand.LoginSucceeded)
+                    {
+                        _connections[currentConnection].Authentificated = true;
+                    }
                     break;
                 case "LOGOUT":
                     response = $"{tag} BYE IMAP4rev1 Server logging out";
+                    _connections[currentConnection].Authentificated = false;
                     break;
                 default:
                     break;

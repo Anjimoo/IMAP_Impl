@@ -17,22 +17,60 @@ namespace IMAP_Server.CommandModels
 
     {
         public string Tag { get; private set; }
-        public int CommandSplits { get; private set; } = 2; //Check how many splits.
-        public string CommandContent { get; set; }
+        public int CommandSplits { get; private set; } = 4;
+        public string[] CommandContent { get; set; }
         public bool Validated { get; set; }
+        public bool LoginSucceeded { get; set; }
 
-
-        public LoginCommand(string command)
+        public LoginCommand(string[] command)
         {
-
+            Tag = command[0];
+            CommandContent = command;
+            ValidateCommand();
+            if (Validated)
+            {
+                ValidateLogin();
+            }
+            
         }
 
-        public bool ValidateCommand()
+        public void ValidateCommand()
         {
             /***********************************/
             //TODO: Finish writing this function.
             /***********************************/
-            return true;
+            if(CommandContent.Length != CommandSplits)
+            {
+                Validated = false;
+            }
+            Validated = true;
+        }
+
+        public string GetResponse()
+        {
+            if(Validated == false)
+            {
+                return $"{Tag} BAD - command unknown or arguments invalid";
+            }
+            
+            if(LoginSucceeded)
+            {
+                return $"{Tag} OK - login completed, now in authenticated state";
+            }
+            
+            return $"{Tag} NO - login failure: user name or password rejected";
+        }
+
+        public void ValidateLogin()
+        {
+            if(CommandContent[2] == "Anton" && CommandContent[3] == "12345")
+            {
+                LoginSucceeded = true;
+            }
+            else
+            {
+                LoginSucceeded = false;
+            }
         }
     }
 }
