@@ -9,7 +9,7 @@ namespace IMAP.Shared
     {
         public bool Connected { get; set; }
         public bool Authentificated { get; set; }
-        public bool SelectedMail { get; set; }
+        public bool SelectedMailBox { get; set; }
         public Timer Timer { get; set; }
 
         public ConnectionState()
