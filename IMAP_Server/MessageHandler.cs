@@ -7,41 +7,60 @@ namespace IMAP_Server
 {
     public class MessageHandler
     {
-        private Message message;
-        private ConnectionState connectionState;
+        private Message message;      
+        public Dictionary<string, ConnectionState> _connections;
         private string response;
         public MessageHandler()
         {
-            connectionState = new ConnectionState();
+            _connections = new Dictionary<string, ConnectionState>();
         }
-        public string HandleMessage(string _message)
+        public string HandleMessage(string _message, string currentConnection)
         {
             message = new Message();
             message.ParseMessage(_message);
-            
-            if (!connectionState.Authentificated && message.Content == "LOGIN")
+
+            if (message.Command == "LOGOUT")
             {
-                if(message.Arguments[ArgumentType.USERNAME] == "Anton" && message.Arguments[ArgumentType.PASSWORD] == "12345")
-                {
-                    response = "OK LOGIN Complited: now in authentificated state";
-                }
-                else
-                {
-                    response = "NO LOGIN Failure: username or password rejected";
-                }
+                response = message.Response;
+                _connections[currentConnection].Authentificated = false;
+                _connections[currentConnection].SelectedMail = false;
+                return response;
             }
-            else if(connectionState.Authentificated)
+
+            if (!_connections[currentConnection].Connected && message.Command == "CONNECT")
+            {
+                _connections[currentConnection].Connected = true;
+                response = message.Response;     
+            }
+            else if(!_connections[currentConnection].Authentificated && message.Command == "LOGIN")
+            {
+                HandleLogin(currentConnection);
+            }
+            else if(_connections[currentConnection].Authentificated)
             {
 
             }
             else
             {
-
+                response = $"{message.Tag} BAD";
             }
 
 
 
             return response;
+        }
+
+        private void HandleLogin(string currentConnection)
+        {
+            if (message.Arguments[ArgumentType.USERNAME] == "Anton" && message.Arguments[ArgumentType.PASSWORD] == "12345")
+            {
+                _connections[currentConnection].Authentificated = true;
+                response = $"{message.Tag} OK LOGIN Complited: now in authentificated state";
+            }
+            else
+            {
+                response = $"{message.Tag} NO LOGIN Failure: username or password rejected";
+            }
         }
 
         

@@ -75,19 +75,20 @@ namespace IMAP_Client.ViewModels
         private void ExecuteConnect()
         {
             _connection = new ServerConnection(IPAddress, Port);
-            Console += $"{_connection.SendMessage($"CONNECT")}\n";
+            UpdateConsole(_connection.SendMessage($"* CONNECT"));
         }
         private void ExecuteDisconnect()
         {
             _connection.Disconnect();
+            UpdateConsole("Disconnected from server");
         }
 
         private void ExecuteLogout()
         {
             //TODO
             //check connection to server
-            _connection.SendMessage("LOGOUT");
-
+            UpdateConsole(_connection.SendMessage($"{TaggingService.Tag} LOGOUT"));
+            
         }
 
         private void ExecuteNoop()
