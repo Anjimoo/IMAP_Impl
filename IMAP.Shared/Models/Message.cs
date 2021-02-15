@@ -27,6 +27,7 @@ namespace IMAP.Shared
     {
         public string Content { get; set; }
         public Dictionary<ArgumentType, string> Arguments { get; set; }
+        public string Response { get; set; }
 
         public void ParseMessage(string _message)
         {
@@ -37,6 +38,9 @@ namespace IMAP.Shared
 
             switch (Content)
             {
+                case "CONNECT":
+                    Response = "* OK greetings";
+                    break;
                 case "LOGIN":
                     Arguments.Add(ArgumentType.USERNAME, tempMessage[1]);
                     Arguments.Add(ArgumentType.PASSWORD, tempMessage[2]);

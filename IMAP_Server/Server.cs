@@ -29,40 +29,37 @@ namespace IMAP_Server
         {
             try
             {
-                Log.Logger.Information($"Listening on {_server.LocalEndpoint.AddressFamily}");
+                Log.Logger.Information($"Listening on 127.0.0.1:143");
                 while (true)
                 {                   
                     TcpClient client = _server.AcceptTcpClient();
                     Log.Logger.Information($"Received incoming connection.");
                     try
                     {
-                        var ignored = Task.Run(() =>
+                        var ignored = Task.Run(async () =>
                         {
-                            HandleConnection(client);
+                            await HandleConnection(client);
+                            client.Dispose();
                         });
                     }
                     catch(Exception e)
                     {
                         Log.Logger.Error(e, "Connections is faulted");
-                    }
-                    finally
-                    {
-                        client.Dispose();
-                    }
-                           
+                    }                   
                 }
+
             }catch(SocketException ex)
             {
-                Console.WriteLine($"SocketException : {ex}");
+                Log.Logger.Error(ex, "Error");
                 _server.Stop();
             }
         }
 
-        private void HandleConnection(TcpClient tcpClient)
+        private async Task HandleConnection(TcpClient tcpClient)
         {
             
             var stream = tcpClient.GetStream();
-            string imei = String.Empty;
+            
 
             string data = null;
             Byte[] bytes = new Byte[256];
@@ -85,7 +82,6 @@ namespace IMAP_Server
             }catch(Exception e)
             {
                 Console.WriteLine($"Exception : {e}");
-                tcpClient.Close();
             }
         }
     }

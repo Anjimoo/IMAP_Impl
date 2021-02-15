@@ -18,8 +18,13 @@ namespace IMAP_Server
         {
             message = new Message();
             message.ParseMessage(_message);
-            
-            if (!connectionState.Authentificated && message.Content == "LOGIN")
+
+            if (!connectionState.Connected && message.Content == "CONNECT")
+            {
+                connectionState.Connected = true;
+                response = message.Response;     
+            }
+            else if(!connectionState.Authentificated && message.Content == "LOGIN")
             {
                 if(message.Arguments[ArgumentType.USERNAME] == "Anton" && message.Arguments[ArgumentType.PASSWORD] == "12345")
                 {
@@ -36,7 +41,7 @@ namespace IMAP_Server
             }
             else
             {
-
+                response = "BAD";
             }
 
 
