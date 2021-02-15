@@ -1,4 +1,6 @@
-﻿using Prism.Commands;
+﻿using IMAP_Client.Services;
+using Prism.Commands;
+using Prism.Events;
 using Prism.Mvvm;
 using System;
 using System.Collections.Generic;
@@ -10,6 +12,7 @@ namespace IMAP_Client.ViewModels
 {
     public class AuthStateViewModel : BindableBase
     {
+        private IEventAggregator _eventAggregator;
         #region Properties
         private string _mailBox;
         public string MailBox
@@ -91,8 +94,9 @@ namespace IMAP_Client.ViewModels
         public DelegateCommand Status { get; set; }
         public DelegateCommand Append { get; set; }
         #endregion
-        public AuthStateViewModel()
+        public AuthStateViewModel(IEventAggregator eventAggregator)
         {
+            _eventAggregator = eventAggregator;
             Select = new DelegateCommand(ExecuteSelect);
             Select = new DelegateCommand(ExecuteExamine);
             Select = new DelegateCommand(ExecuteCreate);
@@ -108,57 +112,80 @@ namespace IMAP_Client.ViewModels
         #region Execute Functions
         private void ExecuteAppend()
         {
-            //TODO
+            string response;
+            response = MainWindowViewModel._connection.SendMessage($"{TaggingService.Tag} APPEND {MailBox} {Flag} {DateTime} {MessageLiteral}");
+            _eventAggregator.GetEvent<UpdateUserConsole>().Publish(response);
+
         }
 
         private void ExecuteStatus()
         {
-            //TODO
+            string response;
+            response = MainWindowViewModel._connection.SendMessage($"{TaggingService.Tag} STATUS {MailBox} {MailboxNameAndWildCard} ");
+            _eventAggregator.GetEvent<UpdateUserConsole>().Publish(response);
         }
 
         private void ExecuteLSUB()
         {
-            //TODO
+            string response;
+            response = MainWindowViewModel._connection.SendMessage($"{TaggingService.Tag} LSUB {ReferenceName} {MailboxNameAndWildCard} ");
+            _eventAggregator.GetEvent<UpdateUserConsole>().Publish(response);
         }
 
         private void ExecuteLIST()
         {
-            //TODO
+            string response;
+            response = MainWindowViewModel._connection.SendMessage($"{TaggingService.Tag} LIST {ReferenceName} {MailboxNameAndWildCard} ");
+            _eventAggregator.GetEvent<UpdateUserConsole>().Publish(response);
         }
 
         private void ExecuteRename()
-        {
-            //TODO
+        { 
+            string response;
+            response = MainWindowViewModel._connection.SendMessage($"{TaggingService.Tag} RENAME {MailBox} {NewMailBox}");
+            _eventAggregator.GetEvent<UpdateUserConsole>().Publish(response);
         }
 
         private void ExecuteUnsubscribe()
         {
-            //TODO
+            string response;
+            response = MainWindowViewModel._connection.SendMessage($"{TaggingService.Tag} UNSUBSCRIBE {MailBox}");
+            _eventAggregator.GetEvent<UpdateUserConsole>().Publish(response);
         }
 
         private void ExecuteSubscribe()
         {
-            //TODO
+            string response;
+            response = MainWindowViewModel._connection.SendMessage($"{TaggingService.Tag} SUBSCRIBE {MailBox}");
+            _eventAggregator.GetEvent<UpdateUserConsole>().Publish(response);
         }
 
         private void ExecuteDelete()
-        {
-            //TODO
+        {  
+          string response; 
+         response= MainWindowViewModel._connection.SendMessage($"{TaggingService.Tag} DELETE {MailBox}");
+           _eventAggregator.GetEvent<UpdateUserConsole>().Publish(response);       
         }
 
         private void ExecuteCreate()
         {
-            //TODO
+            string response;
+            response = MainWindowViewModel._connection.SendMessage($"{TaggingService.Tag} Create {MailBox}");
+            _eventAggregator.GetEvent<UpdateUserConsole>().Publish(response);
         }
 
         private void ExecuteExamine()
-        {
-            //TODO
+        { 
+            string response;
+            response = MainWindowViewModel._connection.SendMessage($"{TaggingService.Tag} EXAMINE {MailBox}");
+            _eventAggregator.GetEvent<UpdateUserConsole>().Publish(response);
         }
 
         private void ExecuteSelect()
         {
-            //TODO
+            string response;
+            response = MainWindowViewModel._connection.SendMessage($"{TaggingService.Tag} SELECT {MailBox}");
+            _eventAggregator.GetEvent<UpdateUserConsole>().Publish(response);
         }
         #endregion
     }
