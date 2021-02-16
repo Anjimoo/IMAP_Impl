@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using IMAP.Shared;
 using IMAP_Server.Interfaces;
 
 namespace IMAP_Server.CommandModels
@@ -13,6 +14,7 @@ namespace IMAP_Server.CommandModels
         public int CommandSplits { get; set; }
         public string[] CommandContent { get; set; }
         public bool Validated { get; set; }
+        public ConnectionState Connection { get; set; }
 
 
         public StatusCommand(string[] command)
