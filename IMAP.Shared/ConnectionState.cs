@@ -7,13 +7,35 @@ namespace IMAP.Shared
 {
     public class ConnectionState
     {
+        public string Ip { get; set; }
         public bool Connected { get; set; }
-        public bool Authentificated { get; set; }
+
+        private bool _Authentificated;
+        public bool Authentificated 
+        {
+            get
+            {
+                return _Authentificated;
+                
+            } 
+            set 
+            {
+                if (value == false)
+                {
+                    SelectedMailBox = false;
+                }
+                _Authentificated = value;
+            } 
+        }
+
         public bool SelectedMailBox { get; set; }
+
+
         public Timer Timer { get; set; }
 
-        public ConnectionState()
+        public ConnectionState(string ip)
         {
+            Ip = ip;
             //Timer = new Timer(10000);
             //Timer.Elapsed += OnTimedEvent;
             //Timer.AutoReset = true;
@@ -23,6 +45,11 @@ namespace IMAP.Shared
         public void OnTimedEvent(Object source, ElapsedEventArgs e)
         {
             Console.WriteLine("Logout is executed");
+        }
+
+        public void CloseConnection()
+        {
+            //**TODO: Finish this.
         }
     }
 }
