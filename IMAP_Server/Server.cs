@@ -75,13 +75,13 @@ namespace IMAP_Server
                 while((i = stream.Read(bytes, 0 , bytes.Length)) != 0)
                 {
                     string hex = BitConverter.ToString(bytes);
-                    data = Encoding.ASCII.GetString(bytes, 0, i);
-                    var client = tcpClient.Client.RemoteEndPoint;
+                    data = Encoding.UTF8.GetString(bytes, 0, i);
+                    var client = tcpClient.Client.RemoteEndPoint.ToString();
 
                     Log.Logger.Information($"{data} received from {client}");
 
-                    messageHandler._connections.TryAdd(client.ToString(), new ConnectionState(client.ToString()));
-                    messageHandler.HandleMessage(data, client.ToString(), stream);
+                    messageHandler._connections.TryAdd(client, new ConnectionState(client));
+                    messageHandler.HandleMessage(data, client, stream);
                 }
             }catch(Exception e)
             {
