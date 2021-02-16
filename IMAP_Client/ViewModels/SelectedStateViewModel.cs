@@ -90,13 +90,13 @@ namespace IMAP_Client.ViewModels
         public SelectedStateViewModel()
         {
             Check = new DelegateCommand(ExecuteCheck);
-            Check = new DelegateCommand(ExecuteClose);
-            Check = new DelegateCommand(ExecuteExpunge);
-            Check = new DelegateCommand(ExecuteSearch);
-            Check = new DelegateCommand(ExecuteFetch);
-            Check = new DelegateCommand(ExecuteStore);
-            Check = new DelegateCommand(ExecuteCopy);
-            Check = new DelegateCommand(ExecuteUID);
+            Close = new DelegateCommand(ExecuteClose);
+            Expunge = new DelegateCommand(ExecuteExpunge);
+            Search = new DelegateCommand(ExecuteSearch);
+            Fetch = new DelegateCommand(ExecuteFetch);
+            Store = new DelegateCommand(ExecuteStore);
+            Copy = new DelegateCommand(ExecuteCopy);
+            UID = new DelegateCommand(ExecuteUID);
         }
         #region Functions
         private void ExecuteUID()
