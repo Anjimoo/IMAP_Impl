@@ -1,4 +1,5 @@
 ﻿using IMAP.Shared;
+using IMAP.Shared.Models;
 using Serilog;
 using System;
 using System.Collections.Generic;
@@ -18,11 +19,13 @@ namespace IMAP_Server
         private TcpListener _server = null;
         private MessageHandler messageHandler;
         private string _response;
+        public static Dictionary<string, Mailbox> mailBoxes;
         
         public Server()
         {
             IPAddress localAddress = IPAddress.Parse("127.0.0.1");
             messageHandler = new MessageHandler();
+            CreateMailBoxes();
             _server = new TcpListener(localAddress, 143);
             _server.Start();          
         }
@@ -76,16 +79,18 @@ namespace IMAP_Server
                     Log.Logger.Information($"{data} received from {tcpClient.Client.RemoteEndPoint}");
 
                     messageHandler._connections.TryAdd(tcpClient.Client.RemoteEndPoint.ToString(), new ConnectionState());
-                    _response = messageHandler.HandleMessage(data, tcpClient.Client.RemoteEndPoint.ToString());
-              
-                    Byte[] reply = System.Text.Encoding.ASCII.GetBytes(_response);
-                    stream.Write(reply, 0, reply.Length);
-                    Log.Logger.Information($"{_response} sent");
+                    messageHandler.HandleMessage(data, tcpClient.Client.RemoteEndPoint.ToString(), stream);
                 }
             }catch(Exception e)
             {
                 Console.WriteLine($"Exception : {e}");
             }
+        }
+
+        private void CreateMailBoxes()
+        {
+            mailBoxes = new Dictionary<string, Mailbox>();
+            mailBoxes.Add("Jimoo@gmail.com", new Mailbox() { mailboxName = "Jimoo@gmail.com" });
         }
     }
 }

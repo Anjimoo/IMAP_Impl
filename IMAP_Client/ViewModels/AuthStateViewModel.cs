@@ -98,16 +98,16 @@ namespace IMAP_Client.ViewModels
         {
             _eventAggregator = eventAggregator;
             Select = new DelegateCommand(ExecuteSelect);
-            Select = new DelegateCommand(ExecuteExamine);
-            Select = new DelegateCommand(ExecuteCreate);
-            Select = new DelegateCommand(ExecuteDelete);
-            Select = new DelegateCommand(ExecuteSubscribe);
-            Select = new DelegateCommand(ExecuteUnsubscribe);
-            Select = new DelegateCommand(ExecuteRename);
-            Select = new DelegateCommand(ExecuteLIST);
-            Select = new DelegateCommand(ExecuteLSUB);
-            Select = new DelegateCommand(ExecuteStatus);
-            Select = new DelegateCommand(ExecuteAppend);
+            Examine = new DelegateCommand(ExecuteExamine);
+            Create = new DelegateCommand(ExecuteCreate);
+            Delete = new DelegateCommand(ExecuteDelete);
+            Subscribe = new DelegateCommand(ExecuteSubscribe);
+            Unsubscribe = new DelegateCommand(ExecuteUnsubscribe);
+            Rename = new DelegateCommand(ExecuteRename);
+            LIST = new DelegateCommand(ExecuteLIST);
+            LSUB = new DelegateCommand(ExecuteLSUB);
+            Status = new DelegateCommand(ExecuteStatus);
+            Append = new DelegateCommand(ExecuteAppend);
         }
         #region Execute Functions
         private void ExecuteAppend()

@@ -39,8 +39,7 @@ namespace IMAP_Server.CommandModels
             //Example for general use of "Action" function. In login there's probably not much to do.
             if (LoginSucceeded)
             {
-                Task.Run(() => Action()); //Run what the command is supposed to do in a different thread (I don't know yet 
-                                            //if we need async here or not.)
+                Task.Run(() => Action()); //Run what the command is supposed to do in a different thread (I don't know yet                                             //if we need async here or not.)
             }       
         }
 
