@@ -25,7 +25,7 @@ namespace IMAP_Server.CommandModels
             {
                 if (mb.Value.mailboxName == ImapUTF7.Encode(command[2]))
                 {
-                    //send "NO" response then break
+                    AnyStateCommands.SendResponse(stream, $"NO CREATE: Mailbox already exists in that name");
                     return;
                 }
             }
@@ -34,13 +34,22 @@ namespace IMAP_Server.CommandModels
                 mailboxName = ImapUTF7.Encode(command[2]),
                 mailboxSize = 50000
             };
-            Server.mailBoxes.Add("Jimoo@gmail.com", mailbox);
-            //Send OK message
+            Server.mailBoxes.Add(mailbox.mailboxName, mailbox);
+            AnyStateCommands.SendResponse(stream, $"OK CREATE Completed: {mailbox.mailboxName} Successfully removed");
         }
 
         public static void Delete(string[] command, ConnectionState connectionState, NetworkStream stream)
         {
-            
+            foreach(KeyValuePair<string, Mailbox> mb in Server.mailBoxes)
+            {
+                if(mb.Value.mailboxName==ImapUTF7.Encode(command[2]))
+                {
+                    Server.mailBoxes.Remove(mb.Value.mailboxName);
+                    AnyStateCommands.SendResponse(stream, $"OK DELETE Completed: {mb.Value.mailboxName} Successfully removed");
+                    return;
+                }
+            }
+            AnyStateCommands.SendResponse(stream, $"NO DELETE: Mailbox was not found");
         }
 
         public static void Examine(string[] command, ConnectionState connectionState, NetworkStream stream)
