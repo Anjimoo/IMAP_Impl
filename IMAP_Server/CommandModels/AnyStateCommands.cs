@@ -15,29 +15,56 @@ namespace IMAP_Server.CommandModels
 
         public static void Capability(string[] command, ConnectionState connectionState, NetworkStream stream)
         {
-            Log.Logger.Information($"Capability request by {connectionState.Ip}");
             string tag = command[0];
-            string ok = $"{tag} OK - capability completed";
-            string bad = $"{tag} BAD - command unknown or arguments invalid";
+            string cmd = command[1];
+            Log.Logger.Information($"{cmd} request by {connectionState.Ip}");
+
+            string response = "*";
+
+            foreach (var cap in capabilities)
+            {
+                response+=$" {cap}";
+            }
+
+            SendResponse(stream, response);
+            SendResponse(stream, OK(tag, cmd));
+            Log.Logger.Information($"{cmd} list sent to {connectionState.Ip}");
         }
 
         public static void Logout(string[] command, ConnectionState connectionState, NetworkStream stream)
         {
-           
+            string tag = command[0];
+            string cmd = command[1];
+            Log.Logger.Information($"{cmd} request by {connectionState.Ip}");
         }
 
         public static void NOOP(string[] command, ConnectionState connectionState, NetworkStream stream)
         {
-           
+            string tag = command[0];
+            string cmd = command[1];
+            Log.Logger.Information($"{cmd} request by {connectionState.Ip}");
+
+
         }
 
         public static void Default(string[] command, ConnectionState connectionState, NetworkStream stream)
         {
             string tag = command[0];
-            string bad = $"{tag} BAD - command unknown or arguments invalid";
-
-            SendResponse(stream, bad);
+            SendResponse(stream, BAD(tag));
         }
+
+
+        public static string OK(string tag, string command)
+        {
+            return $"{tag} OK - {command} completed";
+        }
+
+        public static string BAD(string tag)
+        {
+            return $"{tag} BAD - command unknown or arguments invalid";
+        }
+
+
 
         public static void SendResponse(NetworkStream stream, string response)
         {

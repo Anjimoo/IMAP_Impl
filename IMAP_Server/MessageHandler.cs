@@ -137,7 +137,7 @@ namespace IMAP_Server
                 case "UID":
                     SelectStateCommands.UID(tempMessage,_connections[currentConnection], stream);
                     break;
-               
+
 
                 //case "CONNECT":
                 //    response = $"{tag} OK greetings";
@@ -159,6 +159,7 @@ namespace IMAP_Server
                 //    break;
 
                 default:
+                    AnyStateCommands.Default(tempMessage, _connections[currentConnection], stream);
                     break;
             }
         }
