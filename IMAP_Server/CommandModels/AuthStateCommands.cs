@@ -16,7 +16,7 @@ namespace IMAP_Server.CommandModels
 
         public static void Append(string[] command, ConnectionState connectionState, NetworkStream stream)
         {
-            
+             
         }
 
         public static void Create(string[] command, ConnectionState connectionState, NetworkStream stream)

@@ -87,8 +87,7 @@ namespace IMAP_Client.ViewModels
         {
             //TODO
             //check connection to server
-            UpdateConsole(_connection.SendMessage($"{TaggingService.Tag} LOGOUT"));
-            
+            UpdateConsole(_connection.SendMessage($"{TaggingService.Tag} LOGOUT"));            
         }
 
         private void ExecuteNoop()
@@ -98,7 +97,9 @@ namespace IMAP_Client.ViewModels
 
         private void ExecuteCapability()
         {
-            //TODO
+            string tag = TaggingService.Tag;
+            UpdateConsole($"{tag} CAPABILITY");
+            UpdateConsole(_connection.SendMessage($"{tag} CAPABILITY"));
         }
         #endregion
 
