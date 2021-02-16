@@ -4,7 +4,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using IMAP_Server.Interfaces;
 using System.Threading.Tasks;
-
+using IMAP.Shared;
 
 namespace IMAP_Server.CommandModels
 {
@@ -23,9 +23,11 @@ namespace IMAP_Server.CommandModels
         public string[] CommandContent { get; set; }
         public bool Validated { get; set; }
         public bool LoginSucceeded { get; set; }
+        public ConnectionState Connection { get; set; }
 
-        public LoginCommand(string[] command)
+        public LoginCommand(string[] command, ConnectionState connection)
         {
+            Connection = connection;
             Tag = command[0];
             CommandContent = command;
             ValidateCommand();

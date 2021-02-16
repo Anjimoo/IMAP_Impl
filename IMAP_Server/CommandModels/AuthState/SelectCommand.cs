@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using IMAP_Server.Interfaces;
+using IMAP.Shared;
 
 namespace IMAP_Server.CommandModels
 {
@@ -12,9 +13,10 @@ namespace IMAP_Server.CommandModels
         public string Tag { get; set; }
         public int CommandSplits { get; set; }
         public string[] CommandContent { get; set; }
-        public bool Validated { get; set; }
+        public bool Validated { get; set; }                
+        public ConnectionState Connection { get; set; }
 
-        public string GetResponse()
+    public string GetResponse()
         {
             return "";
         }

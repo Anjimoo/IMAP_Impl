@@ -93,7 +93,7 @@ namespace IMAP_Server
                     response = $"{tag} OK greetings";
                     break;
                 case "LOGIN":
-                    var loginCommand = new LoginCommand(tempMessage);
+                    var loginCommand = new LoginCommand(tempMessage, _connections[currentConnection]);
                     response = loginCommand.GetResponse();
                     if (loginCommand.LoginSucceeded)
                     {
