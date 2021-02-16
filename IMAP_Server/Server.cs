@@ -75,7 +75,7 @@ namespace IMAP_Server
                 while((i = stream.Read(bytes, 0 , bytes.Length)) != 0)
                 {
                     string hex = BitConverter.ToString(bytes);
-                    data = Encoding.ASCII.GetString(bytes, 0, i);
+                    data = Encoding.UTF8.GetString(bytes, 0, i);
                     Log.Logger.Information($"{data} received from {tcpClient.Client.RemoteEndPoint}");
 
                     messageHandler._connections.TryAdd(tcpClient.Client.RemoteEndPoint.ToString(), new ConnectionState());
