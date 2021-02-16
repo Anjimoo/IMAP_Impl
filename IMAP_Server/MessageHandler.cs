@@ -48,6 +48,9 @@ namespace IMAP_Server
             switch (command)
             {
                 //Any state commands
+                case "CONNECT":
+                    AnyStateCommands.SendResponse(stream, $"{command[0]} OK greetings.");
+                    break;
                 case "CAPABILITY":
                     AnyStateCommands.Capability(tempMessage, _connections[currentConnection], stream);
                     break;
