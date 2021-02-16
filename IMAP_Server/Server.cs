@@ -76,10 +76,12 @@ namespace IMAP_Server
                 {
                     string hex = BitConverter.ToString(bytes);
                     data = Encoding.ASCII.GetString(bytes, 0, i);
-                    Log.Logger.Information($"{data} received from {tcpClient.Client.RemoteEndPoint}");
+                    var client = tcpClient.Client.RemoteEndPoint;
 
-                    messageHandler._connections.TryAdd(tcpClient.Client.RemoteEndPoint.ToString(), new ConnectionState());
-                    messageHandler.HandleMessage(data, tcpClient.Client.RemoteEndPoint.ToString(), stream);
+                    Log.Logger.Information($"{data} received from {client}");
+
+                    messageHandler._connections.TryAdd(client.ToString(), new ConnectionState(client.ToString()));
+                    messageHandler.HandleMessage(data, client.ToString(), stream);
                 }
             }catch(Exception e)
             {
