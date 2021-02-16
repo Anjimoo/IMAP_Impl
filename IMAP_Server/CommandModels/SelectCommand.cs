@@ -23,5 +23,10 @@ namespace IMAP_Server.CommandModels
         {
             
         }
+
+        async Task Action()
+        {
+            
+        }
     }
 }

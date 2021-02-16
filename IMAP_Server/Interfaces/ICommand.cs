@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace IMAP_Server.Interfaces
 {
@@ -10,8 +11,9 @@ namespace IMAP_Server.Interfaces
         string Tag { get; }
         int CommandSplits { get; }
         string[] CommandContent { get; set; }
-        public bool Validated { get; set; }
-        public void ValidateCommand();
-        public string GetResponse();
+        bool Validated { get; set; }
+        void ValidateCommand();
+        string GetResponse();
+        async Task Action() { }
     }
 }

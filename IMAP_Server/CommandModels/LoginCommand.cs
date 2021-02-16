@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
 using IMAP_Server.Interfaces;
+using System.Threading.Tasks;
+
 
 namespace IMAP_Server.CommandModels
 {
@@ -31,7 +33,13 @@ namespace IMAP_Server.CommandModels
             {
                 ValidateLogin();
             }
-            
+
+            //Example for general use of "Action" function. In login there's probably not much to do.
+            if (LoginSucceeded)
+            {
+                Task.Run(() => Action()); //Run what the command is supposed to do in a different thread (I don't know yet 
+                                            //if we need async here or not.)
+            }       
         }
 
         public void ValidateCommand()
@@ -71,6 +79,11 @@ namespace IMAP_Server.CommandModels
             {
                 LoginSucceeded = false;
             }
+        }
+
+        async Task Action()
+        {
+
         }
     }
 }
