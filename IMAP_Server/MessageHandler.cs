@@ -19,8 +19,7 @@ namespace IMAP_Server
             _connections = new Dictionary<string, ConnectionState>();
         }
         public void HandleMessage(string _message, string currentConnection, NetworkStream stream)
-        {
-           
+        {           
             string[] tempMessage = _message.Split(' ');
 
             var command = tempMessage[1];
