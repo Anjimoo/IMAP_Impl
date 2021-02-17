@@ -15,6 +15,7 @@ namespace IMAP_Server.CommandModels
         private const int CREATE_SPLIT = 3;
         private const int DELETE_SPLIT = 3;
         private const int SELECT_SPLIT = 3;
+        private const int EXAMINE_SPLIT = 3;
         private const int RENAME_SPLIT = 4;
 
         public static void Append(string[] command, ConnectionState connectionState, NetworkStream stream)
@@ -80,6 +81,32 @@ namespace IMAP_Server.CommandModels
 
         public static void Examine(string[] command, ConnectionState connectionState, NetworkStream stream)
         {
+            if (command.Length == EXAMINE_SPLIT) //check if command is legal
+            {
+
+                if (Server.mailBoxes.TryGetValue(command[2], out var mailbox)) //check if chosen mailbox is present
+                {
+                    connectionState.SelectedMailBox = true;
+                    AnyStateCommands.SendResponse(stream, $"* {mailbox.EmailMessages.Count} EXISTS");
+                    int c = 0;
+                    foreach (EmailMessage em in mailbox.EmailMessages)
+                    {
+                        if (em.Flags.TryGetValue(@"\Recent", out var recent))
+                            if (recent)
+                                c++;//Examine do the same as SELECT except that it does not lower Recent flags.
+                    }
+                    AnyStateCommands.SendResponse(stream, $"* {c} RECENT");
+                }
+                else
+                {
+                    AnyStateCommands.SendResponse(stream,
+                        $"{command[0]} NO - EXAMINE failure, now in authenticated state: no such mailbox, can’t access mailbox");
+                }
+            }
+            else
+            {
+                AnyStateCommands.SendResponse(stream, $"{command[0]} BAD - command unknown or arguments invalid");
+            }
 
         }
 
@@ -120,7 +147,19 @@ namespace IMAP_Server.CommandModels
                 {
                     connectionState.SelectedMailBox = true;
                     AnyStateCommands.SendResponse(stream, $"* {mailbox.EmailMessages.Count} EXISTS");
-                    AnyStateCommands.SendResponse(stream, $"* 2 RECENT");
+                    int c = 0;
+                    foreach(EmailMessage em in mailbox.EmailMessages)
+                    {
+                        if(em.Flags.TryGetValue(@"\Recent", out var recent))
+                        {
+                            if(recent)
+                            {
+                                c++;
+                                em.LowerFlag(@"\Recent");
+                            }
+                        }
+                    }
+                    AnyStateCommands.SendResponse(stream, $"* {c} RECENT READED");
                 }
                 else
                 {
