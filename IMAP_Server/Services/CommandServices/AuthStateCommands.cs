@@ -15,6 +15,7 @@ namespace IMAP_Server.CommandModels
         private const int CREATE_SPLIT = 3;
         private const int DELETE_SPLIT = 3;
         private const int SELECT_SPLIT = 3;
+        private const int EXAMINE_SPLIT = 3;
         private const int RENAME_SPLIT = 4;
 
         public static void Append(string[] command, ConnectionState connectionState, NetworkStream stream)
@@ -80,7 +81,7 @@ namespace IMAP_Server.CommandModels
 
         public static void Examine(string[] command, ConnectionState connectionState, NetworkStream stream)
         {
-            if (command.Length == SELECT_SPLIT) //check if command is legal
+            if (command.Length == EXAMINE_SPLIT) //check if command is legal
             {
 
                 if (Server.mailBoxes.TryGetValue(command[2], out var mailbox)) //check if chosen mailbox is present
@@ -91,12 +92,8 @@ namespace IMAP_Server.CommandModels
                     foreach (EmailMessage em in mailbox.EmailMessages)
                     {
                         if (em.Flags.TryGetValue(@"\Recent", out var recent))
-                        {
                             if (recent)
-                            {
-                                c++;
-                            }
-                        }
+                                c++;//Examine do the same as SELECT except that it does not lower Recent flags.
                     }
                     AnyStateCommands.SendResponse(stream, $"* {c} RECENT");
                 }
