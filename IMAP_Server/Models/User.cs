@@ -11,7 +11,5 @@ namespace IMAP_Server.Models
     {
         string Username { get; set; }
         string Password { get; set; } //Password in its Base64 form.
-
-        public static Dictionary<string, Mailbox> mailBoxes;
     }
 }

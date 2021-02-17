@@ -9,6 +9,7 @@ namespace IMAP.Shared.Models
     /// </summary>
     public class Mailbox
     {
+        public List<string> AllowedUsers { get; set; }
         public string mailboxName { get; set; } //Should use UTF-7 string instead since IMAP supports that only? Not sure how 
         public int mailboxSize { get; set; }
         public bool nextUniqueIDVal { get; set; } //MUST NOT change unless new messages are added to the mailbox; and second, the next unique identifier value MUST change whenever new messages are added to the mailbox, even if those new messages are subsequently expunged.
