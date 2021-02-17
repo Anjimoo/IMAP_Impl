@@ -36,6 +36,10 @@ namespace IMAP_Server.CommandModels
             string tag = command[0];
             string cmd = command[1];
             Log.Logger.Information($"{cmd} request by {connectionState.Ip}/{connectionState.Username}");
+
+            connectionState.Authentificated = false;
+
+            Log.Logger.Information($"{cmd} sent to {connectionState.Ip}/{connectionState.Username}");
         }
 
         public static void NOOP(string[] command, ConnectionState connectionState, NetworkStream stream)
