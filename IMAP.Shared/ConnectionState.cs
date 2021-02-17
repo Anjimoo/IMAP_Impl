@@ -8,7 +8,7 @@ namespace IMAP.Shared
     public class ConnectionState
     {
         public string Ip { get; set; }
-        public bool Connected { get; set; }
+        public bool Connected { get; set; } //Don't know if we need this (maybe on client, not on server)
 
         private bool _Authentificated;
         public bool Authentificated 
@@ -28,7 +28,7 @@ namespace IMAP.Shared
             } 
         }
 
-        public string Username { get; set; }
+        public string Username { get; set; } = "ANONYMOUS";
         public bool SelectedMailBox { get; set; }
 
 

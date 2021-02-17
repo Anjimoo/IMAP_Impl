@@ -40,6 +40,7 @@ namespace IMAP_Client.Services
             catch(Exception e)
             {
                 Console.WriteLine($"{e}");
+                return $"{e}";
             }
 
             return response;

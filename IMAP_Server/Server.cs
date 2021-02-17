@@ -36,6 +36,8 @@ namespace IMAP_Server
 
         public void StartListening()
         {
+            GenerateUsers(); //Just for now. We may add them using another method.
+
             try
             {
                 Log.Logger.Information($"Listening on 127.0.0.1:143");
@@ -97,6 +99,15 @@ namespace IMAP_Server
         {
             mailBoxes = new Dictionary<string, Mailbox>();
             mailBoxes.Add("Jimoo@gmail.com", new Mailbox() { mailboxName = "Jimoo@gmail.com" });
+        }
+
+
+        private void GenerateUsers()
+        {
+            users = new Dictionary<string, User>();
+            users.Add("Jimoo" ,new User() { Username = "Jimoo", Password = "123" });
+            users.Add("Shiro", new User() { Username = "Shiro", Password = "123" });
+            users.Add("Diximango", new User() { Username = "Diximango", Password = "123" });
         }
     }
 }

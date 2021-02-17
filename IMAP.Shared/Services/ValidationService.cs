@@ -26,7 +26,7 @@ namespace IMAP.Shared.Services
         }
 
         /// <summary>
-        /// Validates that the password is in a correct format.
+        /// Validates that the password is in a correct format. To be used ONLY on the client side.
         /// </summary>
         /// <returns></returns>
         public static bool ValidatePassword(string password)

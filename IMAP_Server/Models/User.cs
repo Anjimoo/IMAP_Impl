@@ -9,7 +9,7 @@ namespace IMAP_Server.Models
 {
     public class User
     {
-        string Username { get; set; }
-        string Password { get; set; } //Password in its Base64 form.
+        public string Username { get; set; }
+        public string Password { get; set; } //Password in its Base64 form.
     }
 }

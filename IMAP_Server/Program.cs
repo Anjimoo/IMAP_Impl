@@ -1,4 +1,5 @@
 ﻿using System;
+using IMAP_Server.CommandModels;
 using Serilog;
 using Serilog.Sinks.SystemConsole;
 

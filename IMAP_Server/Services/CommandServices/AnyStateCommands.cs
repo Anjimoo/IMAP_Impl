@@ -17,7 +17,7 @@ namespace IMAP_Server.CommandModels
         {
             string tag = command[0];
             string cmd = command[1];
-            Log.Logger.Information($"{cmd} request by {connectionState.Ip}");
+            Log.Logger.Information($"{cmd} request by {connectionState.Ip}/{connectionState.Username}");
 
             string response = "*";
 
@@ -28,14 +28,14 @@ namespace IMAP_Server.CommandModels
 
             SendResponse(stream, response);
             SendResponse(stream, OK(tag, cmd));
-            Log.Logger.Information($"{cmd} list sent to {connectionState.Ip}");
+            Log.Logger.Information($"{cmd} list sent to {connectionState.Ip}/{connectionState.Username}");
         }
 
         public static void Logout(string[] command, ConnectionState connectionState, NetworkStream stream)
         {
             string tag = command[0];
             string cmd = command[1];
-            Log.Logger.Information($"{cmd} request by {connectionState.Ip}");
+            Log.Logger.Information($"{cmd} request by {connectionState.Ip}/{connectionState.Username}");
         }
 
         public static void NOOP(string[] command, ConnectionState connectionState, NetworkStream stream)
