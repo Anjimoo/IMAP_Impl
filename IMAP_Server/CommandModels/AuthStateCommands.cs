@@ -12,6 +12,8 @@ namespace IMAP_Server.CommandModels
 {
     public static class AuthStateCommands
     {
+        private const int CREATE_SPLIT = 3;
+        private const int DELETE_SPLIT = 3;
         private const int SELECT_SPLIT = 3;
         private const int RENAME_SPLIT = 4;
 
@@ -22,35 +24,49 @@ namespace IMAP_Server.CommandModels
 
         public static void Create(string[] command, ConnectionState connectionState, NetworkStream stream)
         {
-            foreach (KeyValuePair<string, Mailbox> mb in Server.mailBoxes)
+            if (command.Length == CREATE_SPLIT)
             {
-                if (mb.Value.mailboxName == ImapUTF7.Encode(command[2]))
+                foreach (KeyValuePair<string, Mailbox> mb in Server.mailBoxes)
                 {
-                    AnyStateCommands.SendResponse(stream, $"NO CREATE: Mailbox already exists in that name");
-                    return;
+                    if (mb.Value.mailboxName == ImapUTF7.Encode(command[2]))
+                    {
+                        AnyStateCommands.SendResponse(stream, $"NO CREATE: Mailbox already exists in that name");
+                        return;
+                    }
                 }
+                Mailbox mailbox = new Mailbox()
+                {
+                    mailboxName = ImapUTF7.Encode(command[2]),
+                    mailboxSize = 50000
+                };
+                Server.mailBoxes.Add(mailbox.mailboxName, mailbox);
+                AnyStateCommands.SendResponse(stream, $"OK CREATE Completed: {mailbox.mailboxName} Successfully removed");
             }
-            Mailbox mailbox = new Mailbox()
+            else
             {
-                mailboxName = ImapUTF7.Encode(command[2]),
-                mailboxSize = 50000
-            };
-            Server.mailBoxes.Add(mailbox.mailboxName, mailbox);
-            AnyStateCommands.SendResponse(stream, $"OK CREATE Completed: {mailbox.mailboxName} Successfully removed");
+                AnyStateCommands.SendResponse(stream, command[0] + "  BAD - command unknown or arguments invalid");
+            }
         }
 
         public static void Delete(string[] command, ConnectionState connectionState, NetworkStream stream)
         {
-            foreach (KeyValuePair<string, Mailbox> mb in Server.mailBoxes)
+            if (command.Length == DELETE_SPLIT)
             {
-                if (mb.Value.mailboxName == ImapUTF7.Encode(command[2]))
+                foreach (KeyValuePair<string, Mailbox> mb in Server.mailBoxes)
                 {
-                    Server.mailBoxes.Remove(mb.Value.mailboxName);
-                    AnyStateCommands.SendResponse(stream, $"OK DELETE Completed: {mb.Value.mailboxName} Successfully removed");
-                    return;
+                    if (mb.Value.mailboxName == ImapUTF7.Encode(command[2]))
+                    {
+                        Server.mailBoxes.Remove(mb.Value.mailboxName);
+                        AnyStateCommands.SendResponse(stream, $"OK DELETE Completed: {mb.Value.mailboxName} Successfully removed");
+                        return;
+                    }
                 }
+                AnyStateCommands.SendResponse(stream, $"NO DELETE: Mailbox was not found");
             }
-            AnyStateCommands.SendResponse(stream, $"NO DELETE: Mailbox was not found");
+            else
+            {
+                AnyStateCommands.SendResponse(stream, command[0] + "  BAD - command unknown or arguments invalid");
+            }
         }
 
         public static void Examine(string[] command, ConnectionState connectionState, NetworkStream stream)
