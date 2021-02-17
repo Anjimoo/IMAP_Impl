@@ -6,26 +6,31 @@ namespace IMAP.Shared.Models
 {
     public class EmailMessage
     {
-        public int msgNum { get; set; }
-        public int uniqueID { get; set; }
-        public DateTime date { get; set; }
-        public string from { get; set; }
-        public string to { get; set; }
-        public string subject { get; set; }
+        public int MsgNum { get; set; }
+        public int UniqueID { get; set; }
+        public DateTime Date { get; set; }
+        public string From { get; set; }
+        public string To { get; set; }
+        public string Subject { get; set; }
         public string Content { get; set; }
+        public Dictionary<string, bool> Flags {get;set;}  = new Dictionary<string, bool>();
 
-        public enum State
-        {
-            Seen,
-            Answered,
-            Flagged,
-            Deleted,
-            Draft,
-            Recent
-        }
+
+
         public EmailMessage()
         {
-
+            InitFlags();
         }
+
+        private void InitFlags()
+        {
+            Flags.Add(@"\Answered", false);
+            Flags.Add(@"\Flagged", false);
+            Flags.Add(@"\Deleted", false);
+            Flags.Add(@"\Seen", false);
+            Flags.Add(@"\Draft", false);
+            Flags.Add(@"\Recent", false);
+        }
+
     }
 }
