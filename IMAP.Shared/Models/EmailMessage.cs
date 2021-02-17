@@ -32,5 +32,14 @@ namespace IMAP.Shared.Models
             Flags.Add(@"\Recent", false);
         }
 
+        public void RaiseFlag(string flagName)
+        {
+            Flags[flagName] = true;
+        }
+
+        public void LowerFlag(string flagName)
+        {
+            Flags[flagName] = false;
+        }
     }
 }
