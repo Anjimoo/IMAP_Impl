@@ -28,6 +28,7 @@ namespace IMAP.Shared
             } 
         }
 
+        public string Username { get; set; }
         public bool SelectedMailBox { get; set; }
 
 

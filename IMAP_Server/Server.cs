@@ -1,5 +1,6 @@
 ﻿using IMAP.Shared;
 using IMAP.Shared.Models;
+using IMAP_Server.Models;
 using Serilog;
 using System;
 using System.Collections.Generic;
@@ -19,6 +20,9 @@ namespace IMAP_Server
         private TcpListener _server = null;
         private MessageHandler messageHandler;
         private string _response;
+
+        public static  Dictionary<string, User> users; //still not in use, 
+
         public static Dictionary<string, Mailbox> mailBoxes;
         
         public Server()

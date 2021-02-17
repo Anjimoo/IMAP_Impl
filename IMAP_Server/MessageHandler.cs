@@ -8,26 +8,7 @@ using IMAP_Server.CommandModels;
 
 namespace IMAP_Server
 {
-    //public enum ArgumentType //I don't remember what i wanted to do
-    //{
-    //    USERNAME,
-    //    PASSWORD,
-    //    MAILBOX,
-    //    OLDMAILBOX,
-    //    NEWMAILBOX,
-    //    REFNAME,
-    //    MAILBOXWILDCARDS,
-    //    STATUSDATANAMES,
-    //    FLAGLIST,
-    //    DATETIME,
-    //    SEARCHCRIT,
-    //    SEQUENCE,
-    //    DATAORMACRO,
-    //    DATANAME,
-    //    VALUEDATA,
-    //    COMMANDNAME,
-    //    COMMANDARGS
-    //}
+
     public class MessageHandler
     {
         public Dictionary<string, ConnectionState> _connections;
