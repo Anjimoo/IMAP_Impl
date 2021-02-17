@@ -18,6 +18,7 @@ namespace IMAP.Shared.Models
 
         public Mailbox()
         {
+            AllowedUsers = new List<string>();
             EmailMessages = new List<EmailMessage>();
         }
     }
