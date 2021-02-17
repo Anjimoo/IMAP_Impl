@@ -39,6 +39,7 @@ namespace IMAP_Server.CommandModels
                     mailboxName = ImapUTF7.Encode(command[2]),
                     mailboxSize = 50000
                 };
+                mailbox.AllowedUsers.Add(connectionState.Username);
                 Server.mailBoxes.Add(mailbox.mailboxName, mailbox);
                 AnyStateCommands.SendResponse(stream, $"OK CREATE Completed: {mailbox.mailboxName} Successfully removed");
             }
@@ -54,10 +55,18 @@ namespace IMAP_Server.CommandModels
             {
                 foreach (KeyValuePair<string, Mailbox> mb in Server.mailBoxes)
                 {
-                    if (mb.Value.mailboxName == ImapUTF7.Encode(command[2]))
+                    if (mb.Value.AllowedUsers.Contains(connectionState.Username))
                     {
-                        Server.mailBoxes.Remove(mb.Value.mailboxName);
-                        AnyStateCommands.SendResponse(stream, $"OK DELETE Completed: {mb.Value.mailboxName} Successfully removed");
+                        if (mb.Value.mailboxName == ImapUTF7.Encode(command[2]))
+                        {
+                            Server.mailBoxes.Remove(mb.Value.mailboxName);
+                            AnyStateCommands.SendResponse(stream, $"OK DELETE Completed: {mb.Value.mailboxName} Successfully removed");
+                            return;
+                        }
+                    }
+                    else
+                    {
+                        AnyStateCommands.SendResponse(stream, $"NO DELETE: Access denided for the username {connectionState.Username}!");
                         return;
                     }
                 }
