@@ -27,6 +27,8 @@ namespace IMAP_Server
 
         public static Dictionary<string, Mailbox> mailBoxes;
 
+        public static HashSet<Mailbox> subscriberMailboxes;
+
         public Server(string ip, int port)
         {
             this.ip = ip;
@@ -34,6 +36,7 @@ namespace IMAP_Server
             IPAddress localAddress = IPAddress.Parse(ip);
             messageHandler = new MessageHandler();
             CreateMailBoxes();
+            subscriberMailboxes = new HashSet<Mailbox>();
             _server = new TcpListener(localAddress, port);
             //_server.Start();    
             GenerateUsers();
