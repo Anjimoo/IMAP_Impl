@@ -17,7 +17,7 @@ namespace IMAP_Server.CommandModels
         private const int STARTTLS_SPLIT = 3;
 
 
-        public static void Authenticate(string[] command, ConnectionState connectionState, NetworkStream stream)
+        public static void Authenticate(string[] command, Connection connectionState)
         {
             string tag = command[0];
             string cmd = command[1];
@@ -27,21 +27,21 @@ namespace IMAP_Server.CommandModels
                 if (command.Length > AUTHENTICATE_SPLIT)
                 {
                     string response = $"{tag} NO - AUTHENTICATE is not available on this server";
-                    SendResponse(stream, response);
+                    connectionState.SendToStream(response);
                 }
                 else
                 {
-                    SendResponse(stream, $"{tag} BAD - command unknown or arguments invalid");
+                    connectionState.SendToStream("{tag} BAD - command unknown or arguments invalid");
                 }
             }
             else
             {
-                SendResponse(stream, $"{tag} BAD - command unknown or arguments invalid");
+                connectionState.SendToStream($"{tag} BAD - command unknown or arguments invalid");
             }
             Log.Logger.Information($"{cmd} response sent to {connectionState.Ip}/{connectionState.Username}");
         }
 
-        public static void Login(string[] command, ConnectionState connectionState, NetworkStream stream)
+        public static void Login(string[] command, Connection connectionState)
         {
             string tag = command[0];
             string cmd = command[1];
@@ -59,7 +59,7 @@ namespace IMAP_Server.CommandModels
             {
                 if (!ValidationService.ValidateUsername(username) || command.Length > LOGIN_SPLIT)
                 {
-                    SendResponse(stream, bad);
+                    connectionState.SendToStream(bad);
                 }
                 else if (Server.users.TryGetValue(username, out var user))
                 {
@@ -67,27 +67,27 @@ namespace IMAP_Server.CommandModels
                     {
                         connectionState.Authentificated = true;
                         connectionState.Username = username;
-                        SendResponse(stream, ok);
+                        connectionState.SendToStream(ok);
                     }
                     else //Wrong password
                     {
-                        SendResponse(stream, no);
+                        connectionState.SendToStream(no);
                     }
                 }
                 else //Wrong username
                 {
-                    SendResponse(stream, no);
+                    connectionState.SendToStream(no);
                 }
             }
             else
             {
-                SendResponse(stream, bad);
+                connectionState.SendToStream(bad);
             }
 
             Log.Logger.Information($"{cmd} response sent to {connectionState.Ip}/{connectionState.Username}");
         }
 
-        public static void StartTLS(string[] command, ConnectionState connectionState, NetworkStream stream)
+        public static void StartTLS(string[] command, Connection connectionState)
         {
             string tag = command[0];
             string cmd = command[1];
@@ -97,16 +97,16 @@ namespace IMAP_Server.CommandModels
                 if (command.Length > STARTTLS_SPLIT)
                 {
                     string response = $"{tag} NO - STARTTLS is not available on this server";
-                    SendResponse(stream, response);
+                    connectionState.SendToStream(response);
                 }
                 else
                 {
-                    SendResponse(stream, $"{tag} BAD - command unknown or arguments invalid");
+                    connectionState.SendToStream($"{tag} BAD - command unknown or arguments invalid");
                 }
             }
             else
             {
-                SendResponse(stream, $"{tag} BAD - command unknown or arguments invalid");
+                connectionState.SendToStream($"{tag} BAD - command unknown or arguments invalid");
             }
             Log.Logger.Information($"{cmd} response sent to {connectionState.Ip}/{connectionState.Username}");
         }

@@ -21,7 +21,7 @@ namespace IMAP_Server
         private MessageHandler messageHandler;
         private string _response;
 
-        public static  Dictionary<string, User> users; //still not in use, 
+        public static  Dictionary<string, User> users; 
 
         public static Dictionary<string, Mailbox> mailBoxes;
         
@@ -50,7 +50,7 @@ namespace IMAP_Server
                         var ignored = Task.Run(async () =>
                         {
                             await HandleConnection(client);
-                            client.Dispose();
+                            client.Dispose(); //At the end of the connection by "logout", not here
                         });
                     }
                     catch(Exception e)
@@ -86,8 +86,8 @@ namespace IMAP_Server
 
                     Log.Logger.Information($"{data} received from {client}");
 
-                    messageHandler._connections.TryAdd(client, new ConnectionState(client));
-                    messageHandler.HandleMessage(data, client, stream);
+                    messageHandler._connections.TryAdd(client, new Connection(client) {Stream=stream});
+                    messageHandler.HandleMessage(data, client); //, stream);
                 }
             }catch(Exception e)
             {

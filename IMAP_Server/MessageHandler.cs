@@ -11,15 +11,18 @@ namespace IMAP_Server
 
     public class MessageHandler
     {
-        public Dictionary<string, ConnectionState> _connections;
+        public Dictionary<string, Connection> _connections;
         private string response;
         
         public MessageHandler()
         {
-            _connections = new Dictionary<string, ConnectionState>();
+            _connections = new Dictionary<string, Connection>();
         }
-        public void HandleMessage(string _message, string currentConnection, NetworkStream stream)
-        {           
+        public void HandleMessage(string _message, string currentConnection)//, NetworkStream stream)
+        {
+            //var stream = _connections[currentConnection].Stream;//temporary
+
+
             string[] tempMessage = _message.Split(' ');
 
             var command = tempMessage[1];
@@ -29,93 +32,93 @@ namespace IMAP_Server
             {
                 //Any state commands
                 case "CONNECT":
-                    AnyStateCommands.SendResponse(stream, $"{command[0]} OK greetings.");
+                    _connections[currentConnection].SendToStream($"{command[0]} OK greetings.");
                     break;
                 case "CAPABILITY":
-                    AnyStateCommands.Capability(tempMessage, _connections[currentConnection], stream);
+                    AnyStateCommands.Capability(tempMessage, _connections[currentConnection]);
                     break;
                 case "LOGOUT":
-                    AnyStateCommands.Logout(tempMessage, _connections[currentConnection], stream);
+                    AnyStateCommands.Logout(tempMessage, _connections[currentConnection]);
                     break;
                 case "NOOP":
-                    AnyStateCommands.NOOP(tempMessage, _connections[currentConnection], stream);
+                    AnyStateCommands.NOOP(tempMessage, _connections[currentConnection]);
                     break;
                 //No Auth state commands    
 
                 case "AUTHENTICATE":
-                    NonAuthStateCommands.Authenticate(tempMessage, _connections[currentConnection], stream);
+                    NonAuthStateCommands.Authenticate(tempMessage, _connections[currentConnection]);
                     break;
                 case "LOGIN":
-                    NonAuthStateCommands.Login(tempMessage, _connections[currentConnection], stream);
+                    NonAuthStateCommands.Login(tempMessage, _connections[currentConnection]);
                     break;
                 case "STARTTLS":
-                    NonAuthStateCommands.StartTLS(tempMessage, _connections[currentConnection], stream);
+                    NonAuthStateCommands.StartTLS(tempMessage, _connections[currentConnection]);
                     break;
 
                 //Auth state commands
                 case "APPEND":
-                    AuthStateCommands.Append(tempMessage,_connections[currentConnection], stream);
+                    AuthStateCommands.Append(tempMessage,_connections[currentConnection]);
                     break;
                 case "CREATE":
-                    AuthStateCommands.Create(tempMessage,_connections[currentConnection], stream);
+                    AuthStateCommands.Create(tempMessage,_connections[currentConnection]);
                     break;
 
                 case "DELETE":
-                    AuthStateCommands.Create(tempMessage,_connections[currentConnection], stream);
+                    AuthStateCommands.Create(tempMessage,_connections[currentConnection]);
                     break;
 
                 case "EXAMINE":
-                    AuthStateCommands.Examine(tempMessage,_connections[currentConnection], stream); ;
+                    AuthStateCommands.Examine(tempMessage,_connections[currentConnection]); ;
                     break;
 
                 case "LIST":
-                    AuthStateCommands.List(tempMessage,_connections[currentConnection], stream);
+                    AuthStateCommands.List(tempMessage,_connections[currentConnection]);
                     break;
 
                 case "LSUB": 
-                    AuthStateCommands.Lsub(tempMessage,_connections[currentConnection], stream);
+                    AuthStateCommands.Lsub(tempMessage,_connections[currentConnection]);
                     break;
 
                 case "RENAME": 
-                    AuthStateCommands.Rename(tempMessage,_connections[currentConnection], stream); 
+                    AuthStateCommands.Rename(tempMessage,_connections[currentConnection]); 
                     break;
                 case "SELECT":
-                    AuthStateCommands.Select(tempMessage, _connections[currentConnection], stream);
+                    AuthStateCommands.Select(tempMessage, _connections[currentConnection]);
                     break;
                 case "STATUS":
-                    AuthStateCommands.Status(tempMessage, _connections[currentConnection], stream);
+                    AuthStateCommands.Status(tempMessage, _connections[currentConnection]);
                     break;
                 case "SUBSCRIBE":
-                    AuthStateCommands.Subscribe(tempMessage, _connections[currentConnection], stream);
+                    AuthStateCommands.Subscribe(tempMessage, _connections[currentConnection]);
                     break;
                 case "UNSUBSCRIBE":
-                    AuthStateCommands.Unsubscribe(tempMessage, _connections[currentConnection], stream);
+                    AuthStateCommands.Unsubscribe(tempMessage, _connections[currentConnection]);
                     break;
 
                 //Select state commands
                 case "CHECK":
-                    SelectStateCommands.Check(tempMessage, _connections[currentConnection], stream);
+                    SelectStateCommands.Check(tempMessage, _connections[currentConnection]);
                     break;
                 case "CLOSE":
-                    SelectStateCommands.Close(tempMessage,_connections[currentConnection], stream);
+                    SelectStateCommands.Close(tempMessage,_connections[currentConnection]);
                     break;
                 case "COPY":
-                    SelectStateCommands.Copy(tempMessage,_connections[currentConnection], stream);
+                    SelectStateCommands.Copy(tempMessage,_connections[currentConnection]);
                     break;
                 case "Expunge":
-                    SelectStateCommands.Expunge(tempMessage,_connections[currentConnection], stream);
+                    SelectStateCommands.Expunge(tempMessage,_connections[currentConnection]);
                     break;
                 case "FETCH":
-                    SelectStateCommands.Fetch(tempMessage,_connections[currentConnection], stream);
+                    SelectStateCommands.Fetch(tempMessage,_connections[currentConnection]);
                     break;
                 case "SEARCH":
-                    SelectStateCommands.Search(tempMessage,_connections[currentConnection], stream);
+                    SelectStateCommands.Search(tempMessage,_connections[currentConnection]);
                     break;
                case "STORE":
-                    SelectStateCommands.Store(tempMessage, _connections[currentConnection], stream);
+                    SelectStateCommands.Store(tempMessage, _connections[currentConnection]);
                     break;
                 case "UID":
-                    SelectStateCommands.UID(tempMessage,_connections[currentConnection], stream);
+                    SelectStateCommands.UID(tempMessage,_connections[currentConnection]);
                     break;
 
 
@@ -139,7 +142,7 @@ namespace IMAP_Server
                 //    break;
 
                 default:
-                    AnyStateCommands.Default(tempMessage, _connections[currentConnection], stream);
+                    AnyStateCommands.Default(tempMessage, _connections[currentConnection]);
                     break;
             }
         }

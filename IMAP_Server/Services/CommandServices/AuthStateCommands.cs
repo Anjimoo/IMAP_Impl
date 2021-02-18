@@ -18,12 +18,12 @@ namespace IMAP_Server.CommandModels
         private const int EXAMINE_SPLIT = 3;
         private const int RENAME_SPLIT = 4;
 
-        public static void Append(string[] command, ConnectionState connectionState, NetworkStream stream)
+        public static void Append(string[] command, Connection connectionState)
         {
 
         }
 
-        public static void Create(string[] command, ConnectionState connectionState, NetworkStream stream)
+        public static void Create(string[] command, Connection connectionState)
         {
             if (command.Length == CREATE_SPLIT)
             {
@@ -31,7 +31,7 @@ namespace IMAP_Server.CommandModels
                 {
                     if (mb.Value.mailboxName == ImapUTF7.Encode(command[2]))
                     {
-                        AnyStateCommands.SendResponse(stream, $"NO CREATE: Mailbox already exists in that name");
+                        connectionState.SendToStream($"NO CREATE: Mailbox already exists in that name");
                         return;
                     }
                 }
@@ -42,15 +42,15 @@ namespace IMAP_Server.CommandModels
                 };
                 mailbox.AllowedUsers.Add(connectionState.Username);
                 Server.mailBoxes.Add(mailbox.mailboxName, mailbox);
-                AnyStateCommands.SendResponse(stream, $"OK CREATE Completed: {mailbox.mailboxName} Successfully removed");
+                connectionState.SendToStream($"OK CREATE Completed: {mailbox.mailboxName} Successfully removed");
             }
             else
             {
-                AnyStateCommands.SendResponse(stream, command[0] + "  BAD - command unknown or arguments invalid");
+                connectionState.SendToStream(command[0] + "  BAD - command unknown or arguments invalid");
             }
         }
 
-        public static void Delete(string[] command, ConnectionState connectionState, NetworkStream stream)
+        public static void Delete(string[] command, Connection connectionState)
         {
             if (command.Length == DELETE_SPLIT)
             {
@@ -61,25 +61,25 @@ namespace IMAP_Server.CommandModels
                         if (mb.Value.mailboxName == ImapUTF7.Encode(command[2]))
                         {
                             Server.mailBoxes.Remove(mb.Value.mailboxName);
-                            AnyStateCommands.SendResponse(stream, $"OK DELETE Completed: {mb.Value.mailboxName} Successfully removed");
+                            connectionState.SendToStream($"OK DELETE Completed: {mb.Value.mailboxName} Successfully removed");
                             return;
                         }
                     }
                     else
                     {
-                        AnyStateCommands.SendResponse(stream, $"NO DELETE: Access denided for the username {connectionState.Username}!");
+                        connectionState.SendToStream($"NO DELETE: Access denided for the username {connectionState.Username}!");
                         return;
                     }
                 }
-                AnyStateCommands.SendResponse(stream, $"NO DELETE: Mailbox was not found");
+                connectionState.SendToStream($"NO DELETE: Mailbox was not found");
             }
             else
             {
-                AnyStateCommands.SendResponse(stream, command[0] + "  BAD - command unknown or arguments invalid");
+                connectionState.SendToStream(command[0] + "  BAD - command unknown or arguments invalid");
             }
         }
 
-        public static void Examine(string[] command, ConnectionState connectionState, NetworkStream stream)
+        public static void Examine(string[] command, Connection connectionState)
         {
             if (command.Length == EXAMINE_SPLIT) //check if command is legal
             {
@@ -87,7 +87,7 @@ namespace IMAP_Server.CommandModels
                 if (Server.mailBoxes.TryGetValue(command[2], out var mailbox)) //check if chosen mailbox is present
                 {
                     connectionState.SelectedMailBox = true;
-                    AnyStateCommands.SendResponse(stream, $"* {mailbox.EmailMessages.Count} EXISTS");
+                    connectionState.SendToStream($"* {mailbox.EmailMessages.Count} EXISTS");
                     int c = 0;
                     foreach (EmailMessage em in mailbox.EmailMessages)
                     {
@@ -95,32 +95,31 @@ namespace IMAP_Server.CommandModels
                             if (recent)
                                 c++;//Examine do the same as SELECT except that it does not lower Recent flags.
                     }
-                    AnyStateCommands.SendResponse(stream, $"* {c} RECENT");
+                    connectionState.SendToStream($"* {c} RECENT");
                 }
                 else
                 {
-                    AnyStateCommands.SendResponse(stream,
-                        $"{command[0]} NO - EXAMINE failure, now in authenticated state: no such mailbox, can’t access mailbox");
+                    connectionState.SendToStream($"{command[0]} NO - EXAMINE failure, now in authenticated state: no such mailbox, can’t access mailbox");
                 }
             }
             else
             {
-                AnyStateCommands.SendResponse(stream, $"{command[0]} BAD - command unknown or arguments invalid");
+                connectionState.SendToStream($"{command[0]} BAD - command unknown or arguments invalid");
             }
 
         }
 
-        public static void List(string[] command, ConnectionState connectionState, NetworkStream stream)
+        public static void List(string[] command, Connection connectionState)
         {
 
         }
 
-        public static void Lsub(string[] command, ConnectionState connectionState, NetworkStream stream)
+        public static void Lsub(string[] command, Connection connectionState)
         {
 
         }
 
-        public static void Rename(string[] command, ConnectionState connectionState, NetworkStream stream)
+        public static void Rename(string[] command, Connection connectionState)
         {
             if (command.Length == RENAME_SPLIT)
             {
@@ -129,16 +128,16 @@ namespace IMAP_Server.CommandModels
                     mailbox.mailboxName = command[3];
                     Server.mailBoxes.Remove(command[2]);
                     Server.mailBoxes.Add(command[3], mailbox);
-                    AnyStateCommands.SendResponse(stream, command[0] + "OK - rename completed");
+                    connectionState.SendToStream(command[0] + "OK - rename completed");
                 }
             }
             else
             {
-                AnyStateCommands.SendResponse(stream, command[0] + "  BAD - command unknown or arguments invalid");
+                connectionState.SendToStream(command[0] + "  BAD - command unknown or arguments invalid");
             }
         }
 
-        public static void Select(string[] command, ConnectionState connectionState, NetworkStream stream)
+        public static void Select(string[] command, Connection connectionState)
         {
             if (command.Length == SELECT_SPLIT) //check if command is legal
             {
@@ -146,7 +145,7 @@ namespace IMAP_Server.CommandModels
                 if (Server.mailBoxes.TryGetValue(command[2], out var mailbox)) //check if chosen mailbox is present
                 {
                     connectionState.SelectedMailBox = true;
-                    AnyStateCommands.SendResponse(stream, $"* {mailbox.EmailMessages.Count} EXISTS");
+                    connectionState.SendToStream($"* {mailbox.EmailMessages.Count} EXISTS");
                     int c = 0;
                     foreach(EmailMessage em in mailbox.EmailMessages)
                     {
@@ -159,31 +158,31 @@ namespace IMAP_Server.CommandModels
                             }
                         }
                     }
-                    AnyStateCommands.SendResponse(stream, $"* {c} RECENT READED");
+                    connectionState.SendToStream($"* {c} RECENT READED");
                 }
                 else
                 {
-                    AnyStateCommands.SendResponse(stream,
+                    connectionState.SendToStream(
                         $"{command[0]} NO - select failure, now in authenticated state: no such mailbox, can’t access mailbox");
                 }
             }
             else
             {
-                AnyStateCommands.SendResponse(stream, $"{command[0]} BAD - command unknown or arguments invalid");
+                connectionState.SendToStream($"{command[0]} BAD - command unknown or arguments invalid");
             }
         }
 
-        public static void Status(string[] command, ConnectionState connectionState, NetworkStream stream)
+        public static void Status(string[] command, Connection connectionState)
         {
 
         }
 
-        public static void Subscribe(string[] command, ConnectionState connectionState, NetworkStream stream)
+        public static void Subscribe(string[] command, Connection connectionState)
         {
 
         }
 
-        public static void Unsubscribe(string[] command, ConnectionState connectionState, NetworkStream stream)
+        public static void Unsubscribe(string[] command, Connection connectionState)
         {
 
         }
