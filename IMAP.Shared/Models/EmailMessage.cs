@@ -24,12 +24,12 @@ namespace IMAP.Shared.Models
 
         private void InitFlags()
         {
-            Flags.Add(@"\Answered", false);
-            Flags.Add(@"\Flagged", false);
-            Flags.Add(@"\Deleted", false);
-            Flags.Add(@"\Seen", false);
-            Flags.Add(@"\Draft", false);
-            Flags.Add(@"\Recent", false);
+            Flags.Add(Models.Flags.ANSWERED, false);
+            Flags.Add(Models.Flags.FLAGGED, false);
+            Flags.Add(Models.Flags.DELETED, false);
+            Flags.Add(Models.Flags.SEEN, false);
+            Flags.Add(Models.Flags.DRAFT, false);
+            Flags.Add(Models.Flags.RECENT, false);
         }
 
         public void RaiseFlag(string flagName)

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using IMAP.Shared.Models;
 
 namespace IMAP_Server.Services
 {
@@ -50,21 +51,29 @@ namespace IMAP_Server.Services
             switch (searchCriterias[0])
             {
                 case ALL:
-
+                    foreach(var email in Server.mailBoxes["Jimoo"].EmailMessages)
+                    {
+                        messages.Add(email.MsgNum);
+                    }
                     break;
                 case ANSWERED:
+                    CheckFlaggedMessage(messages, Flags.ANSWERED);
                     break;
                 case BCC:
+
                     break;
                 case BEFORE:
                     break;
                 case CC:
                     break;
                 case DELETED:
+                    CheckFlaggedMessage(messages, Flags.DELETED);
                     break;
                 case DRAFT:
+                    CheckFlaggedMessage(messages, Flags.DRAFT);
                     break;
                 case FLAGGED:
+                    CheckFlaggedMessage(messages, Flags.FLAGGED);
                     break;
                 case FROM:
                     break;
@@ -85,8 +94,10 @@ namespace IMAP_Server.Services
                 case OR:
                     break;
                 case RECENT:
+                    CheckFlaggedMessage(messages, Flags.RECENT);
                     break;
                 case SEEN:
+                    CheckFlaggedMessage(messages, Flags.SEEN);
                     break;
                 case SENTBEFORE:
                     break;
@@ -129,6 +140,17 @@ namespace IMAP_Server.Services
                     break;
             }
             return messages;
+        }
+
+        private static void CheckFlaggedMessage(List<int> messages, string flag)
+        {
+            foreach (var email in Server.mailBoxes["Jimoo"].EmailMessages)
+            {
+                if (email.Flags[flag] == true)
+                {
+                    messages.Add(email.MsgNum);
+                }
+            }
         }
     }
 }
