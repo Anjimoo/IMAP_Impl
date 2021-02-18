@@ -2,14 +2,17 @@
 using System.Collections.Generic;
 using System.Net.Sockets;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
-using System.Timers;
+//using System.Timers;
 
 namespace IMAP.Shared
 {
     public class Connection
     {
         public string Ip { get; set; }
+
+        private TcpClient connection;
 
         public NetworkStream Stream { get; set; }
 
@@ -36,22 +39,31 @@ namespace IMAP.Shared
         public string Username { get; set; } = "ANONYMOUS";
         public bool SelectedMailBox { get; set; }
 
+        public CancellationTokenSource token;
 
-        public Timer Timer { get; set; }
+        //public Timer Timer { get; set; } //FOR NOW, **TODO: try this later on.
 
-        public Connection(string ip)
+        public Connection(string ip, TcpClient conn, CancellationTokenSource token=null)
         {
             Ip = ip;
+            connection = conn;
+            Stream = conn.GetStream();
+
+            if (token != null)
+            {
+                this.token = token;
+            }
+
             //Timer = new Timer(10000);
             //Timer.Elapsed += OnTimedEvent;
             //Timer.AutoReset = true;
             //Timer.Enabled = true;
         }
 
-        public void OnTimedEvent(Object source, ElapsedEventArgs e)
-        {
-            Console.WriteLine("Logout is executed");
-        }
+        //public void OnTimedEvent(Object source, ElapsedEventArgs e)
+        //{
+        //    Console.WriteLine("Logout is executed");
+        //}
 
         public void SendToStream(string response)
         {
@@ -63,16 +75,18 @@ namespace IMAP.Shared
         public async Task<string> ReceiveFromStream()
         {
             string data = null;
-            Byte[] bytes = new Byte[256];
+            Byte[] bytes = new Byte[512];
             int i = 0;
 
-            while ((i = await Stream.ReadAsync(bytes, 0, bytes.Length)) != 0)
-            {
+            //while ((i = await Stream.ReadAsync(bytes, 0, bytes.Length)) != 0)
+            //{ 
+
+                i = await Stream.ReadAsync(bytes, 0, bytes.Length);
                 string hex = BitConverter.ToString(bytes);
                 data = Encoding.UTF8.GetString(bytes, 0, i);
                 //messageHandler._connections.TryAdd(client, new Connection(client) { Stream = stream });
                 //messageHandler.HandleMessage(data, Ip); //, stream);
-            }
+            //}
 
             return data;
         }
@@ -80,6 +94,17 @@ namespace IMAP.Shared
         public void CloseConnection()
         {
             //**TODO: Finish this.
+
+            if (token != null)//Server
+            {
+                token.Cancel();
+            }
+            else //Client
+            {
+                //Didn't do yet.
+            }
+
+
         }
 
     }

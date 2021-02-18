@@ -110,12 +110,5 @@ namespace IMAP_Server.CommandModels
             }
             Log.Logger.Information($"{cmd} response sent to {connectionState.Ip}/{connectionState.Username}");
         }
-
-        public static void SendResponse(NetworkStream stream, string response)
-        {
-            Byte[] reply = System.Text.Encoding.UTF8.GetBytes(response);
-            stream.Write(reply, 0, reply.Length);
-            Log.Logger.Information($"SENT : {response}");
-        }
     }
 }

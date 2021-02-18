@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using IMAP_Server.CommandModels;
 using Serilog;
 using Serilog.Sinks.SystemConsole;
@@ -7,15 +8,15 @@ namespace IMAP_Server
 {
     class Program
     {
-        static void Main(string[] args)
+        static async Task Main(string[] args)
         {
             var log = new LoggerConfiguration()
                 .WriteTo.Console()
                 .CreateLogger();
             Log.Logger = log;
                 
-            Server server = new Server();
-            server.StartListening();
+            Server server = new Server("127.0.0.1",143);
+            await server.StartListening();
 
         }
     }
