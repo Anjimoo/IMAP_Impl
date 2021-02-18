@@ -41,8 +41,9 @@ namespace IMAP_Server.CommandModels
             connectionState.Authentificated = false;
 
             connectionState.SendToStream("* BYE IMAP4rev1 Server logging out");
+            connectionState.SendToStream($"{tag} OK - LOGOUT completed");
             connectionState.CloseConnection();
-            connectionState.SendToStream($"{tag} OK LOGOUT completed");
+
 
             Log.Logger.Information($"{cmd} sent to {connectionState.Ip}/{connectionState.Username}");
         }

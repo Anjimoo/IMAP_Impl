@@ -5,7 +5,7 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-//using System.Timers;
+using System.Timers;
 
 namespace IMAP.Shared
 {
@@ -43,7 +43,8 @@ namespace IMAP.Shared
 
         public CancellationTokenSource token;
 
-        //public Timer Timer { get; set; } //FOR NOW, **TODO: try this later on.
+        public System.Timers.Timer Timer { get; set; } //FOR NOW, **TODO: try this later on.
+        private const double timeout=600000;
 
         public Connection(string ip, TcpClient conn, CancellationTokenSource token=null)
         {
@@ -55,40 +56,69 @@ namespace IMAP.Shared
             {
                 this.token = token;
             }
-
-            //Timer = new Timer(10000);
-            //Timer.Elapsed += OnTimedEvent;
-            //Timer.AutoReset = true;
-            //Timer.Enabled = true;
+            StartTimeout();
         }
 
-        //public void OnTimedEvent(Object source, ElapsedEventArgs e)
-        //{
-        //    Console.WriteLine("Logout is executed");
-        //}
+
+        private void StartTimeout()
+        {
+            Timer = new System.Timers.Timer(timeout);
+            Timer.Elapsed += OnTimedEvent;
+            Timer.AutoReset = false;
+            Timer.Start();
+        }
+
+        private void ResetTimeout()
+        {
+            Timer.Stop();
+            Timer.Interval = timeout;
+            Timer.Start();
+        }
+
+        public void OnTimedEvent(Object source, ElapsedEventArgs e)
+        {
+            SendToStream("* BYE - Connection timed out"); //****TODO: Reminder to have a thread on the client to 
+                                                          //listen to possible server-initiated messages
+             //https://stackoverflow.com/questions/6843064/c-sharp-networkstream-write-and-read answer before last.
+            Console.WriteLine("Timeout Logout is executed");
+
+            CloseConnection();   
+        }
 
         public void SendToStream(string response)
         {
-            Byte[] reply = System.Text.Encoding.UTF8.GetBytes(response);
-            Stream.WriteAsync(reply, 0, reply.Length);
-            //Log.Logger.Information($"SENT : {response}");
+            try
+            {
+                Byte[] reply = System.Text.Encoding.UTF8.GetBytes(response);
+                Stream.WriteAsync(reply, 0, reply.Length);
+                //Log.Logger.Information($"SENT : {response}");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
         }
 
         public async Task<string> ReceiveFromStream()
         {
+            ResetTimeout();
+
             string data = null;
             Byte[] bytes = new Byte[512];
             int i = 0;
-
-            //while ((i = await Stream.ReadAsync(bytes, 0, bytes.Length)) != 0)
-            //{ 
-
+            try
+            {
+                //while ((i = await Stream.ReadAsync(bytes, 0, bytes.Length)) != 0)
+                //{ 
                 i = await Stream.ReadAsync(bytes, 0, bytes.Length);
                 string hex = BitConverter.ToString(bytes);
                 data = Encoding.UTF8.GetString(bytes, 0, i);
-                //messageHandler._connections.TryAdd(client, new Connection(client) { Stream = stream });
-                //messageHandler.HandleMessage(data, Ip); //, stream);
-            //}
+                //}
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Either client logged out or a net problem: "+ex.Message);
+            }
 
             return data;
         }
@@ -96,17 +126,9 @@ namespace IMAP.Shared
         public void CloseConnection()
         {
             //**TODO: Finish this.
-
-            if (token != null)//Server
-            {
-                token.Cancel();
-            }
-            else //Client
-            {
-                //Didn't do yet.
-            }
-
-
+            token.Cancel();
+            Stream.Dispose();
+            connection.Close();
         }
 
     }
