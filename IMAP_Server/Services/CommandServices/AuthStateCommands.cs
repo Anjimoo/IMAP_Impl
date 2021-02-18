@@ -29,20 +29,37 @@ namespace IMAP_Server.CommandModels
             {
                 foreach (KeyValuePair<string, Mailbox> mb in Server.mailBoxes)
                 {
-                    if (mb.Value.mailboxName == ImapUTF7.Encode(command[2]))
+                    if (mb.Value.mailboxName == command[2])
                     {
                         connectionState.SendToStream($"NO CREATE: Mailbox already exists in that name");
                         return;
                     }
                 }
-                Mailbox mailbox = new Mailbox()
+                Mailbox mailbox;
+                if (command[2].Contains('/'))
                 {
-                    mailboxName = ImapUTF7.Encode(command[2]),
-                    mailboxSize = 50000
-                };
-                mailbox.AllowedUsers.Add(connectionState.Username);
-                Server.mailBoxes.Add(mailbox.mailboxName, mailbox);
-                connectionState.SendToStream($"OK CREATE Completed: {mailbox.mailboxName} Successfully removed");
+                    string[] hierarchy = command[2].Split('/');
+                    for(int i=0;i<hierarchy.Length;i++)
+                    {
+                        if(Server.mailBoxes.TryGetValue(hierarchy[i], out var parentMailbox))
+                        {
+                            mailbox = new Mailbox(parentMailbox);
+                            mailbox.mailboxName = parentMailbox.mailboxName + "/" + hierarchy[i + 1];
+                            Server.mailBoxes.Add(mailbox.mailboxName, mailbox);
+                            connectionState.SendToStream($"OK CREATE Completed: {mailbox.mailboxName} Successfully removed");
+                            return;
+                        }
+                    }
+                }
+                else
+                {
+                    mailbox = new Mailbox();
+                    mailbox.mailboxName = command[2];
+                    mailbox.mailboxSize = 50000;
+                    mailbox.AllowedUsers.Add(connectionState.Username);
+                    Server.mailBoxes.Add(mailbox.mailboxName, mailbox);
+                    connectionState.SendToStream($"OK CREATE Completed: {mailbox.mailboxName} Successfully removed");
+                }
             }
             else
             {
@@ -58,7 +75,7 @@ namespace IMAP_Server.CommandModels
                 {
                     if (mb.Value.AllowedUsers.Contains(connectionState.Username))
                     {
-                        if (mb.Value.mailboxName == ImapUTF7.Encode(command[2]))
+                        if (mb.Value.mailboxName == command[2])
                         {
                             Server.mailBoxes.Remove(mb.Value.mailboxName);
                             connectionState.SendToStream($"OK DELETE Completed: {mb.Value.mailboxName} Successfully removed");
@@ -145,6 +162,7 @@ namespace IMAP_Server.CommandModels
                 if (Server.mailBoxes.TryGetValue(command[2], out var mailbox)) //check if chosen mailbox is present
                 {
                     connectionState.SelectedMailBox = true;
+                    mailbox.uniqueIDValidityVal++;
                     connectionState.SendToStream($"* {mailbox.EmailMessages.Count} EXISTS");
                     int c = 0;
                     foreach(EmailMessage em in mailbox.EmailMessages)
