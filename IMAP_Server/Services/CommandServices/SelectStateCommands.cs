@@ -42,7 +42,7 @@ namespace IMAP_Server.CommandModels
                     //need to do search 2 times and filter
                 }
                 
-                IMAP_Search.Search(command.Take(2).ToArray());
+                IMAP_Search.Search(command.Take(2).ToArray(), connectionState);
             }
             else
             {

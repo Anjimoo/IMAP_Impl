@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using IMAP.Shared;
 using IMAP.Shared.Models;
 
 namespace IMAP_Server.Services
@@ -44,14 +45,16 @@ namespace IMAP_Server.Services
         public const string UNFLAGGED = "UNFLAGGED";
         public const string UNKEYWORD = "UNKEYWORD";
         public const string UNSEEN = "UNSEEN";
-        public static List<int> Search(string[] searchCriterias)
+        private static Connection _connection;
+        public static List<int> Search(string[] searchCriterias, Connection connection)
         {
+            _connection = connection;
             List<int> messages = new List<int>();
             
             switch (searchCriterias[0])
             {
                 case ALL:
-                    foreach(var email in Server.mailBoxes["Jimoo"].EmailMessages)
+                    foreach(var email in _connection.SelectedMailBox.EmailMessages)
                     {
                         messages.Add(email.MsgNum);
                     }
@@ -112,7 +115,7 @@ namespace IMAP_Server.Services
                 case SUBJECT:
                     break;
                 case TEXT:
-                    foreach (var email in Server.mailBoxes["Jimoo@gmail.com"].EmailMessages)
+                    foreach (var email in _connection.SelectedMailBox.EmailMessages)
                     {
                         if (email.Content.Contains(searchCriterias[1]))
                         {
@@ -144,7 +147,7 @@ namespace IMAP_Server.Services
 
         private static void CheckFlaggedMessage(List<int> messages, string flag)
         {
-            foreach (var email in Server.mailBoxes["Jimoo"].EmailMessages)
+            foreach (var email in _connection.SelectedMailBox.EmailMessages)
             {
                 if (email.Flags[flag] == true)
                 {

@@ -103,7 +103,7 @@ namespace IMAP_Server.CommandModels
 
                 if (Server.mailBoxes.TryGetValue(command[2], out var mailbox)) //check if chosen mailbox is present
                 {
-                    connectionState.SelectedMailBox = true;
+                    connectionState.SelectedState = true;
                     connectionState.SendToStream($"* {mailbox.EmailMessages.Count} EXISTS");
                     int c = 0;
                     foreach (EmailMessage em in mailbox.EmailMessages)
@@ -161,7 +161,7 @@ namespace IMAP_Server.CommandModels
 
                 if (Server.mailBoxes.TryGetValue(command[2], out var mailbox)) //check if chosen mailbox is present
                 {
-                    connectionState.SelectedMailBox = true;
+                    connectionState.SelectedState = true;
                     mailbox.uniqueIDValidityVal++;
                     connectionState.SendToStream($"* {mailbox.EmailMessages.Count} EXISTS");
                     int c = 0;

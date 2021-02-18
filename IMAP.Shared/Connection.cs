@@ -1,4 +1,5 @@
-﻿using System;
+﻿using IMAP.Shared.Models;
+using System;
 using System.Collections.Generic;
 using System.Net.Sockets;
 using System.Text;
@@ -30,14 +31,15 @@ namespace IMAP.Shared
             {
                 if (value == false)
                 {
-                    SelectedMailBox = false;
+                    SelectedState = false;
                 }
                 _Authentificated = value;
             } 
         }
 
         public string Username { get; set; } = "ANONYMOUS";
-        public bool SelectedMailBox { get; set; }
+        public bool SelectedState { get; set; }
+        public Mailbox SelectedMailBox { get; set; }
 
         public CancellationTokenSource token;
 
