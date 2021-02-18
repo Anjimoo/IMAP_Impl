@@ -1,4 +1,5 @@
 ﻿using IMAP_Client.Services;
+using IMAP_Client.UpdateEvents;
 using Prism.Commands;
 using Prism.Events;
 using Prism.Mvvm;

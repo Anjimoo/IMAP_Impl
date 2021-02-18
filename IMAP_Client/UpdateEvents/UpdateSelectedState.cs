@@ -5,9 +5,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace IMAP_Client.Services
+namespace IMAP_Client.UpdateEvents
 {
-    public class UpdateUserConsole : PubSubEvent<string>
+    public class UpdateSelectedState : PubSubEvent<bool>
     {
     }
 }

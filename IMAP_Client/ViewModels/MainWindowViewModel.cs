@@ -1,4 +1,6 @@
-﻿using IMAP_Client.Services;
+﻿using IMAP.Shared;
+using IMAP_Client.Services;
+using IMAP_Client.UpdateEvents;
 using IMAP_Client.Views;
 using Prism.Commands;
 using Prism.Events;
@@ -13,8 +15,10 @@ namespace IMAP_Client.ViewModels
     public class MainWindowViewModel : BindableBase
     {
         public static ServerConnection _connection;
+
         private IRegionManager _regionManager;
         private IEventAggregator _eventAggregator;
+
         #region Properties
         private string _title = "IMAP Client Application";
         public string Title
@@ -40,6 +44,24 @@ namespace IMAP_Client.ViewModels
             get { return _port; }
             set { SetProperty(ref _port, value); }
         }
+        private bool connected;
+        public bool Connected
+        {
+            get { return connected; }
+            set { SetProperty(ref connected, value); }
+        }
+        private bool authentificated;
+        public bool Authentificated
+        {
+            get { return authentificated; }
+            set { SetProperty(ref authentificated, value); }
+        }
+        private bool selectedMailBox;
+        public bool SelectedMailBox
+        {
+            get { return selectedMailBox; }
+            set { SetProperty(ref selectedMailBox, value); }
+        }
         #endregion
 
         #region Delegate Commands
@@ -48,46 +70,76 @@ namespace IMAP_Client.ViewModels
         public DelegateCommand Logout { get; set; }
         public DelegateCommand Disconnect { get; set; }
         public DelegateCommand Connect { get; set; }
-        public DelegateCommand<string> NavigateCommand { get; set; }
+        public DelegateCommand<string> NavigateNoAuthState { get; set; }
+        public DelegateCommand<string> NavigateToAuthState { get; set; }
+        public DelegateCommand<string> NavigateToSelecState { get; set; }
         #endregion
         public MainWindowViewModel(IRegionManager regionManager, IEventAggregator eventAggregator)
         {
             _regionManager = regionManager;
             _eventAggregator = eventAggregator;
-            NavigateCommand = new DelegateCommand<string>(Navigate);
+            SelectedMailBox = true;
+            NavigateNoAuthState = new DelegateCommand<string>(Navigate)
+                .ObservesCanExecute(() => Connected);
+            NavigateToAuthState = new DelegateCommand<string>(ExecuteToAuthState)
+                .ObservesCanExecute(() => Authentificated);
+            NavigateToSelecState = new DelegateCommand<string>(ExecuteToSelectState)
+                .ObservesCanExecute(() => SelectedMailBox);
             Capability = new DelegateCommand(ExecuteCapability);
             Noop = new DelegateCommand(ExecuteNoop);
             Logout = new DelegateCommand(ExecuteLogout);
-            Disconnect = new DelegateCommand(ExecuteDisconnect);
+            Disconnect = new DelegateCommand(ExecuteDisconnect)
+                .ObservesCanExecute(() => Connected);
             Connect = new DelegateCommand(ExecuteConnect);
             _eventAggregator.GetEvent<UpdateUserConsole>().Subscribe(UpdateConsole);
+            _eventAggregator.GetEvent<UpdateAuthentificationState>().Subscribe(UpdateAuthentification);
+            _eventAggregator.GetEvent<UpdateSelectedState>().Subscribe(UpdateSelection);
             Port = 143;
             IPAddress = "127.0.0.1";
+        }
+
+        #region UpdateEvents
+        private void UpdateSelection(bool state)
+        {
+            SelectedMailBox = state;
         }
 
         private void UpdateConsole(string obj)
         {
             Console += $"{obj}\n";
         }
-
+        private void UpdateAuthentification(bool state)
+        {
+            Authentificated = state;
+        }
+        #endregion
 
         #region Buttons Functions
         private void ExecuteConnect()
         {
             _connection = new ServerConnection(IPAddress, Port);
-            UpdateConsole(_connection.SendMessage($"* CONNECT"));
+            var response = _connection.SendMessage($"* CONNECT");
+            UpdateConsole(response);
+            if (response.Split()[1] == "OK") {
+                Connected = true;
+            }
         }
         private void ExecuteDisconnect()
         {
             _connection.Disconnect();
             UpdateConsole("Disconnected from server");
+            Connected = false;
+            Authentificated = false;
+            SelectedMailBox = false;
         }
 
         private void ExecuteLogout()
         {
             //TODO
             //check connection to server
-            UpdateConsole(_connection.SendMessage($"{TaggingService.Tag} LOGOUT"));            
+            UpdateConsole(_connection.SendMessage($"{TaggingService.Tag} LOGOUT"));
+            Authentificated = false;
+            SelectedMailBox = false;
         }
 
         private void ExecuteNoop()
@@ -103,9 +155,20 @@ namespace IMAP_Client.ViewModels
         }
         #endregion
 
-        private void Navigate(string navigationParams)
+        #region Navigation
+        private void Navigate(string navigationParam)
         {
-            _regionManager.RequestNavigate("ContentRegion", navigationParams);  
+            _regionManager.RequestNavigate("ContentRegion", navigationParam);  
         }
+        private void ExecuteToAuthState(string navigationParam)
+        {
+            _regionManager.RequestNavigate("ContentRegion", navigationParam);
+        }
+
+        private void ExecuteToSelectState(string navigationParam)
+        {
+            _regionManager.RequestNavigate("ContentRegion", navigationParam);
+        }
+        #endregion
     }
 }

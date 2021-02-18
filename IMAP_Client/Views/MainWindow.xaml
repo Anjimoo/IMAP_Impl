@@ -74,11 +74,11 @@
                 
 
                 <Button Grid.Column="0" Grid.Row="1" Content="No Auth State" Margin="5" Padding="5"
-                        Command="{Binding NavigateCommand}" CommandParameter="NoAuthStateView"></Button>
+                        Command="{Binding NavigateNoAuthState}" CommandParameter="NoAuthStateView"></Button>
                 <Button Grid.Column="1" Grid.Row="1" Content="Auth State" Margin="5" Padding="5"
-                        Command="{Binding NavigateCommand}" CommandParameter="AuthStateView"></Button>
+                        Command="{Binding NavigateToAuthState}" CommandParameter="AuthStateView"></Button>
                 <Button Grid.Column="2" Grid.Row="1" Content="Selected State" Margin="5" Padding="5"
-                        Command="{Binding NavigateCommand}" CommandParameter="SelectedStateView"></Button>
+                        Command="{Binding NavigateToSelecState}" CommandParameter="SelectedStateView"></Button>
                 <ContentControl Grid.Column="0" Grid.Row="2" Grid.ColumnSpan="3" prism:RegionManager.RegionName="ContentRegion" />
                 <ScrollViewer Grid.Column="0" Grid.Row="3" Grid.ColumnSpan="3" MaxHeight="100">
                     <TextBlock  Text="{Binding Console}"/>

@@ -1,4 +1,5 @@
 ﻿using IMAP_Client.Services;
+using IMAP_Client.UpdateEvents;
 using Prism.Commands;
 using Prism.Events;
 using Prism.Mvvm;
@@ -49,6 +50,10 @@ namespace IMAP_Client.ViewModels
             string response;
             response = MainWindowViewModel._connection.SendMessage($"{TaggingService.Tag} LOGIN {UserName} {Password}");
             _eventAggregator.GetEvent<UpdateUserConsole>().Publish(response);
+            if(response.Split()[1] == "OK")
+            {
+                _eventAggregator.GetEvent<UpdateAuthentificationState>().Publish(true);
+            }
             //TODO
         }
 
