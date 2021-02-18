@@ -20,6 +20,7 @@ namespace IMAP_Server.CommandModels
         private const int SUBSCRIBE_SPLIT = 3;
         private const int UNSUBSCRIBE_SPLIT = 3;
 
+        //TODO - Look for CATENATE extension
         public static void Append(string[] command, Connection connectionState)
         {
 
@@ -136,11 +137,13 @@ namespace IMAP_Server.CommandModels
 
         }
 
+        //TODO - Requires a param named "reference name" and I have no clue what exactly is it.
         public static void List(string[] command, Connection connectionState)
         {
 
         }
 
+        //TODO - Requires a param named "reference name" and I have no clue what exactly is it.
         public static void Lsub(string[] command, Connection connectionState)
         {
 
@@ -200,6 +203,7 @@ namespace IMAP_Server.CommandModels
             }
         }
 
+        //TODO - Requires more than 2 params, just like Search but more lightweight
         public static void Status(string[] command, Connection connectionState)
         {
 
