@@ -63,7 +63,8 @@ namespace IMAP_Server
                         }
                         catch (OperationCanceledException ex)
                         {
-                            Log.Logger.Information("Client disconnected.");
+                            Log.Logger.Information("Client disconnected.");  //***************Cancelation token doesn't work 
+                            //as intended and it might be a problem with the timers. TODO: Fix this when we have time.
                             cancellationTokenSourceClient.Dispose();
                         }
                     }, cancelToken);
