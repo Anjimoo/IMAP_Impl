@@ -43,9 +43,9 @@ namespace IMAP_Server.Services
         public const string UNFLAGGED = "UNFLAGGED";
         public const string UNKEYWORD = "UNKEYWORD";
         public const string UNSEEN = "UNSEEN";
-        public static List<string> Search(string[] searchCriterias)
+        public static List<int> Search(string[] searchCriterias)
         {
-            List<string> messageContents = new List<string>();
+            List<int> messages = new List<int>();
             
             switch (searchCriterias[0])
             {
@@ -105,7 +105,7 @@ namespace IMAP_Server.Services
                     {
                         if (email.Content.Contains(searchCriterias[1]))
                         {
-                            messageContents.Add(email.Content);
+                            messages.Add(email.MsgNum);
                         }
                     }
                     break;
@@ -128,7 +128,7 @@ namespace IMAP_Server.Services
                 default:
                     break;
             }
-            return messageContents;
+            return messages;
         }
     }
 }
