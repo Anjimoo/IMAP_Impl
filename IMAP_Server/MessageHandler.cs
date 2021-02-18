@@ -62,7 +62,7 @@ namespace IMAP_Server
                     break;
 
                 case "DELETE":
-                    AuthStateCommands.Create(tempMessage,_connections[currentConnection]);
+                    AuthStateCommands.Delete(tempMessage,_connections[currentConnection]);
                     break;
 
                 case "EXAMINE":

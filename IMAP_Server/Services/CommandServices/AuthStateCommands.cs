@@ -84,19 +84,20 @@ namespace IMAP_Server.CommandModels
             {
                 foreach (KeyValuePair<string, Mailbox> mb in Server.mailBoxes)
                 {
-                    if (mb.Value.AllowedUsers.Contains(connectionState.Username))
+                    if (mb.Value.mailboxName == command[2])
                     {
-                        if (mb.Value.mailboxName == command[2])
+                        if (mb.Value.AllowedUsers.Contains(connectionState.Username))
                         {
                             Server.mailBoxes.Remove(mb.Value.mailboxName);
                             connectionState.SendToStream($"OK DELETE Completed: {mb.Value.mailboxName} Successfully removed");
                             return;
                         }
-                    }
-                    else
-                    {
-                        connectionState.SendToStream($"NO DELETE: Access denided for the username {connectionState.Username}!");
-                        return;
+                        else
+                        {
+                            connectionState.SendToStream($"NO DELETE: Access denided for the username {connectionState.Username}!");
+                            return;
+
+                        }
                     }
                 }
                 connectionState.SendToStream($"NO DELETE: Mailbox was not found");
@@ -114,7 +115,6 @@ namespace IMAP_Server.CommandModels
 
                 if (Server.mailBoxes.TryGetValue(command[2], out var mailbox)) //check if chosen mailbox is present
                 {
-                    connectionState.SelectedState = true;
                     connectionState.SendToStream($"* {mailbox.EmailMessages.Count} EXISTS");
                     int c = 0;
                     foreach (EmailMessage em in mailbox.EmailMessages)
@@ -124,6 +124,28 @@ namespace IMAP_Server.CommandModels
                                 c++;//Examine do the same as SELECT except that it does not lower Recent flags.
                     }
                     connectionState.SendToStream($"* {c} RECENT");
+                    if (mailbox.EmailMessages.Count == 0)
+                    {
+                        connectionState.SendToStream($"* OK No message is first unseen");
+                    }
+                    else
+                    {
+                        connectionState.SendToStream($"* OK [UNSEEN {mailbox.EmailMessages.Last().UniqueID}] is first unseen");
+                    }
+                    connectionState.SendToStream($"* OK {mailbox.uniqueIDValidityVal} UIDs valid");
+                    connectionState.SendToStream($"* OK {mailbox.nextUniqueIDVal} Predicted next UID");
+                    string permflaglist = "";
+                    foreach (var flag in PermanentFlags.PermaFlags)
+                    {
+                        permflaglist += " " + flag;
+                    }
+                    connectionState.SendToStream($"* OK [PERMFLAGS {permflaglist}]");
+                    string mailboxFlagList = "";
+                    foreach (var flag in mailbox.supportedFlags)
+                    {
+                        mailboxFlagList += " " + flag;
+                    }
+                    connectionState.SendToStream($"* FLAGS {mailboxFlagList}");
                 }
                 else
                 {
@@ -175,6 +197,7 @@ namespace IMAP_Server.CommandModels
                 if (Server.mailBoxes.TryGetValue(command[2], out var mailbox)) //check if chosen mailbox is present
                 {
                     connectionState.SelectedState = true;
+                    connectionState.SelectedMailBox = mailbox;
                     mailbox.uniqueIDValidityVal++;
                     connectionState.SendToStream($"* {mailbox.EmailMessages.Count} EXISTS");
                     int c = 0;
@@ -189,7 +212,30 @@ namespace IMAP_Server.CommandModels
                             }
                         }
                     }
-                    connectionState.SendToStream($"* {c} RECENT READED");
+                    connectionState.SendToStream($"* {c} RECENT");
+                    //TODO - Finish select
+                    if(mailbox.EmailMessages.Count==0)
+                    {
+                        connectionState.SendToStream($"* OK No message is first unseen");
+                    }
+                    else
+                    {
+                        connectionState.SendToStream($"* OK [UNSEEN {mailbox.EmailMessages.Last().UniqueID}] is first unseen");
+                    }
+                    connectionState.SendToStream($"* OK {mailbox.uniqueIDValidityVal} UIDs valid");
+                    connectionState.SendToStream($"* OK {mailbox.nextUniqueIDVal} Predicted next UID");
+                    string permflaglist = "";
+                    foreach (var flag in PermanentFlags.PermaFlags)
+                    {
+                        permflaglist += " " + flag;
+                    }
+                    connectionState.SendToStream($"* OK [PERMFLAGS {permflaglist}]");
+                    string mailboxFlagList = "";
+                    foreach(var flag in mailbox.supportedFlags)
+                    {
+                        mailboxFlagList += " " + flag;
+                    }
+                    connectionState.SendToStream($"* FLAGS {mailboxFlagList}");
                 }
                 else
                 {
