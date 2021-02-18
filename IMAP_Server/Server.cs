@@ -14,71 +14,134 @@ using System.Threading.Tasks;
 
 namespace IMAP_Server
 {
-    
+
     public class Server
     {
+        private string ip;
+        private int port;
         private TcpListener _server = null;
         private MessageHandler messageHandler;
         private string _response;
 
-        public static  Dictionary<string, User> users; 
+        public static Dictionary<string, User> users;
 
         public static Dictionary<string, Mailbox> mailBoxes;
-        
-        public Server()
+
+        public Server(string ip, int port)
         {
-            IPAddress localAddress = IPAddress.Parse("127.0.0.1");
+            this.ip = ip;
+            this.port = port;
+            IPAddress localAddress = IPAddress.Parse(ip);
             messageHandler = new MessageHandler();
             CreateMailBoxes();
-            _server = new TcpListener(localAddress, 143);
-            _server.Start();          
+            _server = new TcpListener(localAddress, port);
+            //_server.Start();    
+            GenerateUsers();
         }
 
-        public void StartListening()
+        public async Task StartListening()
+        {
+            _server.Start();
+            Log.Logger.Information($"Listening on {ip}");
+
+            //var ignored = Task.Run(async () =>
+            //{
+
+            while (true)
+            {
+                try
+                {
+                    CancellationTokenSource cancellationTokenSourceClient = new CancellationTokenSource();
+                    var cancelToken = cancellationTokenSourceClient.Token;
+                    var tcpClient = await _server.AcceptTcpClientAsync();
+                    _=Task.Run(async () =>
+                    {
+                        try
+                        {
+                            await HandleConnection(tcpClient, cancellationTokenSourceClient);
+                            tcpClient.Dispose();
+                        }
+                        catch (OperationCanceledException ex)
+                        {
+                            Log.Logger.Information("Client disconnected.");
+                            cancellationTokenSourceClient.Dispose();
+                        }
+                    }, cancelToken);
+                }
+                catch (Exception ex)
+                {
+                    Log.Logger.Error(ex.Message);
+                }
+            }
+
+            //});
+        }
+
+
+
+        private async Task HandleConnection(TcpClient tcpClient, CancellationTokenSource token)
+        {
+            Log.Logger.Information($"Received incoming connection.");
+
+            //var stream = tcpClient.GetStream();
+            var client = tcpClient.Client.RemoteEndPoint.ToString();
+
+            Connection con = new Connection(client, tcpClient, token);
+
+            messageHandler._connections.TryAdd(client, con);
+            while (!con.token.IsCancellationRequested)
+            {
+                await messageHandler.HandleMessage(await con.ReceiveFromStream(), client);
+            }
+            con.token.Dispose();
+        }
+
+        public void StartListeningOld()
         {
             GenerateUsers(); //Just for now. We may add them using another method.
 
             try
             {
-                Log.Logger.Information($"Listening on 127.0.0.1:143");
+                Log.Logger.Information($"Listening on {ip}");
                 while (true)
-                {                   
+                {
                     TcpClient client = _server.AcceptTcpClient();
                     Log.Logger.Information($"Received incoming connection.");
                     try
                     {
                         var ignored = Task.Run(async () =>
                         {
-                            await HandleConnection(client);
+                            await HandleConnectionOld(client);
                             client.Dispose(); //At the end of the connection by "logout", not here
                         });
                     }
-                    catch(Exception e)
+                    catch (Exception e)
                     {
                         Log.Logger.Error(e, "Connections is faulted");
-                    }                   
+                    }
                 }
 
-            }catch(SocketException ex)
+            }
+            catch (SocketException ex)
             {
                 Log.Logger.Error(ex, "Error");
                 _server.Stop();
             }
         }
 
-        private async Task HandleConnection(TcpClient tcpClient)
+        private async Task HandleConnectionOld(TcpClient tcpClient)
         {
-            
+
             var stream = tcpClient.GetStream();
 
-            
+
             string data = null;
             Byte[] bytes = new Byte[256];
             int i;
 
             try
             {
-                while((i = stream.Read(bytes, 0 , bytes.Length)) != 0)
+                while ((i = stream.Read(bytes, 0, bytes.Length)) != 0)
                 {
                     string hex = BitConverter.ToString(bytes);
                     data = Encoding.UTF8.GetString(bytes, 0, i);
@@ -86,10 +149,11 @@ namespace IMAP_Server
 
                     Log.Logger.Information($"{data} received from {client}");
 
-                    messageHandler._connections.TryAdd(client, new Connection(client) {Stream=stream});
-                    messageHandler.HandleMessage(data, client); //, stream);
+                    //messageHandler._connections.TryAdd(client, new Connection(client) {Stream=stream});
+                    messageHandler.HandleMessage(data, client);
                 }
-            }catch(Exception e)
+            }
+            catch (Exception e)
             {
                 Console.WriteLine($"Exception : {e}");
             }
@@ -105,7 +169,7 @@ namespace IMAP_Server
         private void GenerateUsers()
         {
             users = new Dictionary<string, User>();
-            users.Add("Jimoo" ,new User() { Username = "Jimoo", Password = "123" });
+            users.Add("Jimoo", new User() { Username = "Jimoo", Password = "123" });
             users.Add("Shiro", new User() { Username = "Shiro", Password = "123" });
             users.Add("Diximango", new User() { Username = "Diximango", Password = "123" });
         }

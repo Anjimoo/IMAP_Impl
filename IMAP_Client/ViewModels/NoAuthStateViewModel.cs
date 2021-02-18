@@ -51,8 +51,9 @@ namespace IMAP_Client.ViewModels
             try
             {
                 string response;
-                response = await MainWindowViewModel._connection.SendMessage($"{TaggingService.Tag} LOGIN {UserName} {Password}");
-                _eventAggregator.GetEvent<UpdateUserConsole>().Publish(response);
+                string tag = TaggingService.Tag;
+                response = await MainWindowViewModel._connection.SendMessage($"{tag} LOGIN {UserName} {Password}", _eventAggregator);
+                //_eventAggregator.GetEvent<UpdateUserConsole>().Publish(response);
                 if (response.Split()[1] == "OK")
                 {
                     _eventAggregator.GetEvent<UpdateAuthentificationState>().Publish(true);

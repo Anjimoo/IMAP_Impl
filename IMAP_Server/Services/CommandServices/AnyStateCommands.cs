@@ -27,6 +27,7 @@ namespace IMAP_Server.CommandModels
             }
 
             connectionState.SendToStream(response);
+            Task.Delay(2000);
             connectionState.SendToStream(OK(tag, cmd));
             Log.Logger.Information($"{cmd} list sent to {connectionState.Ip}/{connectionState.Username}");
         }
@@ -38,6 +39,10 @@ namespace IMAP_Server.CommandModels
             Log.Logger.Information($"{cmd} request by {connectionState.Ip}/{connectionState.Username}");
 
             connectionState.Authentificated = false;
+
+            connectionState.SendToStream("* BYE IMAP4rev1 Server logging out");
+            connectionState.CloseConnection();
+            connectionState.SendToStream($"{tag} OK LOGOUT completed");
 
             Log.Logger.Information($"{cmd} sent to {connectionState.Ip}/{connectionState.Username}");
         }

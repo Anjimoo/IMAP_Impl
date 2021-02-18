@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Net.Sockets;
 using System.Text;
+using System.Threading.Tasks;
 using IMAP.Shared;
 using IMAP.Shared.Models;
 using IMAP_Server.CommandModels;
@@ -12,16 +13,13 @@ namespace IMAP_Server
     public class MessageHandler
     {
         public Dictionary<string, Connection> _connections;
-        private string response;
         
         public MessageHandler()
         {
             _connections = new Dictionary<string, Connection>();
         }
-        public void HandleMessage(string _message, string currentConnection)//, NetworkStream stream)
+        public async Task HandleMessage(string _message, string currentConnection)//, NetworkStream stream)
         {
-            //var stream = _connections[currentConnection].Stream;//temporary
-
 
             string[] tempMessage = _message.Split(' ');
 
@@ -32,7 +30,7 @@ namespace IMAP_Server
             {
                 //Any state commands
                 case "CONNECT":
-                    _connections[currentConnection].SendToStream($"{command[0]} OK greetings.");
+                    _connections[currentConnection].SendToStream($"{_message[0]} OK greetings.");
                     break;
                 case "CAPABILITY":
                     AnyStateCommands.Capability(tempMessage, _connections[currentConnection]);
@@ -43,8 +41,8 @@ namespace IMAP_Server
                 case "NOOP":
                     AnyStateCommands.NOOP(tempMessage, _connections[currentConnection]);
                     break;
-                //No Auth state commands    
 
+                //No Auth state commands    
                 case "AUTHENTICATE":
                     NonAuthStateCommands.Authenticate(tempMessage, _connections[currentConnection]);
                     break;
