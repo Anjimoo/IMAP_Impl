@@ -7,6 +7,7 @@ using Prism.Events;
 using Prism.Mvvm;
 using Prism.Regions;
 using System;
+using System.Windows;
 using System.Windows.Navigation;
 using Unity;
 
@@ -115,14 +116,23 @@ namespace IMAP_Client.ViewModels
         #endregion
 
         #region Buttons Functions
-        private void ExecuteConnect()
+        private async void ExecuteConnect()
         {
-            _connection = new ServerConnection(IPAddress, Port);
-            var response = _connection.SendMessage($"* CONNECT");
-            UpdateConsole(response);
-            if (response.Split()[1] == "OK") {
-                Connected = true;
+            try
+            {
+                _connection = new ServerConnection(IPAddress, Port);
+                var response = await _connection.SendMessage($"* CONNECT");
+                UpdateConsole(response);
+                if (response.Split()[1] == "OK")
+                {
+                    Connected = true;
+                }
             }
+            catch(Exception e)
+            {
+                MessageBox.Show(e.Message);
+            }
+            
         }
         private void ExecuteDisconnect()
         {
@@ -133,13 +143,21 @@ namespace IMAP_Client.ViewModels
             SelectedMailBox = false;
         }
 
-        private void ExecuteLogout()
+        private async void ExecuteLogout()
         {
             //TODO
             //check connection to server
-            UpdateConsole(_connection.SendMessage($"{TaggingService.Tag} LOGOUT"));
-            Authentificated = false;
-            SelectedMailBox = false;
+            try
+            {
+                UpdateConsole(await _connection.SendMessage($"{TaggingService.Tag} LOGOUT"));
+                Authentificated = false;
+                SelectedMailBox = false;
+            }
+            catch(Exception e)
+            {
+                MessageBox.Show(e.Message);
+            }
+            
         }
 
         private void ExecuteNoop()
@@ -147,11 +165,19 @@ namespace IMAP_Client.ViewModels
             //TODO
         }
 
-        private void ExecuteCapability()
+        private async void ExecuteCapability()
         {
-            string tag = TaggingService.Tag;
-            UpdateConsole($"{tag} CAPABILITY");
-            UpdateConsole(_connection.SendMessage($"{tag} CAPABILITY"));
+            try
+            {
+                string tag = TaggingService.Tag;
+                UpdateConsole($"{tag} CAPABILITY");
+                UpdateConsole(await _connection.SendMessage($"{tag} CAPABILITY"));
+            }
+            catch(Exception e)
+            {
+                MessageBox.Show(e.Message);
+            }
+            
         }
         #endregion
 

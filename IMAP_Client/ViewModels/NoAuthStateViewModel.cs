@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace IMAP_Client.ViewModels
 {
@@ -45,15 +46,23 @@ namespace IMAP_Client.ViewModels
             Login = new DelegateCommand(ExecuteLogin);
         }
 
-        private void ExecuteLogin()
+        private async void ExecuteLogin()
         {
-            string response;
-            response = MainWindowViewModel._connection.SendMessage($"{TaggingService.Tag} LOGIN {UserName} {Password}");
-            _eventAggregator.GetEvent<UpdateUserConsole>().Publish(response);
-            if(response.Split()[1] == "OK")
+            try
             {
-                _eventAggregator.GetEvent<UpdateAuthentificationState>().Publish(true);
+                string response;
+                response = await MainWindowViewModel._connection.SendMessage($"{TaggingService.Tag} LOGIN {UserName} {Password}");
+                _eventAggregator.GetEvent<UpdateUserConsole>().Publish(response);
+                if (response.Split()[1] == "OK")
+                {
+                    _eventAggregator.GetEvent<UpdateAuthentificationState>().Publish(true);
+                }
             }
+            catch(Exception e)
+            {
+                MessageBox.Show(e.Message);
+            }
+            
             //TODO
         }
 

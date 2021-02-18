@@ -19,7 +19,7 @@ namespace IMAP_Client.Services
             networkStream = tcpClient.GetStream();
         }
 
-        public string SendMessage(String message)
+        public async Task<string> SendMessage(String message)
         {
             String response = String.Empty;
             try
@@ -27,13 +27,13 @@ namespace IMAP_Client.Services
                 Byte[] data = System.Text.Encoding.UTF8.GetBytes(message);
 
                 // Send the message to the connected TcpServer. 
-                networkStream.Write(data, 0, data.Length);
+                await networkStream.WriteAsync(data, 0, data.Length);
                 
                 // Bytes Array to receive Server Response.
                 data = new Byte[256];
 
                 // Read the Tcp Server Response Bytes.
-                Int32 bytes = networkStream.Read(data, 0, data.Length);
+                Int32 bytes = await networkStream.ReadAsync(data, 0, data.Length);
                 response = System.Text.Encoding.UTF8.GetString(data, 0, bytes);
                 
             }

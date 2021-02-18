@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace IMAP_Client.ViewModels
 {
@@ -98,45 +99,103 @@ namespace IMAP_Client.ViewModels
             Copy = new DelegateCommand(ExecuteCopy);
             UID = new DelegateCommand(ExecuteUID);
         }
+        
         #region Functions
-        private void ExecuteUID()
+        private async void ExecuteUID()
         {
-            //TODO
+            try
+            {
+                //TODO
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show(e.Message);
+            }
+
         }
 
-        private void ExecuteCopy()
+        private async void ExecuteCopy()
         {
-            //TODO
+            try
+            {
+                //TODO
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show(e.Message);
+            }
         }
 
-        private void ExecuteStore()
+        private async void ExecuteStore()
         {
-            //TODO
+            try
+            {
+                //TODO
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show(e.Message);
+            }
         }
 
-        private void ExecuteFetch()
+        private async void ExecuteFetch()
         {
-            //TODO
+            try
+            {
+                //TODO
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show(e.Message);
+            }
         }
 
-        private void ExecuteSearch()
+        private async void ExecuteSearch()
         {
-            //TODO
+            try
+            {
+                //TODO
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show(e.Message);
+            }
         }
 
-        private void ExecuteExpunge()
+        private async void ExecuteExpunge()
         {
-            //TODO
+            try
+            {
+                //TODO
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show(e.Message);
+            }
         }
 
-        private void ExecuteClose()
+        private async void ExecuteClose()
         {
-            //TODO
+            try
+            {
+                //TODO
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show(e.Message);
+            }
         }
 
-        private void ExecuteCheck()
+        private async void ExecuteCheck()
         {
-            //TODO
+            try
+            {
+                //TODO
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show(e.Message);
+            }
         }
         #endregion
     }
