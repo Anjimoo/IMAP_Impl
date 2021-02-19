@@ -52,12 +52,13 @@ namespace IMAP_Client.ViewModels
             {
                 string response;
                 string tag = TaggingService.Tag;
-                response = await MainWindowViewModel._connection.SendMessage($"{tag} LOGIN {UserName} {Password}", _eventAggregator);
+                //response = 
+                await MainWindowViewModel._connection.SendMessage($"{tag} LOGIN {UserName} {Password}", _eventAggregator);
                 //_eventAggregator.GetEvent<UpdateUserConsole>().Publish(response);
-                if (response.Split()[1] == "OK")
-                {
-                    _eventAggregator.GetEvent<UpdateAuthentificationState>().Publish(true);
-                }
+                //if (response.Split()[1] == "OK")
+                //{
+                //    _eventAggregator.GetEvent<UpdateAuthentificationState>().Publish(true);
+                //}
             }
             catch(Exception e)
             {

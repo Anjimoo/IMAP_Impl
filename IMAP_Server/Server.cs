@@ -49,7 +49,7 @@ namespace IMAP_Server
 
             //var ignored = Task.Run(async () =>
             //{
-
+            
             while (true)
             {
                 try
@@ -78,6 +78,7 @@ namespace IMAP_Server
                 catch (Exception ex)
                 {
                     Log.Logger.Error(ex.Message);
+                    break;
                 }
             }
 

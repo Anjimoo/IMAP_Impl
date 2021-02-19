@@ -21,9 +21,13 @@ namespace IMAP_Client.Services
             networkStream = tcpClient.GetStream();
         }
 
-        public async Task<string> SendMessage(String message, IEventAggregator _eventAggregator = null)
+        string outgoingTag=""; //The last tag sent.
+        string outgoingCommand=""; //The last command sent.
+        string wholeServerResponse=""; //The whole response for a command as one block of string.
+
+        public async Task SendMessage(String message, IEventAggregator _eventAggregator = null)
         {
-            String response = "";// String.Empty;
+            //String response = "";// String.Empty;
 
             try
             {
@@ -32,12 +36,55 @@ namespace IMAP_Client.Services
                 // Send the message to the connected TcpServer. 
                 await networkStream.WriteAsync(data, 0, data.Length);
 
+                outgoingTag = message.Split(' ')[0];
+                outgoingCommand = message.Split(' ')[1]; //Still didn't handle non-command outgoing messages (i.e encryption keys).
+
+
                 // Bytes Array to receive Server Response.
-                data = new Byte[512];
+                //data = new Byte[512];
+
+                //Task.Run(async () =>
+                //{
+                //    //while (!(response.Contains("OK") || response.Contains("NO") || response.Contains("BAD") || response.Contains("BYE")))
+                //    while (!response.Contains(message.Split(' ')[0])) //Could also do while contains * but we sent it as a tag in connect.
+                //    {
+                //        // Read the Tcp Server Response Bytes.
+                //        try
+                //        {
+                //            Int32 bytes = await networkStream.ReadAsync(data, 0, data.Length);
+                //            response = System.Text.Encoding.UTF8.GetString(data, 0, bytes);
+                //            _eventAggregator?.GetEvent<UpdateUserConsole>().Publish(response);
+                //        }
+                //        catch (Exception ex)
+                //        {
+                //            System.Windows.MessageBox.Show(ex.Message);
+                //            break;
+                //        }
+                //    }
+                //});
 
 
-                //while (!(response.Contains("OK") || response.Contains("NO") || response.Contains("BAD") || response.Contains("BYE")))
-                while(!response.Contains(message.Split(' ')[0])) //Could also do while contains * but we sent it as a tag in connect.
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine($"{e}");
+                //return $"{e}";
+            }
+
+
+            //return "* OK";
+        }
+
+        public void GetMessages(IEventAggregator _eventAggregator)
+        {
+            ResponseHandler._eventAggregator = _eventAggregator;
+            String response = "";
+            // Bytes Array to receive Server Response.
+            Byte[] data = new Byte[512];
+
+            Task.Run(async () =>
+            {
+                while (true) 
                 {
                     // Read the Tcp Server Response Bytes.
                     try
@@ -45,23 +92,45 @@ namespace IMAP_Client.Services
                         Int32 bytes = await networkStream.ReadAsync(data, 0, data.Length);
                         response = System.Text.Encoding.UTF8.GetString(data, 0, bytes);
                         _eventAggregator?.GetEvent<UpdateUserConsole>().Publish(response);
+
+                        if (response.Contains("BYE"))
+                        {
+                            ResponseHandler.Bye();
+                            break;
+                        }
+
+                        if (response.Split(' ')[0] == outgoingTag)
+                        {
+                            //Here we can handle a server result (it means that the command execution is finished
+                            //on server side and we can start handle its result on the server).
+                            wholeServerResponse += response;
+                            ResponseHandler.HandleResponse(outgoingCommand, response);
+                            wholeServerResponse += "";
+                        }
+                        else if (response.Split(' ')[0] == "*" || response.Split(' ')[0] == "+")
+                        {
+                            //Over here we can add a condition for a currently occuring command
+                            //for an instance, sending encryption keys if the server response is "+",
+                            //or when we want to read the information a bit by a bit.
+                            wholeServerResponse += response+"\n";
+                        }
+                        else
+                        {
+                            //Illegal server response.
+                        }
+
                     }
                     catch (Exception ex)
                     {
-                        System.Windows.MessageBox.Show(ex.Message);
+                        System.Windows.MessageBox.Show("You are now disconnected from the server.");
+                        //System.Windows.MessageBox.Show(ex.Message);
                         break;
                     }
                 }
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine($"{e}");
-                return $"{e}";
-            }
 
-
-            return response;
+            });
         }
+
 
         public void Disconnect()
         {

@@ -95,11 +95,18 @@ namespace IMAP_Client.ViewModels
             _eventAggregator.GetEvent<UpdateUserConsole>().Subscribe(UpdateConsole);
             _eventAggregator.GetEvent<UpdateAuthentificationState>().Subscribe(UpdateAuthentification);
             _eventAggregator.GetEvent<UpdateSelectedState>().Subscribe(UpdateSelection);
+            _eventAggregator.GetEvent<UpdateServerConnectionState>().Subscribe(UpdateConnection);
             Port = 143;
             IPAddress = "127.0.0.1";
         }
 
+
         #region UpdateEvents
+
+        private void UpdateConnection(bool isConnected)
+        {
+            Connected = isConnected;
+        }
         private void UpdateSelection(bool state)
         {
             SelectedMailBox = state;
@@ -121,12 +128,14 @@ namespace IMAP_Client.ViewModels
             try
             {
                 _connection = new ServerConnection(IPAddress, Port);
-                var response = await _connection.SendMessage($"* CONNECT", _eventAggregator);
+                //var response = 
+                await _connection.SendMessage($"* CONNECT", _eventAggregator);
                 //UpdateConsole(response);
-                if (response.Split()[1] == "OK")
-                {
-                    Connected = true;
-                }
+                //if (response.Split()[1] == "OK")
+                //{
+                    //Connected = true;
+                //}
+                _connection.GetMessages(_eventAggregator);
             }
             catch(Exception e)
             {
@@ -149,7 +158,8 @@ namespace IMAP_Client.ViewModels
             //check connection to server
             try
             {
-                var response = await _connection.SendMessage($"{TaggingService.Tag} LOGOUT", _eventAggregator);
+                //var response = 
+                await _connection.SendMessage($"{TaggingService.Tag} LOGOUT", _eventAggregator);
                 //UpdateConsole(await _connection.SendMessage($"{TaggingService.Tag} LOGOUT"));
                 Authentificated = false;
                 SelectedMailBox = false;
@@ -173,7 +183,8 @@ namespace IMAP_Client.ViewModels
                 string tag = TaggingService.Tag;
                 //UpdateConsole($"{tag} CAPABILITY");
                 //UpdateConsole(await _connection.SendMessage($"{tag} CAPABILITY", _eventAggregator));
-                var response = await _connection.SendMessage($"{tag} CAPABILITY", _eventAggregator);
+                //var response = 
+                await _connection.SendMessage($"{tag} CAPABILITY", _eventAggregator);
 
             }
             catch (Exception e)

@@ -8,22 +8,25 @@ namespace IMAP_Client.Services
 {
     public static class TaggingService
     {
-        private static int tagNumber=0; //Initial tag number.
+        private static int tagNumber = 0; //Initial tag number.
 
-        private static string _Tag="A0000"; //Initial tag.
-        
-        public static string Tag 
+        private static string _Tag = "A0000"; //Initial tag.
+
+        public static string Tag
         {
-            get 
+            get
             {
+                LastTag = _Tag;
                 NextTag();
-                return _Tag; 
+                return _Tag;
             }
-            private set 
+            private set
             {
                 _Tag = "A" + value;
             }
         }
+
+        public static string LastTag {get;set;}
 
         private static void NextTag()
         {

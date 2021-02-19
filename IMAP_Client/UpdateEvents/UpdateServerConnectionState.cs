@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace IMAP_Client.UpdateEvents
 {
-    public class UpdateServerConnectionState : PubSubEvent<bool>
+    public class UpdateAuthentificationState : PubSubEvent<bool>
     {
     }
 }

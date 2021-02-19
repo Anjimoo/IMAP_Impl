@@ -118,7 +118,8 @@ namespace IMAP_Client.ViewModels
             try
             {
                 string response;
-                response = await MainWindowViewModel._connection.SendMessage($"{TaggingService.Tag} APPEND {MailBox} {Flag} {DateTime} {MessageLiteral}",_eventAggregator);
+                //response = 
+                await MainWindowViewModel._connection.SendMessage($"{TaggingService.Tag} APPEND {MailBox} {Flag} {DateTime} {MessageLiteral}",_eventAggregator);
                 //_eventAggregator.GetEvent<UpdateUserConsole>().Publish(response);
             }
             catch(Exception e)
@@ -134,7 +135,8 @@ namespace IMAP_Client.ViewModels
             try
             {
                 string response;
-                response = await MainWindowViewModel._connection.SendMessage($"{TaggingService.Tag} STATUS {MailBox} {MailboxNameAndWildCard} ", _eventAggregator);
+                //response = 
+                await MainWindowViewModel._connection.SendMessage($"{TaggingService.Tag} STATUS {MailBox} {MailboxNameAndWildCard} ", _eventAggregator);
                 //_eventAggregator.GetEvent<UpdateUserConsole>().Publish(response);
             }
             catch (Exception e)
@@ -149,7 +151,8 @@ namespace IMAP_Client.ViewModels
             try
             {
                 string response;
-                response = await MainWindowViewModel._connection.SendMessage($"{TaggingService.Tag} LSUB {ReferenceName} {MailboxNameAndWildCard} ", _eventAggregator);
+                //response = 
+                await MainWindowViewModel._connection.SendMessage($"{TaggingService.Tag} LSUB {ReferenceName} {MailboxNameAndWildCard} ", _eventAggregator);
                 //_eventAggregator.GetEvent<UpdateUserConsole>().Publish(response);
             }
             catch (Exception e)
@@ -164,7 +167,8 @@ namespace IMAP_Client.ViewModels
             try
             {
                 string response;
-                response = await MainWindowViewModel._connection.SendMessage($"{TaggingService.Tag} LIST {ReferenceName} {MailboxNameAndWildCard} ", _eventAggregator);
+                //response = 
+                await MainWindowViewModel._connection.SendMessage($"{TaggingService.Tag} LIST {ReferenceName} {MailboxNameAndWildCard} ", _eventAggregator);
                 //_eventAggregator.GetEvent<UpdateUserConsole>().Publish(response);
             }
             catch (Exception e)
@@ -179,7 +183,8 @@ namespace IMAP_Client.ViewModels
             try
             {
                 string response;
-                response = await MainWindowViewModel._connection.SendMessage($"{TaggingService.Tag} RENAME {MailBox} {NewMailBox}", _eventAggregator);
+                //response = 
+                await MainWindowViewModel._connection.SendMessage($"{TaggingService.Tag} RENAME {MailBox} {NewMailBox}", _eventAggregator);
                 //_eventAggregator.GetEvent<UpdateUserConsole>().Publish(response);
             }
             catch (Exception e)
@@ -194,7 +199,8 @@ namespace IMAP_Client.ViewModels
             try
             {
                 string response;
-                response = await MainWindowViewModel._connection.SendMessage($"{TaggingService.Tag} UNSUBSCRIBE {MailBox}", _eventAggregator);
+                //response = 
+                await MainWindowViewModel._connection.SendMessage($"{TaggingService.Tag} UNSUBSCRIBE {MailBox}", _eventAggregator);
                 //_eventAggregator.GetEvent<UpdateUserConsole>().Publish(response);
             }
             catch (Exception e)
@@ -209,7 +215,8 @@ namespace IMAP_Client.ViewModels
             try
             {
                 string response;
-                response = await MainWindowViewModel._connection.SendMessage($"{TaggingService.Tag} SUBSCRIBE {MailBox}", _eventAggregator);
+                //response = 
+                await MainWindowViewModel._connection.SendMessage($"{TaggingService.Tag} SUBSCRIBE {MailBox}", _eventAggregator);
                 //_eventAggregator.GetEvent<UpdateUserConsole>().Publish(response);
             }
             catch (Exception e)
@@ -224,7 +231,8 @@ namespace IMAP_Client.ViewModels
             try
             {
                 string response;
-                response = await MainWindowViewModel._connection.SendMessage($"{TaggingService.Tag} DELETE {MailBox}", _eventAggregator);
+                //response = 
+                await MainWindowViewModel._connection.SendMessage($"{TaggingService.Tag} DELETE {MailBox}", _eventAggregator);
                 //_eventAggregator.GetEvent<UpdateUserConsole>().Publish(response);
             }
             catch (Exception e)
@@ -239,7 +247,8 @@ namespace IMAP_Client.ViewModels
             try
             {
                 string response;
-                response = await MainWindowViewModel._connection.SendMessage($"{TaggingService.Tag} CREATE {MailBox}", _eventAggregator);
+                //response = 
+                await MainWindowViewModel._connection.SendMessage($"{TaggingService.Tag} CREATE {MailBox}", _eventAggregator);
                 //_eventAggregator.GetEvent<UpdateUserConsole>().Publish(response);
             }
             catch (Exception e)
@@ -254,7 +263,8 @@ namespace IMAP_Client.ViewModels
             try
             {
                 string response;
-                response = await MainWindowViewModel._connection.SendMessage($"{TaggingService.Tag} EXAMINE {MailBox}", _eventAggregator);
+                //response = 
+                await MainWindowViewModel._connection.SendMessage($"{TaggingService.Tag} EXAMINE {MailBox}", _eventAggregator);
                 //_eventAggregator.GetEvent<UpdateUserConsole>().Publish(response);
             }
             catch (Exception e)
@@ -269,7 +279,8 @@ namespace IMAP_Client.ViewModels
             try
             {
                 string response;
-                response = await MainWindowViewModel._connection.SendMessage($"{TaggingService.Tag} SELECT {MailBox}", _eventAggregator);
+                //response = 
+                await MainWindowViewModel._connection.SendMessage($"{TaggingService.Tag} SELECT {MailBox}", _eventAggregator);
                 //_eventAggregator.GetEvent<UpdateUserConsole>().Publish(response);
             }
             catch (Exception e)

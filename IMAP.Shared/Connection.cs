@@ -44,7 +44,7 @@ namespace IMAP.Shared
         public CancellationTokenSource token;
 
         public System.Timers.Timer Timer { get; set; } //FOR NOW, **TODO: try this later on.
-        private const double timeout=600000;
+        private const double timeout=60000;
 
         public Connection(string ip, TcpClient conn, CancellationTokenSource token=null)
         {
@@ -96,6 +96,7 @@ namespace IMAP.Shared
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
+                Timer.Dispose();
             }
         }
 
@@ -117,7 +118,9 @@ namespace IMAP.Shared
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Either client logged out or a net problem: "+ex.Message);
+                Console.WriteLine("Either client logged out, net problem or a Timeout: "+ex.Message);
+                Timer.Dispose();
+                CloseConnection();
             }
 
             return data;
