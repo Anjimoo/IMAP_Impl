@@ -29,12 +29,14 @@ namespace IMAP_Server
 
         public static HashSet<Mailbox> subscriberMailboxes;
 
+
         public Server(string ip, int port)
         {
             this.ip = ip;
             this.port = port;
             IPAddress localAddress = IPAddress.Parse(ip);
             messageHandler = new MessageHandler();
+            DefinePermFlags();
             CreateMailBoxes();
             subscriberMailboxes = new HashSet<Mailbox>();
             _server = new TcpListener(localAddress, port);
@@ -109,14 +111,17 @@ namespace IMAP_Server
             con.token.Dispose();
             messageHandler._connections.Remove(client);
         }
-
+        private void DefinePermFlags()
+        {
+            PermanentFlags.PermaFlags.Add(Flags.ANSWERED);
+            PermanentFlags.PermaFlags.Add(Flags.DELETED);
+            PermanentFlags.PermaFlags.Add(Flags.SEEN);
+        }
         private void CreateMailBoxes()
         {
             mailBoxes = new Dictionary<string, Mailbox>();
             mailBoxes.Add("Jimoo@gmail.com", new Mailbox() { mailboxName = "Jimoo@gmail.com" });
         }
-
-
         private void GenerateUsers()
         {
             users = new Dictionary<string, User>();

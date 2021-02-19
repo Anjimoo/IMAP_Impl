@@ -16,12 +16,17 @@ namespace IMAP.Shared.Models
         public long uniqueIDValidityVal { get; set; } //containing the UIDVALIDITY of the currently selected folder, or 0 if no folder is selected. (The client needs to check this value for each folder every session)
         public List<EmailMessage> EmailMessages { get; set; }
         public Mailbox Parent { get; set; } //can be null or have a mailbox - it's the hierarchy property
+        public List<string> supportedFlags;
 
         public Mailbox()
         {
             Parent = null;
             AllowedUsers = new List<string>();
             EmailMessages = new List<EmailMessage>();
+            supportedFlags = new List<string>();
+            supportedFlags.AddRange(PermanentFlags.PermaFlags);
+            supportedFlags.Add(Flags.DRAFT);
+            supportedFlags.Add(Flags.FLAGGED);
             nextUniqueIDVal = 0;
             uniqueIDValidityVal = 0;
         }

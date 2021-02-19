@@ -15,8 +15,6 @@ namespace IMAP.Shared.Models
         public string Content { get; set; }
         public Dictionary<string, bool> Flags {get;set;}  = new Dictionary<string, bool>();
 
-
-
         public EmailMessage()
         {
             InitFlags();
