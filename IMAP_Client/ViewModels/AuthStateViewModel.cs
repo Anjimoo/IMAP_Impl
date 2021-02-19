@@ -239,7 +239,7 @@ namespace IMAP_Client.ViewModels
             try
             {
                 string response;
-                response = await MainWindowViewModel._connection.SendMessage($"{TaggingService.Tag} Create {MailBox}", _eventAggregator);
+                response = await MainWindowViewModel._connection.SendMessage($"{TaggingService.Tag} CREATE {MailBox}", _eventAggregator);
                 //_eventAggregator.GetEvent<UpdateUserConsole>().Publish(response);
             }
             catch (Exception e)

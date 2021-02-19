@@ -18,7 +18,7 @@ namespace IMAP_Server
         {
             _connections = new Dictionary<string, Connection>();
         }
-        public async Task HandleMessage(string _message, string currentConnection)//, NetworkStream stream)
+        public async Task HandleMessage(string _message, string currentConnection)
         {
 
             string[] tempMessage = _message.Split(' ');
@@ -62,7 +62,7 @@ namespace IMAP_Server
                     break;
 
                 case "DELETE":
-                    AuthStateCommands.Create(tempMessage,_connections[currentConnection]);
+                    AuthStateCommands.Delete(tempMessage,_connections[currentConnection]);
                     break;
 
                 case "EXAMINE":

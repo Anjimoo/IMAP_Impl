@@ -27,13 +27,18 @@ namespace IMAP_Server
 
         public static Dictionary<string, Mailbox> mailBoxes;
 
+        public static HashSet<Mailbox> subscriberMailboxes;
+
+
         public Server(string ip, int port)
         {
             this.ip = ip;
             this.port = port;
             IPAddress localAddress = IPAddress.Parse(ip);
             messageHandler = new MessageHandler();
+            DefinePermFlags();
             CreateMailBoxes();
+            subscriberMailboxes = new HashSet<Mailbox>();
             _server = new TcpListener(localAddress, port);
             //_server.Start();    
             GenerateUsers();
@@ -58,8 +63,11 @@ namespace IMAP_Server
                     {
                         try
                         {
-                            await HandleConnection(tcpClient, cancellationTokenSourceClient);
-                            tcpClient.Dispose();
+                            using (tcpClient)
+                            {
+                                await HandleConnection(tcpClient, cancellationTokenSourceClient);
+                            }
+                            //tcpClient.Dispose();
                         }
                         catch (OperationCanceledException ex)
                         {
@@ -82,91 +90,37 @@ namespace IMAP_Server
 
         private async Task HandleConnection(TcpClient tcpClient, CancellationTokenSource token)
         {
-            Log.Logger.Information($"Received incoming connection.");
-
             //var stream = tcpClient.GetStream();
             var client = tcpClient.Client.RemoteEndPoint.ToString();
 
-            Connection con = new Connection(client, tcpClient, token);
+            Log.Logger.Information($"Received incoming connection from {client}");
 
+
+            Connection con = new Connection(client, tcpClient, token);
+                        
             messageHandler._connections.TryAdd(client, con);
             while (!con.token.IsCancellationRequested)
             {
-                await messageHandler.HandleMessage(await con.ReceiveFromStream(), client);
+                var command = await con.ReceiveFromStream();
+                if (command != null)
+                {
+                    await messageHandler.HandleMessage(command, client);
+                }
             }
             con.token.Dispose();
+            messageHandler._connections.Remove(client);
         }
-
-        public void StartListeningOld()
+        private void DefinePermFlags()
         {
-            GenerateUsers(); //Just for now. We may add them using another method.
-
-            try
-            {
-                Log.Logger.Information($"Listening on {ip}");
-                while (true)
-                {
-                    TcpClient client = _server.AcceptTcpClient();
-                    Log.Logger.Information($"Received incoming connection.");
-                    try
-                    {
-                        var ignored = Task.Run(async () =>
-                        {
-                            await HandleConnectionOld(client);
-                            client.Dispose(); //At the end of the connection by "logout", not here
-                        });
-                    }
-                    catch (Exception e)
-                    {
-                        Log.Logger.Error(e, "Connections is faulted");
-                    }
-                }
-
-            }
-            catch (SocketException ex)
-            {
-                Log.Logger.Error(ex, "Error");
-                _server.Stop();
-            }
+            PermanentFlags.PermaFlags.Add(Flags.ANSWERED);
+            PermanentFlags.PermaFlags.Add(Flags.DELETED);
+            PermanentFlags.PermaFlags.Add(Flags.SEEN);
         }
-
-        private async Task HandleConnectionOld(TcpClient tcpClient)
-        {
-
-            var stream = tcpClient.GetStream();
-
-
-            string data = null;
-            Byte[] bytes = new Byte[256];
-            int i;
-
-            try
-            {
-                while ((i = stream.Read(bytes, 0, bytes.Length)) != 0)
-                {
-                    string hex = BitConverter.ToString(bytes);
-                    data = Encoding.UTF8.GetString(bytes, 0, i);
-                    var client = tcpClient.Client.RemoteEndPoint.ToString();
-
-                    Log.Logger.Information($"{data} received from {client}");
-
-                    //messageHandler._connections.TryAdd(client, new Connection(client) {Stream=stream});
-                    messageHandler.HandleMessage(data, client);
-                }
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine($"Exception : {e}");
-            }
-        }
-
         private void CreateMailBoxes()
         {
             mailBoxes = new Dictionary<string, Mailbox>();
             mailBoxes.Add("Jimoo@gmail.com", new Mailbox() { mailboxName = "Jimoo@gmail.com" });
         }
-
-
         private void GenerateUsers()
         {
             users = new Dictionary<string, User>();
@@ -174,5 +128,70 @@ namespace IMAP_Server
             users.Add("Shiro", new User() { Username = "Shiro", Password = "123" });
             users.Add("Diximango", new User() { Username = "Diximango", Password = "123" });
         }
+
+        //public void StartListeningOld()
+        //{
+        //    GenerateUsers(); //Just for now. We may add them using another method.
+
+        //    try
+        //    {
+        //        Log.Logger.Information($"Listening on {ip}");
+        //        while (true)
+        //        {
+        //            TcpClient client = _server.AcceptTcpClient();
+        //            Log.Logger.Information($"Received incoming connection.");
+        //            try
+        //            {
+        //                var ignored = Task.Run(async () =>
+        //                {
+        //                    await HandleConnectionOld(client);
+        //                    client.Dispose(); //At the end of the connection by "logout", not here
+        //                });
+        //            }
+        //            catch (Exception e)
+        //            {
+        //                Log.Logger.Error(e, "Connections is faulted");
+        //            }
+        //        }
+
+        //    }
+        //    catch (SocketException ex)
+        //    {
+        //        Log.Logger.Error(ex, "Error");
+        //        _server.Stop();
+        //    }
+        //}
+
+        //private async Task HandleConnectionOld(TcpClient tcpClient)
+        //{
+
+        //    var stream = tcpClient.GetStream();
+
+
+        //    string data = null;
+        //    Byte[] bytes = new Byte[256];
+        //    int i;
+
+        //    try
+        //    {
+        //        while ((i = stream.Read(bytes, 0, bytes.Length)) != 0)
+        //        {
+        //            string hex = BitConverter.ToString(bytes);
+        //            data = Encoding.UTF8.GetString(bytes, 0, i);
+        //            var client = tcpClient.Client.RemoteEndPoint.ToString();
+
+        //            Log.Logger.Information($"{data} received from {client}");
+
+        //            //messageHandler._connections.TryAdd(client, new Connection(client) {Stream=stream});
+        //            messageHandler.HandleMessage(data, client);
+        //        }
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        Console.WriteLine($"Exception : {e}");
+        //    }
+        //}
+
+
     }
 }
