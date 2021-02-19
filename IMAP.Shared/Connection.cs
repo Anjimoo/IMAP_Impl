@@ -129,7 +129,16 @@ namespace IMAP.Shared
         public void CloseConnection()
         {
             //**TODO: Finish this.
-            token.Cancel();
+            try
+            {
+                token.Cancel();
+
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+
             Stream.Dispose();
             connection.Close();
         }
