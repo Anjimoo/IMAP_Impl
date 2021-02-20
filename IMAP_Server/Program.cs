@@ -80,8 +80,10 @@ namespace IMAP_Server
                     server = new Server(chosenIP, chosenPort);
                     break;
                 }
-                catch 
+                catch (Exception ex)
                 {
+                    Log.Logger.Error(ex.Message);
+
                     Log.Logger.Error("Port is either taken, or not a valid port at all.");
                 }
             }
