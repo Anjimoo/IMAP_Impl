@@ -49,7 +49,7 @@ namespace IMAP.Shared
         public CancellationTokenSource token; //A token source that is used as a cancelable token.
 
         public System.Timers.Timer Timer { get; set; } //A timer that ticks until the timeout function.
-        private const double timeout = 60000; //The time the client has until a timeout.
+        private const double timeout = 600000; //The time the client has until a timeout.
 
         public Connection(string ip, TcpClient conn, CancellationTokenSource token = null)
         {
