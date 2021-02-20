@@ -60,48 +60,65 @@ namespace IMAP_Server.Services
                     }
                     break;
                 case ANSWERED:
-                    CheckFlaggedMessage(messages, Flags.ANSWERED, true);
+                    messages = CheckFlaggedMessage(Flags.ANSWERED, true);
                     break;
                 case BCC:
+                    messages = CheckInnerText(BCC, searchCriterias[1]);
                     break;
                 case BEFORE:
-                    CheckMessageDate(messages, BEFORE, searchCriterias[1]);
+                    messages = CheckMessageDate(BEFORE, searchCriterias[1]);
                     break;
                 case CC:
+                    messages = CheckInnerText(CC, searchCriterias[1]);
                     break;
                 case DELETED:
-                    CheckFlaggedMessage(messages, Flags.DELETED, true);
+                    messages = CheckFlaggedMessage(Flags.DELETED, true);
                     break;
                 case DRAFT:
-                    CheckFlaggedMessage(messages, Flags.DRAFT, true);
+                    messages = CheckFlaggedMessage(Flags.DRAFT, true);
                     break;
                 case FLAGGED:
-                    CheckFlaggedMessage(messages, Flags.FLAGGED, true);
+                    messages = CheckFlaggedMessage(Flags.FLAGGED, true);
                     break;
                 case FROM:
+                    messages = CheckInnerText(FROM, searchCriterias[1]);
                     break;
                 case HEADER:
                     break;
                 case KEYWORD:
                     break;
                 case LARGER:
-                    CheckSizeOfMessage(messages, searchCriterias[0], Int32.Parse(searchCriterias[1]));
+                    messages = CheckSizeOfMessage(searchCriterias[0], Int32.Parse(searchCriterias[1]));
                     break;
-                case NEW:
+                case NEW:              
+                    var recent = CheckFlaggedMessage(RECENT, true);
+                    var unseen = CheckFlaggedMessage(UNSEEN, false);
+                    var newMails = recent.Intersect(unseen);
                     break;
                 case NOT:
+                    var messagesWithSearchKey = Search(searchCriterias.Skip(1).ToArray(), connection); //check messages with search key
+                    List<int> emailsNumbers = new List<int>();
+                    foreach(var email in _connection.SelectedMailBox.EmailMessages)
+                    {
+                        emailsNumbers.Add(email.MsgNum);
+                    }
+                    var nonIntersect = emailsNumbers.Except(messagesWithSearchKey); //check messages that doest not have search key
                     break;
                 case OLD:
+                    var old = CheckFlaggedMessage(RECENT, false);
                     break;
                 case ON:
+                    messages = CheckMessageDate(ON, searchCriterias[1]);
                     break;
                 case OR:
+                    
+                    //TO DO 
                     break;
                 case RECENT:
-                    CheckFlaggedMessage(messages, Flags.RECENT, true);
+                    messages = CheckFlaggedMessage(Flags.RECENT, true);
                     break;
                 case SEEN:
-                    CheckFlaggedMessage(messages, Flags.SEEN, true);
+                    messages = CheckFlaggedMessage(Flags.SEEN, true);
                     break;
                 case SENTBEFORE:
                     break;
@@ -110,37 +127,38 @@ namespace IMAP_Server.Services
                 case SENTSINCE:
                     break;
                 case SINCE:
-                    CheckMessageDate(messages, SINCE, searchCriterias[1]);
+                    messages = CheckMessageDate(SINCE, searchCriterias[1]);
                     break;
                 case SMALLER:
-                    CheckSizeOfMessage(messages, searchCriterias[0], Int32.Parse(searchCriterias[1]));
+                    messages = CheckSizeOfMessage(searchCriterias[0], Int32.Parse(searchCriterias[1]));
                     break;
                 case SUBJECT:
-                    CheckInnerText(messages, SUBJECT, searchCriterias[1]);
+                    messages = CheckInnerText(SUBJECT, searchCriterias[1]);
                     break;
                 case TEXT:
-                    CheckInnerText(messages, TEXT, searchCriterias[1]);
+                    messages = CheckInnerText(TEXT, searchCriterias[1]);
                     break;
                 case TO:
-                    CheckInnerText(messages, TO, searchCriterias[1]);
+                    messages = CheckInnerText(TO, searchCriterias[1]);
                     break;
                 case UID: break;
                 case UNANSWERED:
-                    CheckFlaggedMessage(messages, Flags.ANSWERED, false);
+                    messages = CheckFlaggedMessage(Flags.ANSWERED, false);
                     break;
                 case UNDELETED:
-                    CheckFlaggedMessage(messages, Flags.DELETED, false);
+                    messages = CheckFlaggedMessage(Flags.DELETED, false);
                     break;
                 case UNDRAFT:
-                    CheckFlaggedMessage(messages, Flags.DRAFT, false);
+                    messages = CheckFlaggedMessage(Flags.DRAFT, false);
                     break;
                 case UNFLAGGED:
-                    CheckFlaggedMessage(messages, Flags.FLAGGED, false);
+                    messages = CheckFlaggedMessage(FLAGGED, false);
                     break;
                 case UNKEYWORD:
+                    messages = CheckFlaggedMessage(searchCriterias[1], false);
                     break;
                 case UNSEEN:
-                    CheckFlaggedMessage(messages, Flags.SEEN, false);
+                    messages = CheckFlaggedMessage(Flags.SEEN, false);
                     break;
 
                 default:
@@ -149,8 +167,9 @@ namespace IMAP_Server.Services
             return messages;
         }
 
-        private static void CheckFlaggedMessage(List<int> messages, string flag, bool flagged)
+        private static List<int> CheckFlaggedMessage(string flag, bool flagged)
         {
+            List<int> messages = new List<int>();
             foreach (var email in _connection.SelectedMailBox.EmailMessages)
             {
                 if (email.Flags[flag] == flagged)
@@ -158,10 +177,12 @@ namespace IMAP_Server.Services
                     messages.Add(email.MsgNum);
                 }
             }
+            return messages;
         }
 
-        private static void CheckMessageDate(List<int> messages, string criteria, string date)
+        private static List<int> CheckMessageDate(string criteria, string date)
         {
+            List<int> messages = new List<int>();
             if (DateTime.TryParse(date, out DateTime parsedDate))
             {
                 foreach (var email in _connection.SelectedMailBox.EmailMessages)
@@ -180,10 +201,12 @@ namespace IMAP_Server.Services
             {
                 _connection.SendToStream("BAD - command unknown or arguments invalid");
             }
+            return messages;
         }
 
-        private static void CheckSizeOfMessage(List<int> messages, string criteria, int sizeInOctets)
+        private static List<int> CheckSizeOfMessage(string criteria, int sizeInOctets)
         {
+            List<int> messages = new List<int>();
             foreach (var email in _connection.SelectedMailBox.EmailMessages)
             {
                 var emailBytes = Encoding.UTF8.GetBytes(email.Content);
@@ -196,10 +219,12 @@ namespace IMAP_Server.Services
                     messages.Add(email.MsgNum);
                 }
             }
+            return messages;
         }
 
-        private static void CheckInnerText(List<int> messages, string criteria, string subStringToFind)
+        private static List<int> CheckInnerText(string criteria, string subStringToFind)
         {
+            List<int> messages = new List<int>();
             foreach (var email in _connection.SelectedMailBox.EmailMessages)
             {
                 if (criteria == TO && email.To.Contains(subStringToFind))
@@ -214,7 +239,24 @@ namespace IMAP_Server.Services
                 {
                     messages.Add(email.MsgNum);
                 }
+                else if (criteria == BODY && (email.Content.Contains(subStringToFind)))//need to add Header
+                {
+                    messages.Add(email.MsgNum);
+                }
+                else if (criteria == CC && email.CC.Contains(subStringToFind))
+                {
+                    messages.Add(email.MsgNum);
+                }
+                else if (criteria == BCC && email.BCC.Contains(subStringToFind))
+                {
+                    messages.Add(email.MsgNum);
+                }
+                else if (criteria == FROM && email.From.Contains(subStringToFind))
+                {
+                    messages.Add(email.MsgNum);
+                }
             }
+            return messages;
         }
     }
 }

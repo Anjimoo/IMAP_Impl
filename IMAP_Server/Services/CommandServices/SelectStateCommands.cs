@@ -1,5 +1,6 @@
 ﻿using IMAP.Shared;
 using IMAP_Server.Services;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Sockets;
@@ -42,7 +43,7 @@ namespace IMAP_Server.CommandModels
                     //need to do search 2 times and filter
                 }
                 
-                IMAP_Search.Search(command.Take(2).ToArray(), connectionState);
+                IMAP_Search.Search(command.Skip(2).ToArray(), connectionState);
             }
             else
             {

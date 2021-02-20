@@ -13,6 +13,8 @@ namespace IMAP.Shared.Models
         public string To { get; set; }
         public string Subject { get; set; }
         public string Content { get; set; }
+        public string BCC { get; set; }
+        public string CC { get; set; }
         public Dictionary<string, bool> Flags {get;set;}  = new Dictionary<string, bool>();
 
         public EmailMessage()
