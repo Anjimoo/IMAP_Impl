@@ -31,23 +31,28 @@ namespace IMAP_Server.CommandModels
         {
             
         }
+        /// <summary>
+        /// Searches messages in mail box by specific criteria
+        /// </summary>
+        /// <param name="command"></param>
+        /// <param name="connectionState"></param>
         public static void Search(string[] command, Connection connectionState)
         {
             if(command.Length > 2)
             {
-                if (command.Contains("OR"))
+                var messages = IMAP_Search.Search(command.Skip(2).ToArray(), connectionState);
+                string response = "";
+                foreach(var message in messages)
                 {
-                    //need to do search 2 times?
-                }else if (command.Contains("AND"))
-                {
-                    //need to do search 2 times and filter
+                    response += $"{message}";
                 }
-                
-                IMAP_Search.Search(command.Skip(2).ToArray(), connectionState);
+
+                connectionState.SendToStream($"* SEARCH {response}");
+                connectionState.SendToStream($"{command[0]} OK SEARCH completed");
             }
             else
             {
-                var str = "BAD - no search criteria specified";
+                connectionState.SendToStream($"{command[0]} BAD - no search criteria specified");
             }
             
         }

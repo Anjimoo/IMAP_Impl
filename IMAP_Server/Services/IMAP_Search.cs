@@ -46,6 +46,12 @@ namespace IMAP_Server.Services
         public const string UNKEYWORD = "UNKEYWORD";
         public const string UNSEEN = "UNSEEN";
         private static Connection _connection;
+        /// <summary>
+        /// Searches messages in email box by specified criterias
+        /// </summary>
+        /// <param name="searchCriterias"></param>
+        /// <param name="connection"></param>
+        /// <returns>Numbers of messages</returns>
         public static List<int> Search(string[] searchCriterias, Connection connection)
         {
             _connection = connection;
@@ -167,6 +173,12 @@ namespace IMAP_Server.Services
             return messages;
         }
 
+        /// <summary>
+        /// Checks which of messages has or does not specified flag and returns List of these messages
+        /// </summary>
+        /// <param name="flag"></param>
+        /// <param name="flagged"></param>
+        /// <returns>Numbers of messages</returns>
         private static List<int> CheckFlaggedMessage(string flag, bool flagged)
         {
             List<int> messages = new List<int>();
@@ -180,6 +192,12 @@ namespace IMAP_Server.Services
             return messages;
         }
 
+        /// <summary>
+        /// Checks if message is older/newer or received at specific date
+        /// </summary>
+        /// <param name="criteria"></param>
+        /// <param name="date"></param>
+        /// <returns>Numbers of messages</returns>
         private static List<int> CheckMessageDate(string criteria, string date)
         {
             List<int> messages = new List<int>();
@@ -203,7 +221,12 @@ namespace IMAP_Server.Services
             }
             return messages;
         }
-
+        /// <summary>
+        /// Checks if message Content(Body) of message is larger/smaller then specific size in Octets
+        /// </summary>
+        /// <param name="criteria"></param>
+        /// <param name="sizeInOctets"></param>
+        /// <returns>Numbers of messages</returns>
         private static List<int> CheckSizeOfMessage(string criteria, int sizeInOctets)
         {
             List<int> messages = new List<int>();
@@ -221,7 +244,12 @@ namespace IMAP_Server.Services
             }
             return messages;
         }
-
+        /// <summary>
+        /// Checks if message has specified string in it's Content(body)/text/subject/bcc/cc/from
+        /// </summary>
+        /// <param name="criteria"></param>
+        /// <param name="subStringToFind"></param>
+        /// <returns>Numbers of messages</returns>
         private static List<int> CheckInnerText(string criteria, string subStringToFind)
         {
             List<int> messages = new List<int>();
