@@ -24,7 +24,6 @@ namespace IMAP_Server.Services
             //string jsonString = File.ReadAllText(path);
             users =JsonSerializer.Deserialize<List<User>>(jsonString);
             return users;
-
         }
     }
 }
