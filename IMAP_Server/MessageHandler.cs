@@ -9,7 +9,7 @@ using IMAP_Server.CommandModels;
 
 namespace IMAP_Server
 {
-
+    //This class handles messages from the client, also holds the current active connections dictionary.
     public class MessageHandler
     {
         public Dictionary<string, Connection> _connections;
@@ -18,6 +18,8 @@ namespace IMAP_Server
         {
             _connections = new Dictionary<string, Connection>();
         }
+
+        //Receives messages and assigns them to the corresponding handling function.
         public async Task HandleMessage(string _message, string currentConnection)
         {
 
@@ -119,26 +121,7 @@ namespace IMAP_Server
                     SelectStateCommands.UID(tempMessage,_connections[currentConnection]);
                     break;
 
-
-                //case "CONNECT":
-                //    response = $"{tag} OK greetings";
-                //    break;
-                //case "LOGIN":
-                //    var loginCommand = new LoginCommand(tempMessage, _connections[currentConnection]);
-                //    response = loginCommand.GetResponse();
-                //    if (loginCommand.LoginSucceeded)
-                //    {
-                //        _connections[currentConnection].Authentificated = true;
-                //    }
-                //    break;
-                //case "LOGOUT":
-                //    response = $"{tag} BYE IMAP4rev1 Server logging out";
-                //    _connections[currentConnection].Authentificated = false;
-                //    break;
-                //case "SELECT":
-                //    var selectCommand = new SelectCommand(tempMessage, _connections[currentConnection]);
-                //    break;
-
+                    //Any other unrecognized command/message sent to the server.
                 default:
                     AnyStateCommands.Default(tempMessage, _connections[currentConnection]);
                     break;

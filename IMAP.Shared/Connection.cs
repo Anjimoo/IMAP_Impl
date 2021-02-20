@@ -20,21 +20,21 @@ namespace IMAP.Shared
         public bool Connected { get; set; } //Don't know if we need this (maybe on client, not on server)
 
         private bool _Authentificated;
-        public bool Authentificated 
+        public bool Authentificated
         {
             get
             {
                 return _Authentificated;
-                
-            } 
-            set 
+
+            }
+            set
             {
                 if (value == false)
                 {
                     SelectedState = false;
                 }
                 _Authentificated = value;
-            } 
+            }
         }
 
         public string Username { get; set; } = "ANONYMOUS";
@@ -44,9 +44,9 @@ namespace IMAP.Shared
         public CancellationTokenSource token;
 
         public System.Timers.Timer Timer { get; set; } //FOR NOW, **TODO: try this later on.
-        private const double timeout=60000;
+        private const double timeout = 60000;
 
-        public Connection(string ip, TcpClient conn, CancellationTokenSource token=null)
+        public Connection(string ip, TcpClient conn, CancellationTokenSource token = null)
         {
             Ip = ip;
             connection = conn;
@@ -68,7 +68,7 @@ namespace IMAP.Shared
             Timer.Start();
         }
 
-        private void ResetTimeout()
+        public void ResetTimeout()
         {
             Timer.Stop();
             Timer.Interval = timeout;
@@ -77,12 +77,10 @@ namespace IMAP.Shared
 
         public void OnTimedEvent(Object source, ElapsedEventArgs e)
         {
-            SendToStream("* BYE - Connection timed out"); //****TODO: Reminder to have a thread on the client to 
-                                                          //listen to possible server-initiated messages
-             //https://stackoverflow.com/questions/6843064/c-sharp-networkstream-write-and-read answer before last.
-            Console.WriteLine("Timeout Logout is executed");
+            SendToStream("* BYE - Connection timed out.");
+            Console.WriteLine($"Timeout Logout for {Ip}/{Username} is executed.");
 
-            CloseConnection();   
+            CloseConnection();
         }
 
         public void SendToStream(string response)
@@ -109,16 +107,13 @@ namespace IMAP.Shared
             int i = 0;
             try
             {
-                //while ((i = await Stream.ReadAsync(bytes, 0, bytes.Length)) != 0)
-                //{ 
                 i = await Stream.ReadAsync(bytes, 0, bytes.Length);
                 string hex = BitConverter.ToString(bytes);
                 data = Encoding.UTF8.GetString(bytes, 0, i);
-                //}
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Either client logged out, net problem or a Timeout: "+ex.Message);
+                Console.WriteLine("Either client logged out, net problem or a Timeout: " + ex.Message);
                 Timer.Dispose();
                 CloseConnection();
             }
@@ -128,7 +123,6 @@ namespace IMAP.Shared
 
         public void CloseConnection()
         {
-            //**TODO: Finish this.
             try
             {
                 token.Cancel();

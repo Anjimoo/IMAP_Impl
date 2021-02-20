@@ -9,10 +9,24 @@ using Serilog;
 
 namespace IMAP_Server.CommandModels
 {
+    /// <summary>
+    /// A service class that holds handling functions for Any State client commands.
+    /// </summary>
     public static class AnyStateCommands
     {
-        public static List<string> capabilities = new List<string>() { "CAPABILITY", "IMAP4rev1", /*"AUTH=PLAIN", "LOGINDISABLED, "STARTTLS */ "CATENATE", "WITHIN" };
+        //A list of the server's capabilities.
+        public static List<string> capabilities = new List<string>() 
+        { 
+          "CAPABILITY",
+          "IMAP4rev1",
+          /*"AUTH=PLAIN", "LOGINDISABLED, "STARTTLS */ //Not supported.
+          "CATENATE", 
+          "WITHIN" 
+        };
 
+        /// <summary>
+        /// Returns the list of server's capabilities.
+        /// </summary>
         public static void Capability(string[] command, Connection connectionState)
         {
             string tag = command[0];
@@ -27,11 +41,14 @@ namespace IMAP_Server.CommandModels
             }
 
             connectionState.SendToStream(response);
-            Task.Delay(2000);
             connectionState.SendToStream(OK(tag, cmd));
             Log.Logger.Information($"{cmd} list sent to {connectionState.Ip}/{connectionState.Username}");
         }
 
+        /// <summary>
+        /// Performs a graceful logout, where both user asks the servrer to log out (and not a forced
+        /// shut-down of the connection.)
+        /// </summary>
         public static void Logout(string[] command, Connection connectionState)
         {
             string tag = command[0];
@@ -54,9 +71,16 @@ namespace IMAP_Server.CommandModels
             string cmd = command[1];
             Log.Logger.Information($"{cmd} request by {connectionState.Ip}");
 
+            connectionState.ResetTimeout();
+            connectionState.SendToStream($"{tag} OK - NOOP completed. Timeout countdown is now back to 10 minutes.");
+
+            Log.Logger.Information($"{cmd} request by {connectionState.Ip} was approved, connection timeout countdown has been reset.");
 
         }
 
+        /// <summary>
+        /// The default server response for any unrecognized command.
+        /// </summary>
         public static void Default(string[] command, Connection connectionState)
         {
             string tag = command[0];
