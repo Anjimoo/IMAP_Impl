@@ -108,6 +108,8 @@ namespace IMAP_Server
                         //Here would go user input that consists of only 1 block of string. This is possible in the 
                         //case of authentication key - a command that requires back-and-forth communication by the server
                         //and the client. Should we have enough time, we might implement this.
+
+                        //Should it not answer the correct format for handling, a Default should be returned as a reponse.
                     }
                     else
                     {

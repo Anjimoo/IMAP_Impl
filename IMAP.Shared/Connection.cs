@@ -9,17 +9,22 @@ using System.Timers;
 
 namespace IMAP.Shared
 {
+    /// <summary>
+    /// An object representing a connection to a client. When a connection ends (the connection recognizes it by catching
+    /// an exception in the stream reading), it will be removed from the dictionary that's holding the active connections.
+    /// </summary>
     public class Connection
     {
-        public string Ip { get; set; }
+        public string Ip { get; set; } //Ip:Port of the client.
 
-        private TcpClient connection;
+        private TcpClient connection; //The tcp socket for the client.
 
-        public NetworkStream Stream { get; set; }
+        public NetworkStream Stream { get; set; } //Network stream used to send and get messages.
 
         public bool Connected { get; set; } //Don't know if we need this (maybe on client, not on server)
 
-        private bool _Authentificated;
+        //Booleans to check what the client is able to do..
+        private bool _Authentificated; 
         public bool Authentificated
         {
             get
@@ -37,14 +42,14 @@ namespace IMAP.Shared
             }
         }
 
-        public string Username { get; set; } = "ANONYMOUS";
+        public string Username { get; set; } = "ANONYMOUS"; //As soon as the client logs in, this is filled.
         public bool SelectedState { get; set; }
-        public Mailbox SelectedMailBox { get; set; }
+        public Mailbox SelectedMailBox { get; set; } //If a mailbox is selected, which one.
 
-        public CancellationTokenSource token;
+        public CancellationTokenSource token; //A token source that is used as a cancelable token.
 
-        public System.Timers.Timer Timer { get; set; } //FOR NOW, **TODO: try this later on.
-        private const double timeout = 60000;
+        public System.Timers.Timer Timer { get; set; } //A timer that ticks until the timeout function.
+        private const double timeout = 60000; //The time the client has until a timeout.
 
         public Connection(string ip, TcpClient conn, CancellationTokenSource token = null)
         {
@@ -68,6 +73,7 @@ namespace IMAP.Shared
             Timer.Start();
         }
 
+        //Upon getting a message, or a noop, reset the timeout countdown.
         public void ResetTimeout()
         {
             Timer.Stop();
@@ -75,6 +81,7 @@ namespace IMAP.Shared
             Timer.Start();
         }
 
+        //What will happen on a timeout.
         public void OnTimedEvent(Object source, ElapsedEventArgs e)
         {
             SendToStream("* BYE - Connection timed out.");
@@ -83,13 +90,14 @@ namespace IMAP.Shared
             CloseConnection();
         }
 
+
+        //A function used to send messages to the client.
         public void SendToStream(string response)
         {
             try
             {
                 Byte[] reply = System.Text.Encoding.UTF8.GetBytes(response);
                 Stream.WriteAsync(reply, 0, reply.Length);
-                //Log.Logger.Information($"SENT : {response}");
             }
             catch (Exception ex)
             {
@@ -98,6 +106,7 @@ namespace IMAP.Shared
             }
         }
 
+        //A function used to receive messages form the client (used in a loop).
         public async Task<string> ReceiveFromStream()
         {
             ResetTimeout();
@@ -121,6 +130,8 @@ namespace IMAP.Shared
             return data;
         }
 
+        //What to do when the connection is closed. This is called on either forced connection closure, timeout,
+        //or a "graceful" logout.
         public void CloseConnection()
         {
             try

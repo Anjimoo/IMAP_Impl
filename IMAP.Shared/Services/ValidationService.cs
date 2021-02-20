@@ -10,8 +10,7 @@ namespace IMAP.Shared.Services
         /// <summary>
         /// Validates that the user name is in a correct format.
         /// </summary>
-        /// <param name="username"></param>
-        /// <returns></returns>
+
         public static bool ValidateUsername(string username)
         {
 
@@ -28,7 +27,6 @@ namespace IMAP.Shared.Services
         /// <summary>
         /// Validates that the password is in a correct format. To be used ONLY on the client side.
         /// </summary>
-        /// <returns></returns>
         public static bool ValidatePassword(string password)
         {
             /***********************************/
@@ -41,7 +39,6 @@ namespace IMAP.Shared.Services
         /// <summary>
         /// Validates that the Mailbox name is in a correct format.
         /// </summary>
-        /// <returns></returns>
         public static bool ValidateMailboxName(string mailbox)
         {
             /***********************************/
