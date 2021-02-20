@@ -171,9 +171,10 @@ namespace IMAP_Client.ViewModels
             
         }
 
-        private void ExecuteNoop()
+        private async void ExecuteNoop()
         {
-            //TODO
+            string tag = TaggingService.Tag;
+            await _connection.SendMessage($"{tag} NOOP", _eventAggregator);
         }
 
         private async void ExecuteCapability()
