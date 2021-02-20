@@ -40,6 +40,32 @@ namespace IMAP_Server.CommandModels
         }
         public static void Copy(string[] command, Connection connectionState)
         {
+            if(command.Length > 2)
+            {
+                if (connectionState.SelectedMailBox.EmailMessages.Count > 0)
+                {
+                    string[] emailsNumbers = command[2].Split(':');
+                    List<int> numbers = new List<int>();
+                    foreach(var number in emailsNumbers)
+                    {
+                        numbers.Add(Int32.Parse(number));
+                    }
+                    foreach(var email in connectionState.SelectedMailBox.EmailMessages)
+                    {
+                        foreach(var number in numbers)
+                        {
+                            if (number == email.MsgNum)
+                            {
+                                Server.mailBoxes[command[3]].EmailMessages.Add(email);
+                            }
+                        }
+                    }
+                }
+            }
+            else
+            {
+                connectionState.SendToStream($"{command[0]} BAD - command unknown or arguments invalid");
+            }
             
         }
         public static void Expunge(string[] command, Connection connectionState)
