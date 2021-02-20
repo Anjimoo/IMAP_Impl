@@ -9,6 +9,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
+using IMAP_Server.Services;
 using System.Threading.Tasks;
 
 
@@ -138,14 +139,7 @@ namespace IMAP_Server
         }
         private void GenerateUsers()
         {
-           var tempUsers= IMAP_Server.Services.JsonParser.ReadUsers();
-
-            users = new Dictionary<string, User>();
-            foreach (var user in tempUsers)
-            {
-                users.Add(user.Username,user);
-            }
-            
+            users = JsonParser.ReadUsers();
         }   
     }
 }

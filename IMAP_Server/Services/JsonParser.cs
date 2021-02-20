@@ -16,13 +16,13 @@ namespace IMAP_Server.Services
         //public static string dataDir = myDir.Parent.FullName.ToString();
 
 
-        public static List<User> ReadUsers()
+        public static Dictionary<string, User> ReadUsers()
         {
             //string path = Path.Combine(dataDir,"Users.json"); 
-            List<User> users = new List<User>();
+            var users = new Dictionary<string, User>();
             string jsonString = File.ReadAllText("Users.json");
             //string jsonString = File.ReadAllText(path);
-            users =JsonSerializer.Deserialize<List<User>>(jsonString);
+            users =JsonSerializer.Deserialize< Dictionary<string, User>> (jsonString);
             return users;
         }
     }
