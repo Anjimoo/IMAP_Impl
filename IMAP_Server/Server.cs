@@ -66,11 +66,9 @@ namespace IMAP_Server
                                 await HandleConnection(tcpClient, cancellationTokenSourceClient);
                             }
                         }
-                        catch (OperationCanceledException ex)
+                        catch (Exception ex)
                         {
-                            Log.Logger.Information("Client disconnected.");  //***************Cancelation token doesn't work 
-                            //as intended and it might be a problem with the timers. TODO: Fix this when we have time.
-                            cancellationTokenSourceClient.Dispose();
+                            Log.Logger.Error(ex.Message);
                         }
                     }, cancelToken);
                 }
