@@ -63,6 +63,12 @@ namespace IMAP_Client.ViewModels
             get { return selectedMailBox; }
             set { SetProperty(ref selectedMailBox, value); }
         }
+        private bool notConnected;
+        public bool NotConnected
+        {
+            get { return notConnected; }
+            set { SetProperty(ref notConnected, value); }
+        }
         #endregion
 
         #region Delegate Commands
@@ -80,6 +86,7 @@ namespace IMAP_Client.ViewModels
             _regionManager = regionManager;
             _eventAggregator = eventAggregator;
             SelectedMailBox = true;
+            NotConnected = true;
             NavigateNoAuthState = new DelegateCommand<string>(Navigate)
                 .ObservesCanExecute(() => Connected);
             NavigateToAuthState = new DelegateCommand<string>(ExecuteToAuthState)
@@ -91,7 +98,8 @@ namespace IMAP_Client.ViewModels
             Logout = new DelegateCommand(ExecuteLogout);
             Disconnect = new DelegateCommand(ExecuteDisconnect)
                 .ObservesCanExecute(() => Connected);
-            Connect = new DelegateCommand(ExecuteConnect);
+            Connect = new DelegateCommand(ExecuteConnect)
+                .ObservesCanExecute(() => NotConnected);
             _eventAggregator.GetEvent<UpdateUserConsole>().Subscribe(UpdateConsole);
             _eventAggregator.GetEvent<UpdateAuthentificationState>().Subscribe(UpdateAuthentification);
             _eventAggregator.GetEvent<UpdateSelectedState>().Subscribe(UpdateSelection);
@@ -100,12 +108,11 @@ namespace IMAP_Client.ViewModels
             IPAddress = "127.0.0.1";
         }
 
-
         #region UpdateEvents
-
         private void UpdateConnection(bool isConnected)
         {
             Connected = isConnected;
+            NotConnected = !isConnected;
         }
         private void UpdateSelection(bool state)
         {
@@ -150,6 +157,7 @@ namespace IMAP_Client.ViewModels
             Connected = false;
             Authentificated = false;
             SelectedMailBox = false;
+            NotConnected = true;
         }
 
         private async void ExecuteLogout()
