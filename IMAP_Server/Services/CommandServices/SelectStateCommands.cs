@@ -1,4 +1,5 @@
 ﻿using IMAP.Shared;
+using IMAP.Shared.Models;
 using IMAP_Server.Services;
 using System;
 using System.Collections.Generic;
@@ -11,13 +12,31 @@ namespace IMAP_Server.CommandModels
 {
     public static class SelectStateCommands
     {
+        private const int SEARCH_MINSPLIT = 2;
+
         public static void Check(string[] command, Connection connectionState)
         {
             
         }
         public static void Close(string[] command, Connection connectionState)
         {
-            
+            if (connectionState.SelectedMailBox.EmailMessages.Count != 0)
+            {
+                foreach (EmailMessage em in connectionState.SelectedMailBox.EmailMessages)
+                {
+                    if (em.Flags.TryGetValue(@"\Deleted", out var deleted))
+                    {
+                        if (deleted)
+                        {
+                            int deletedUID = em.UniqueID;
+                            connectionState.SelectedMailBox.EmailMessages.Remove(em);
+                        }
+                    }
+                }
+            }
+            connectionState.SelectedMailBox = null;
+            connectionState.SelectedState = false;
+            connectionState.SendToStream($"{command[0]} OK CLOSE completed");
         }
         public static void Copy(string[] command, Connection connectionState)
         {
@@ -25,7 +44,23 @@ namespace IMAP_Server.CommandModels
         }
         public static void Expunge(string[] command, Connection connectionState)
         {
-            
+            if (connectionState.SelectedMailBox.EmailMessages.Count != 0)
+            {
+
+                foreach (EmailMessage em in connectionState.SelectedMailBox.EmailMessages)
+                {
+                    if (em.Flags.TryGetValue(@"\Deleted", out var deleted))
+                    {
+                        if (deleted)
+                        {
+                            int deletedUID = em.UniqueID;
+                            connectionState.SelectedMailBox.EmailMessages.Remove(em);
+                            connectionState.SendToStream($"{command[0]} {deletedUID} EXPUNGE");
+                        }
+                    }
+                }
+            }
+            connectionState.SendToStream($"{command[0]} OK EXPUNGE completed");
         }
         public static void Fetch(string[] command, Connection connectionState)
         {
@@ -33,7 +68,7 @@ namespace IMAP_Server.CommandModels
         }
         public static void Search(string[] command, Connection connectionState)
         {
-            if(command.Length > 2)
+            if(command.Length > SEARCH_MINSPLIT)
             {
                 if (command.Contains("OR"))
                 {
