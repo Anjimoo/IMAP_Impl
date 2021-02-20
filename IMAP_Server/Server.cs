@@ -138,10 +138,14 @@ namespace IMAP_Server
         }
         private void GenerateUsers()
         {
+           var tempUsers= IMAP_Server.Services.JsonParser.ReadUsers();
+
             users = new Dictionary<string, User>();
-            users.Add("Jimoo", new User() { Username = "Jimoo", Password = "123" });
-            users.Add("Shiro", new User() { Username = "Shiro", Password = "123" });
-            users.Add("Diximango", new User() { Username = "Diximango", Password = "123" });
+            foreach (var user in tempUsers)
+            {
+                users.Add(user.Username,user);
+            }
+            
         }   
     }
 }
