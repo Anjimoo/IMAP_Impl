@@ -21,14 +21,15 @@ namespace IMAP_Client.Services
             networkStream = tcpClient.GetStream();
         }
 
-        string outgoingTag=""; //The last tag sent.
-        string outgoingCommand=""; //The last command sent.
+        public string outgoingTag=""; //The last tag sent.
+        public string outgoingCommand=""; //The last command sent.
         string wholeServerResponse=""; //The whole response for a command as one block of string.
 
         public async Task SendMessage(String message, IEventAggregator _eventAggregator = null)
         {
             try
             {
+                message += Environment.NewLine;
                 Byte[] data = System.Text.Encoding.UTF8.GetBytes(message);
 
                 // Send the message to the connected TcpServer. 

@@ -136,12 +136,14 @@ namespace IMAP_Client.ViewModels
             {
                 _connection = new ServerConnection(IPAddress, Port);
                 //var response = 
-                await _connection.SendMessage($"* CONNECT", _eventAggregator);
+                //await _connection.SendMessage($"* CONNECT", _eventAggregator);
                 //UpdateConsole(response);
                 //if (response.Split()[1] == "OK")
                 //{
-                    //Connected = true;
+                //Connected = true;
                 //}
+                _connection.outgoingTag = "*";
+                _connection.outgoingCommand = "CONNECT";
                 _connection.GetMessages(_eventAggregator);
             }
             catch(Exception e)

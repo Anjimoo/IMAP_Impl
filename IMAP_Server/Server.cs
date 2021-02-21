@@ -97,22 +97,25 @@ namespace IMAP_Server
 
 
             Connection con = new Connection(client, tcpClient, token);
-                        
+            
+            con.SendToStream($"* OK greetings.");
+
+
             messageHandler._connections.TryAdd(client, con);
             while (!con.token.IsCancellationRequested)
             {
                 var command = await con.ReceiveFromStream();
                 if (command != null)
                 {
-                    if (command.Split(' ').Length == 1)
-                    {
-                        //Here would go user input that consists of only 1 block of string. This is possible in the 
-                        //case of authentication key - a command that requires back-and-forth communication by the server
-                        //and the client. Should we have enough time, we might implement this.
+                    //if (command.Split(' ').Length == 1)
+                    //{
+                    //    //Here would go user input that consists of only 1 block of string. This is possible in the 
+                    //    //case of authentication key - a command that requires back-and-forth communication by the server
+                    //    //and the client. Should we have enough time, we might implement this.
 
-                        //Should it not answer the correct format for handling, a Default should be returned as a reponse.
-                    }
-                    else
+                    //    //Should it not answer the correct format for handling, a Default should be returned as a reponse.
+                    //}
+                    //else
                     {
                         await messageHandler.HandleMessage(command, client);
                     }

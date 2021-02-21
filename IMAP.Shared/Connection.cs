@@ -94,6 +94,7 @@ namespace IMAP.Shared
         //A function used to send messages to the client.
         public void SendToStream(string response)
         {
+            response += Environment.NewLine;
             try
             {
                 Byte[] reply = System.Text.Encoding.UTF8.GetBytes(response);
