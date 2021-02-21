@@ -135,7 +135,10 @@ namespace IMAP_Client.ViewModels
             try
             {
                 if (_connection != null)
-                { _connection = null; }
+                {
+                    ExecuteDisconnect();
+                }
+
                 _connection = new ServerConnection(IPAddress, Port);
                 //var response = 
                 //await _connection.SendMessage($"* CONNECT", _eventAggregator);
@@ -158,6 +161,7 @@ namespace IMAP_Client.ViewModels
         {
             _connection.Disconnect();
             UpdateConsole("Disconnected from server");
+            _connection = null;
             Connected = false;
             Authentificated = false;
             SelectedMailBox = false;
