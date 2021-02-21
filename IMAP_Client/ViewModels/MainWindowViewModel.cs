@@ -134,6 +134,8 @@ namespace IMAP_Client.ViewModels
         {
             try
             {
+                if (_connection != null)
+                { _connection = null; }
                 _connection = new ServerConnection(IPAddress, Port);
                 //var response = 
                 //await _connection.SendMessage($"* CONNECT", _eventAggregator);

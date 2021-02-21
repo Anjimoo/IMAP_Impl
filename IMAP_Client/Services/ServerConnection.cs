@@ -82,7 +82,7 @@ namespace IMAP_Client.Services
                             //Over here we can add a condition for a currently occuring command
                             //for an instance, sending encryption keys if the server response is "+",
                             //or when we want to read the information a bit by a bit.
-                            wholeServerResponse += response+"\n";
+                            wholeServerResponse += response;
                         }
                         else
                         {
