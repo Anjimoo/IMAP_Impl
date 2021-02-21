@@ -93,7 +93,8 @@ namespace IMAP_Client
 
         static private void Connect(string response)
         {
-            if (response.Split("\n")[response.Split("\n").Length - 1].Contains("OK"))
+            //var responseSplit = response.Split("\n")[response.Split("\n").Length - 1];
+            if (response.Contains("OK"))
             {
                 _eventAggregator.GetEvent<UpdateServerConnectionState>().Publish(true);
             }
@@ -101,7 +102,8 @@ namespace IMAP_Client
 
         static private void Login(string response)
         {
-            if (response.Split("\n")[response.Split("\n").Length - 1].Contains("OK"))
+            //if (response.Split("\n")[response.Split("\n").Length - 1].Contains("OK"))
+            if (response.Contains("OK"))
             {
                 _eventAggregator.GetEvent<UpdateAuthentificationState>().Publish(true);
             }
