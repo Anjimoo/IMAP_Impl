@@ -61,6 +61,7 @@ namespace IMAP_Client
                 case "RENAME":
                     break;
                 case "SELECT":
+                    Select(response);
                     break;
                 case "STATUS":
                     break;
@@ -106,6 +107,15 @@ namespace IMAP_Client
             if (response.Contains("OK"))
             {
                 _eventAggregator.GetEvent<UpdateAuthentificationState>().Publish(true);
+            }
+        }
+
+        static private void Select(string response)
+        {
+            //if (response.Split("\n")[response.Split("\n").Length - 1].Contains("OK"))
+            if (response.Contains("OK"))
+            {
+                _eventAggregator.GetEvent<UpdateSelectedState>().Publish(true);
             }
         }
 

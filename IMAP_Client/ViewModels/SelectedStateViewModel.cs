@@ -1,4 +1,6 @@
-﻿using Prism.Commands;
+﻿using IMAP_Client.Services;
+using Prism.Commands;
+using Prism.Events;
 using Prism.Mvvm;
 using System;
 using System.Collections.Generic;
@@ -77,6 +79,8 @@ namespace IMAP_Client.ViewModels
             get { return _commandArguments; }
             set { SetProperty(ref _commandArguments, value); }
         }
+
+        private IEventAggregator _eventAggregator;
         #endregion
         #region Delegate Commands
         public DelegateCommand Check { get; set; }
@@ -88,8 +92,9 @@ namespace IMAP_Client.ViewModels
         public DelegateCommand Copy { get; set; }
         public DelegateCommand UID { get; set; }
         #endregion
-        public SelectedStateViewModel()
+        public SelectedStateViewModel(IEventAggregator eventAggregator)
         {
+            _eventAggregator = eventAggregator;
             Check = new DelegateCommand(ExecuteCheck);
             Close = new DelegateCommand(ExecuteClose);
             Expunge = new DelegateCommand(ExecuteExpunge);
@@ -104,8 +109,8 @@ namespace IMAP_Client.ViewModels
         private async void ExecuteUID()
         {
             try
-            {
-                //TODO
+            {      
+                await MainWindowViewModel._connection.SendMessage($"{TaggingService.Tag} UID {CommandName} {CommandArguments} ", _eventAggregator);
             }
             catch (Exception e)
             {
@@ -118,7 +123,7 @@ namespace IMAP_Client.ViewModels
         {
             try
             {
-                //TODO
+                await MainWindowViewModel._connection.SendMessage($"{TaggingService.Tag} COPY {CopySequenceSet} {MailBox} ", _eventAggregator);
             }
             catch (Exception e)
             {
@@ -130,7 +135,7 @@ namespace IMAP_Client.ViewModels
         {
             try
             {
-                //TODO
+                await MainWindowViewModel._connection.SendMessage($"{TaggingService.Tag} STORE {StoreSequenceSet} {StoreMessageDataItemName} ", _eventAggregator);
             }
             catch (Exception e)
             {
@@ -142,7 +147,7 @@ namespace IMAP_Client.ViewModels
         {
             try
             {
-                //TODO
+                await MainWindowViewModel._connection.SendMessage($"{TaggingService.Tag} FETCH {FetchSequenceSet} {FetchMessageDataItem} ", _eventAggregator);
             }
             catch (Exception e)
             {
@@ -154,7 +159,7 @@ namespace IMAP_Client.ViewModels
         {
             try
             {
-                //TODO
+                await MainWindowViewModel._connection.SendMessage($"{TaggingService.Tag} SEARCH {SearchBox}  ", _eventAggregator);
             }
             catch (Exception e)
             {
@@ -165,8 +170,8 @@ namespace IMAP_Client.ViewModels
         private async void ExecuteExpunge()
         {
             try
-            {
-                //TODO
+            {          
+                await MainWindowViewModel._connection.SendMessage($"{TaggingService.Tag} EXPUNGE  ", _eventAggregator);
             }
             catch (Exception e)
             {
@@ -177,8 +182,8 @@ namespace IMAP_Client.ViewModels
         private async void ExecuteClose()
         {
             try
-            {
-                //TODO
+            {               
+               await MainWindowViewModel._connection.SendMessage($"{TaggingService.Tag} CLOSE ", _eventAggregator);
             }
             catch (Exception e)
             {
@@ -190,7 +195,7 @@ namespace IMAP_Client.ViewModels
         {
             try
             {
-                //TODO
+                await MainWindowViewModel._connection.SendMessage($"{TaggingService.Tag} CHECK ", _eventAggregator);
             }
             catch (Exception e)
             {
