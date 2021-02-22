@@ -39,38 +39,45 @@ namespace IMAP_Server.CommandModels
                     }
                 }
                 Mailbox mailbox;
+                mailbox = new Mailbox();
+                mailbox.mailboxName = command[2];
                 if (command[2].Contains('/'))
                 {
                     string[] hierarchy = command[2].Split('/');
-                    for (int i = 0; i < hierarchy.Length; i++)
-                    {
-                        if (Server.mailBoxes.TryGetValue(hierarchy[i], out var parentMailbox))
-                        {
-                            mailbox = new Mailbox(parentMailbox);
-                            mailbox.mailboxName = parentMailbox.mailboxName + "/" + hierarchy[i + 1];
-                            Server.mailBoxes.Add(mailbox.mailboxName, mailbox);
-                            connectionState.SendToStream($"OK CREATE Completed: {mailbox.mailboxName} Successfully created");
-                            return;
-                        }
-                        else
-                        {
-                            mailbox = new Mailbox(new Mailbox() { mailboxName = hierarchy[i] });
-                            mailbox.mailboxName = parentMailbox.mailboxName + "/" + hierarchy[i + 1];
-                            Server.mailBoxes.Add(mailbox.mailboxName, mailbox);
-                            connectionState.SendToStream($"OK CREATE Completed: {mailbox.mailboxName} Successfully created");
-                            return;
-                        }
-                    }
+                    //for (int i = 0; i < hierarchy.Length; i++)
+                    //{
+                    //    if (Server.mailBoxes.TryGetValue(hierarchy[i], out var parentMailbox))
+                    //    {
+                    //        mailbox = new Mailbox(parentMailbox);
+                    //        mailbox.mailboxName = parentMailbox.mailboxName + "/" + hierarchy[i + 1];
+                    //        Server.mailBoxes.Add(mailbox.mailboxName, mailbox);
+                    //        connectionState.SendToStream($"OK CREATE Completed: {mailbox.mailboxName} Successfully created");
+                    //        return;
+                    //    }
+                    //    else
+                    //    {
+                    //        mailbox = new Mailbox(new Mailbox() { mailboxName = hierarchy[i] });
+                    //        mailbox.mailboxName = parentMailbox.mailboxName + "/" + hierarchy[i + 1];
+                    //        Server.mailBoxes.Add(mailbox.mailboxName, mailbox);
+                    //        connectionState.SendToStream($"OK CREATE Completed: {mailbox.mailboxName} Successfully created");
+                    //        return;
+                    //    }
+                    //}
+                        Array.Resize(ref hierarchy, hierarchy.Length - 1);
+                        string father = string.Join('/', hierarchy);
+                        command[2] = father;
+                        Create(command, connectionState);
+                    
                 }
-                else
-                {
-                    mailbox = new Mailbox();
-                    mailbox.mailboxName = command[2];
+                //else
+                //{
+                    //mailbox = new Mailbox();
+                    //mailbox.mailboxName = command[2];
                     mailbox.mailboxSize = 50000;
                     mailbox.AllowedUsers.Add(connectionState.Username);
                     Server.mailBoxes.Add(mailbox.mailboxName, mailbox);
                     connectionState.SendToStream($"OK CREATE Completed: {mailbox.mailboxName} Successfully created");
-                }
+                //}
             }
             else
             {
