@@ -130,7 +130,7 @@ namespace IMAP_Server.CommandModels
                     }
                     else
                     {
-                        connectionState.SendToStream($"* OK [UNSEEN {mailbox.EmailMessages.Last().UniqueID}] is first unseen");
+                        connectionState.SendToStream($"* OK [UNSEEN {mailbox.EmailMessages.Last().MessageId}] is first unseen");
                     }
                     connectionState.SendToStream($"* OK {mailbox.uniqueIDValidityVal} UIDs valid");
                     connectionState.SendToStream($"* OK {mailbox.nextUniqueIDVal} Predicted next UID");
@@ -220,7 +220,7 @@ namespace IMAP_Server.CommandModels
                     }
                     else
                     {
-                        connectionState.SendToStream($"* OK [UNSEEN {mailbox.EmailMessages.Last().UniqueID}] is first unseen");
+                        connectionState.SendToStream($"* OK [UNSEEN {mailbox.EmailMessages.Last().MessageId}] is first unseen");
                     }
                     connectionState.SendToStream($"* OK {mailbox.uniqueIDValidityVal} UIDs valid");
                     connectionState.SendToStream($"* OK {mailbox.nextUniqueIDVal} Predicted next UID");

@@ -49,7 +49,7 @@ namespace IMAP_Server.CommandModels
                         {
                             if (deleted)
                             {
-                                int deletedUID = em.UniqueID;
+                                var deletedUID = em.MessageId;
                                 connectionState.SelectedMailBox.EmailMessages.Remove(em);
                             }
                         }
@@ -112,7 +112,7 @@ namespace IMAP_Server.CommandModels
                     {
                         if (deleted)
                         {
-                            int deletedUID = em.UniqueID;
+                            var deletedUID = em.MessageId;
                             connectionState.SelectedMailBox.EmailMessages.Remove(em);
                             connectionState.SendToStream($"{command[0]} {deletedUID} EXPUNGE");
                         }

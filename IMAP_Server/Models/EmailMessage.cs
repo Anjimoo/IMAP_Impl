@@ -1,20 +1,15 @@
-﻿using System;
+﻿using MimeKit;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace IMAP_Server.Models
 {
-    public class EmailMessage
+    public class EmailMessage : MimeMessage
     {
-        public int MsgNum { get; set; }
-        public int UniqueID { get; set; }
-        public DateTime Date { get; set; }
-        public string From { get; set; }
-        public string To { get; set; }
-        public string Subject { get; set; }
-        public string Content { get; set; }
-        public string BCC { get; set; }
-        public string CC { get; set; }
+        public int MsgNum { get; set; }    
+        public string J_BCC { get; set; }
+        public string J_BCC_ADDRESS { get; set; }
         public Dictionary<string, bool> Flags {get;set;}  = new Dictionary<string, bool>();
 
         public EmailMessage()
