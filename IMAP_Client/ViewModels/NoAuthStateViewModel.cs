@@ -3,6 +3,7 @@ using IMAP_Client.UpdateEvents;
 using Prism.Commands;
 using Prism.Events;
 using Prism.Mvvm;
+using Prism.Regions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,7 +16,8 @@ namespace IMAP_Client.ViewModels
     public class NoAuthStateViewModel : BindableBase
     {
         private IEventAggregator _eventAggregator;
-
+        private IRegionManager _regionManager;
+        #region Properties
         private string _authMechName;
         public string AuthMechName
         {
@@ -34,16 +36,34 @@ namespace IMAP_Client.ViewModels
             get { return _password; }
             set { SetProperty(ref _password, value); }
         }
+        private bool canExecute;
+        public bool CanExecute
+        {
+            get { return canExecute; }
+            set { SetProperty(ref canExecute, value); }
+        }
+        #endregion
         public DelegateCommand StartTLS { get; set; }
         public DelegateCommand Authenticate { get; set; }
         public DelegateCommand Login { get; set; }
 
-        public NoAuthStateViewModel(IEventAggregator eventAggregator)
+        public NoAuthStateViewModel(IEventAggregator eventAggregator, IRegionManager regionManager)
         {
             _eventAggregator = eventAggregator;
-            StartTLS = new DelegateCommand(ExecuteStartTLS);
-            Authenticate = new DelegateCommand(ExecuteAuthenticate);
-            Login = new DelegateCommand(ExecuteLogin);
+            _regionManager = regionManager;
+            StartTLS = new DelegateCommand(ExecuteStartTLS).
+                ObservesCanExecute(() => CanExecute);
+            Authenticate = new DelegateCommand(ExecuteAuthenticate).
+                ObservesCanExecute(() => CanExecute);
+            Login = new DelegateCommand(ExecuteLogin).
+                ObservesCanExecute(() => CanExecute);
+            _eventAggregator.GetEvent<UpdateAuthentificationState>().Subscribe(UpdateCanExecute);
+            CanExecute = true;
+        }
+
+        private void UpdateCanExecute(bool obj)
+        {
+            CanExecute = !obj;
         }
 
         private async void ExecuteLogin()

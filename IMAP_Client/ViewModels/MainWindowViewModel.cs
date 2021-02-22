@@ -7,6 +7,8 @@ using Prism.Events;
 using Prism.Mvvm;
 using Prism.Regions;
 using System;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Navigation;
 using Unity;
@@ -49,7 +51,10 @@ namespace IMAP_Client.ViewModels
         public bool Connected
         {
             get { return connected; }
-            set { SetProperty(ref connected, value); }
+            set 
+            { 
+                SetProperty(ref connected, value);  
+            }
         }
         private bool authentificated;
         public bool Authentificated
@@ -108,11 +113,11 @@ namespace IMAP_Client.ViewModels
             IPAddress = "127.0.0.1";
         }
 
-        #region UpdateEvents
+        #region UpdateEvents    
         private void UpdateConnection(bool isConnected)
         {
             Connected = isConnected;
-            NotConnected = !isConnected;
+            NotConnected = !isConnected; 
         }
         private void UpdateSelection(bool state)
         {
@@ -143,6 +148,11 @@ namespace IMAP_Client.ViewModels
                 _connection.outgoingTag = "*";
                 _connection.outgoingCommand = "CONNECT";
                 _connection.GetMessages(_eventAggregator);
+                await Task.Delay(2000); //waiting 2 seconds because i cant request navigate not from main thread
+                if (Connected)
+                {
+                    Navigate("NoAuthStateView");
+                }
             }
             catch(Exception e)
             {
