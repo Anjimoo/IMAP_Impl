@@ -71,7 +71,12 @@ namespace IMAP_Client.ViewModels
             try
             {
                 string tag = TaggingService.Tag;
-                await MainWindowViewModel._connection.SendMessage($"{tag} LOGIN {UserName} {Password}", _eventAggregator);     
+                await MainWindowViewModel._connection.SendMessage($"{tag} LOGIN {UserName} {Password}", _eventAggregator);
+                await Task.Delay(2000);
+                if (!CanExecute)
+                {
+                    _regionManager.RequestNavigate("ContentRegion", "AuthStateView");
+                }
             }
             catch(Exception e)
             {

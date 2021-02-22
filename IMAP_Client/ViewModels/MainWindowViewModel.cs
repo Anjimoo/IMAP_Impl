@@ -90,7 +90,7 @@ namespace IMAP_Client.ViewModels
         {
             _regionManager = regionManager;
             _eventAggregator = eventAggregator;
-            SelectedMailBox = true;
+           // SelectedMailBox = true;
             NotConnected = true;
             NavigateNoAuthState = new DelegateCommand<string>(Navigate)
                 .ObservesCanExecute(() => Connected);
@@ -98,9 +98,12 @@ namespace IMAP_Client.ViewModels
                 .ObservesCanExecute(() => Authentificated);
             NavigateToSelecState = new DelegateCommand<string>(ExecuteToSelectState)
                 .ObservesCanExecute(() => SelectedMailBox);
-            Capability = new DelegateCommand(ExecuteCapability);
-            Noop = new DelegateCommand(ExecuteNoop);
-            Logout = new DelegateCommand(ExecuteLogout);
+            Capability = new DelegateCommand(ExecuteCapability)
+                .ObservesCanExecute(() => Connected);
+            Noop = new DelegateCommand(ExecuteNoop)
+                .ObservesCanExecute(() => Connected);
+            Logout = new DelegateCommand(ExecuteLogout)
+                .ObservesCanExecute(() => Authentificated);
             Disconnect = new DelegateCommand(ExecuteDisconnect)
                 .ObservesCanExecute(() => Connected);
             Connect = new DelegateCommand(ExecuteConnect)
@@ -162,22 +165,30 @@ namespace IMAP_Client.ViewModels
         }
         private void ExecuteDisconnect()
         {
-            _connection.Disconnect();
-            UpdateConsole("Disconnected from server");
-            _connection = null;
-            Connected = false;
-            Authentificated = false;
-            SelectedMailBox = false;
-            NotConnected = true;
+            if (Connected)
+            {
+                _connection.Disconnect();
+                UpdateConsole("Disconnected from server");
+                _connection = null;
+                Connected = false;
+                Authentificated = false;
+                SelectedMailBox = false;
+                NotConnected = true;
+                _regionManager.Regions["ContentRegion"].RemoveAll();
+            }      
         }
 
         private async void ExecuteLogout()
         {
             try
             {
-                await _connection.SendMessage($"{TaggingService.Tag} LOGOUT", _eventAggregator);
-                Authentificated = false;
-                SelectedMailBox = false;
+                if (Authentificated)
+                {
+                    await _connection.SendMessage($"{TaggingService.Tag} LOGOUT", _eventAggregator);
+                    Authentificated = false;
+                    SelectedMailBox = false;
+                    _regionManager.Regions["ContentRegion"].RemoveAll();
+                }                        
             }
             catch(Exception e)
             {
@@ -187,7 +198,7 @@ namespace IMAP_Client.ViewModels
         }
 
         private async void ExecuteNoop()
-        {
+        {  
             string tag = TaggingService.Tag;
             await _connection.SendMessage($"{tag} NOOP", _eventAggregator);
         }
