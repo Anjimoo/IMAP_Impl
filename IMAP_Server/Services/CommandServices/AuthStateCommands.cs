@@ -280,7 +280,7 @@ namespace IMAP_Server.CommandModels
 
         public static void Unsubscribe(string[] command, Connection connectionState)
         {
-            if (command.Length == SUBSCRIBE_SPLIT)
+            if (command.Length == UNSUBSCRIBE_SPLIT)
             {
                 foreach (Mailbox mb in Server.subscriberMailboxes)
                 {
