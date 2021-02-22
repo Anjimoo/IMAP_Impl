@@ -109,7 +109,7 @@ namespace IMAP_Server
                 case "COPY":
                     SelectStateCommands.Copy(tempMessage,_connections[currentConnection]);
                     break;
-                case "Expunge":
+                case "EXPUNGE":
                     SelectStateCommands.Expunge(tempMessage,_connections[currentConnection]);
                     break;
                 case "FETCH":

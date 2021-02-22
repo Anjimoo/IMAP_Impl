@@ -49,7 +49,7 @@ namespace IMAP_Server.CommandModels
                             if (deleted)
                             {
                                 var deletedUID = em.MessageId;
-                                connectionState.SelectedMailBox.EmailMessages.Remove(em);
+                                connectionState.SelectedMailBox.EmailMessages.Remove(em);                                
                             }
                         }
                     }
@@ -106,18 +106,32 @@ namespace IMAP_Server.CommandModels
 
                 if (connectionState.SelectedMailBox.EmailMessages.Count != 0)
                 {
-
+                    List<EmailMessage> emailsToDelete = new List<EmailMessage>();
+                    //check which emails to delete
                     foreach (EmailMessage em in connectionState.SelectedMailBox.EmailMessages)
                     {
+                        em.Flags[Flags.DELETED] = true;
                         if (em.Flags.TryGetValue(@"\Deleted", out var deleted))
                         {
                             if (deleted)
-                            {
-                                var deletedUID = em.MessageId;
-                                connectionState.SelectedMailBox.EmailMessages.Remove(em);
-                                connectionState.SendToStream($"{command[0]} {deletedUID} EXPUNGE");
+                            {                               
+                                emailsToDelete.Add(em);
                             }
                         }
+                    }
+                    //deleting emails
+                    foreach (var email in emailsToDelete)
+                    {
+                        connectionState.SelectedMailBox.EmailMessages.Remove(email);
+                        foreach(var mail in connectionState.SelectedMailBox.EmailMessages)
+                        {
+                            //decrease message number for every email that have higher message number then deleted message's number
+                            if (mail.MsgNum > email.MsgNum)
+                            {
+                                mail.MsgNum--;
+                            }
+                        }
+                        connectionState.SendToStream($"{command[0]} {email.MessageId} EXPUNGE");
                     }
                 }
                 connectionState.SendToStream($"{command[0]} OK EXPUNGE completed");
