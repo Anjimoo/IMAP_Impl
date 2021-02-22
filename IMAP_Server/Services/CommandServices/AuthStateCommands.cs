@@ -206,17 +206,84 @@ namespace IMAP_Server.CommandModels
         {
             if (command.Length == RENAME_SPLIT && connectionState.Authentificated)
             {
+                if (Server.mailBoxes.TryGetValue(command[3], out _))
+                {
+                    connectionState.SendToStream(command[0] + "NO - Folder already exists");
+                    return;
+                }
                 if (Server.mailBoxes.TryGetValue(command[2], out var mailbox))
                 {
-                    mailbox.mailboxName = command[3];
-                    Server.mailBoxes.Remove(command[2]);
-                    Server.mailBoxes.Add(command[3], mailbox);
-                    connectionState.SendToStream(command[0] + "OK - rename completed");
+                    if(RenameRecursive(command[2], command[3], connectionState))
+                    {
+                        connectionState.SendToStream(command[0] + "OK - rename completed");
+                    }
+                    else
+                    {
+                        connectionState.SendToStream(command[0] + "NO - Renaming Failed");
+                    }
+                    //    mailbox.Path = command[3];
+                    //    if(!command[3].Contains('/'))
+                    //    {
+                    //        mailbox.mailboxName = command[3];
+                    //    }
+                    //    Server.mailBoxes.Remove(command[2]);
+                    //    Server.mailBoxes.Add(command[3], mailbox);
+                    //    connectionState.SendToStream(command[0] + "OK - rename completed");
                 }
+                else
+                {
+                    connectionState.SendToStream(command[0] + "NO - Folder already exists");
+                }
+
             }
             else
             {
                 connectionState.SendToStream($"{command[0]} BAD - command unknown or arguments invalid");
+            }
+        }
+        private static bool RenameRecursive(string oldName, string newName, Connection connectionState)
+        {
+            List<string> toRename = new List<string>();
+            List<string> changedNames = new List<string>();
+            try
+            {
+                foreach (KeyValuePair<string, Mailbox> mb in Server.mailBoxes)
+                {
+                    if (mb.Key.StartsWith(oldName))
+                    {
+                        toRename.Add(mb.Key);
+                    }
+                }
+                foreach (var name in toRename)
+                {
+                    changedNames.Add(name.Replace(oldName, newName));
+                }
+                for (int i = 0; i < changedNames.Count; i++)
+                {
+                    if (Server.mailBoxes.TryGetValue(toRename[i], out var mailbox))
+                    {
+                        Server.mailBoxes.Remove(oldName);
+                        mailbox.Path = changedNames[i];
+                        if (changedNames[i].Contains('/'))
+                        {
+                            mailbox.mailboxName = changedNames[i].Split('/')[changedNames[i].Split().Length - 1];
+                            string[] newNameSplitted = newName.Split('/');
+                            Array.Resize(ref newNameSplitted, newNameSplitted.Length - 1);
+
+                            CreateRecursive(string.Join('/', newNameSplitted), connectionState);
+                        }
+                        else
+                        {
+                            mailbox.mailboxName = changedNames[i];
+                        }
+                        Server.mailBoxes.Add(changedNames[i], mailbox);
+                    }
+                }
+                return true;
+            }
+            catch
+            {
+                return false;
             }
         }
 
@@ -373,5 +440,7 @@ namespace IMAP_Server.CommandModels
 
             return true;
         }
+
+        
     }
 }
