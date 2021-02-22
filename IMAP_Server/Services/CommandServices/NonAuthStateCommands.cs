@@ -13,8 +13,8 @@ namespace IMAP_Server.CommandModels
     public static class NonAuthStateCommands
     {
         private const int LOGIN_SPLIT = 4;
-        private const int AUTHENTICATE_SPLIT = 3;
-        private const int STARTTLS_SPLIT = 3;
+        private const int AUTHENTICATE_SPLIT = 2;
+        private const int STARTTLS_SPLIT = 2;
 
 
         public static void Authenticate(string[] command, Connection connectionState)
@@ -24,14 +24,14 @@ namespace IMAP_Server.CommandModels
             Log.Logger.Information($"{cmd} request by {connectionState.Ip}/{connectionState.Username}");
             if (!connectionState.Authentificated) //Only non-authenticated may use these commands.
             {
-                if (command.Length > AUTHENTICATE_SPLIT)
+                if (command.Length == AUTHENTICATE_SPLIT)
                 {
                     string response = $"{tag} NO - AUTHENTICATE is not available on this server";
                     connectionState.SendToStream(response);
                 }
                 else
                 {
-                    connectionState.SendToStream("{tag} BAD - command unknown or arguments invalid");
+                    connectionState.SendToStream($"{tag} BAD - command unknown or arguments invalid");
                 }
             }
             else
@@ -94,7 +94,7 @@ namespace IMAP_Server.CommandModels
             Log.Logger.Information($"{cmd} request by {connectionState.Ip}/{connectionState.Username}");
             if (!connectionState.Authentificated) //Only non-authenticated may use these commands.
             {
-                if (command.Length > STARTTLS_SPLIT)
+                if (command.Length == STARTTLS_SPLIT)
                 {
                     string response = $"{tag} NO - STARTTLS is not available on this server";
                     connectionState.SendToStream(response);

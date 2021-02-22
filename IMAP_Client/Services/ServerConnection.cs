@@ -93,6 +93,8 @@ namespace IMAP_Client.Services
                     catch (Exception ex)
                     {
                         System.Windows.MessageBox.Show("You are now disconnected from the server.");
+                        Disconnect();
+                        ResponseHandler.Bye();
                         //System.Windows.MessageBox.Show(ex.Message);
                         break;
                     }

@@ -50,32 +50,40 @@ namespace IMAP_Client.ViewModels
         {
             try
             {
-                string response;
                 string tag = TaggingService.Tag;
-                //response = 
-                await MainWindowViewModel._connection.SendMessage($"{tag} LOGIN {UserName} {Password}", _eventAggregator);
-                //_eventAggregator.GetEvent<UpdateUserConsole>().Publish(response);
-                //if (response.Split()[1] == "OK")
-                //{
-                //    _eventAggregator.GetEvent<UpdateAuthentificationState>().Publish(true);
-                //}
+                await MainWindowViewModel._connection.SendMessage($"{tag} LOGIN {UserName} {Password}", _eventAggregator);     
             }
             catch(Exception e)
             {
                 MessageBox.Show(e.Message);
             }
             
-            //TODO
         }
 
-        private void ExecuteAuthenticate()
+        private async void ExecuteAuthenticate()
         {
-            //TODO
+            try
+            {
+                string tag = TaggingService.Tag;
+                await MainWindowViewModel._connection.SendMessage($"{tag} AUTHENTICATE", _eventAggregator);
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show(e.Message);
+            }
         }
 
-        private void ExecuteStartTLS()
+        private async void ExecuteStartTLS()
         {
-            //TODO
+            try
+            {
+                string tag = TaggingService.Tag;
+                await MainWindowViewModel._connection.SendMessage($"{tag} STARTTLS", _eventAggregator);
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show(e.Message);
+            }
         }
     }
 }

@@ -140,13 +140,6 @@ namespace IMAP_Client.ViewModels
                 }
 
                 _connection = new ServerConnection(IPAddress, Port);
-                //var response = 
-                //await _connection.SendMessage($"* CONNECT", _eventAggregator);
-                //UpdateConsole(response);
-                //if (response.Split()[1] == "OK")
-                //{
-                //Connected = true;
-                //}
                 _connection.outgoingTag = "*";
                 _connection.outgoingCommand = "CONNECT";
                 _connection.GetMessages(_eventAggregator);
@@ -170,13 +163,9 @@ namespace IMAP_Client.ViewModels
 
         private async void ExecuteLogout()
         {
-            //TODO
-            //check connection to server
             try
             {
-                //var response = 
                 await _connection.SendMessage($"{TaggingService.Tag} LOGOUT", _eventAggregator);
-                //UpdateConsole(await _connection.SendMessage($"{TaggingService.Tag} LOGOUT"));
                 Authentificated = false;
                 SelectedMailBox = false;
             }
@@ -198,9 +187,6 @@ namespace IMAP_Client.ViewModels
             try
             {
                 string tag = TaggingService.Tag;
-                //UpdateConsole($"{tag} CAPABILITY");
-                //UpdateConsole(await _connection.SendMessage($"{tag} CAPABILITY", _eventAggregator));
-                //var response = 
                 await _connection.SendMessage($"{tag} CAPABILITY", _eventAggregator);
 
             }
