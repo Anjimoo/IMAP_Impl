@@ -31,7 +31,7 @@ namespace IMAP_Client.Services
             {
                 message += Environment.NewLine;
                 Byte[] data = System.Text.Encoding.UTF8.GetBytes(message);
-
+                await Task.Delay(1000);
                 // Send the message to the connected TcpServer. 
                 await networkStream.WriteAsync(data, 0, data.Length);
 

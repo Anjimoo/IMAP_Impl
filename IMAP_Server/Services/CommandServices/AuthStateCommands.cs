@@ -189,7 +189,7 @@ namespace IMAP_Server.CommandModels
             }
         }
 
-        public static void Select(string[] command, Connection connectionState)
+        public async static void Select(string[] command, Connection connectionState)
         {
             if (command.Length == SELECT_SPLIT) //check if command is legal
             {
@@ -236,6 +236,8 @@ namespace IMAP_Server.CommandModels
                         mailboxFlagList += " " + flag;
                     }
                     connectionState.SendToStream($"* FLAGS {mailboxFlagList}");
+                    await Task.Delay(500);
+                    connectionState.SendToStream($"{command[0]} OK [READ-WRITE] SELECT completed");
                 }
                 else
                 {

@@ -98,7 +98,8 @@ namespace IMAP.Shared
             try
             {
                 Byte[] reply = System.Text.Encoding.UTF8.GetBytes(response);
-                Stream.WriteAsync(reply, 0, reply.Length);
+                var ignored = Stream.WriteAsync(reply, 0, reply.Length);
+                
             }
             catch (Exception ex)
             {
