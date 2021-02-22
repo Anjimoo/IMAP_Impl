@@ -1,5 +1,4 @@
 ﻿using IMAP.Shared;
-using IMAP.Shared.Models;
 using IMAP_Server.Services;
 using System;
 using System.Collections.Generic;
@@ -7,6 +6,7 @@ using System.Linq;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
+using IMAP_Server.Models;
 
 namespace IMAP_Server.CommandModels
 {

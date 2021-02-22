@@ -19,6 +19,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="Emails.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Users.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

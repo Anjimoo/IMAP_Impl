@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace IMAP.Shared.Models
+namespace IMAP_Server.Models
 {
     /// <summary>
     /// Represents a mailbox folder.

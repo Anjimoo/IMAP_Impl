@@ -1,6 +1,6 @@
 ﻿using IMAP.Shared;
-using IMAP.Shared.Models;
 using IMAP.Shared.Services;
+using IMAP_Server.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;

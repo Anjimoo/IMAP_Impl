@@ -5,6 +5,16 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Models\**" />
+    <EmbeddedResource Remove="Models\**" />
+    <None Remove="Models\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="Connection.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="MimeKit" Version="2.10.1" />
   </ItemGroup>
 

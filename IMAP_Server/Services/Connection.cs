@@ -1,4 +1,4 @@
-﻿using IMAP.Shared.Models;
+﻿using IMAP_Server.Models;
 using System;
 using System.Collections.Generic;
 using System.Net.Sockets;
@@ -7,7 +7,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Timers;
 
-namespace IMAP.Shared
+namespace IMAP_Server
 {
     /// <summary>
     /// An object representing a connection to a client. When a connection ends (the connection recognizes it by catching

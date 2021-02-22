@@ -25,5 +25,12 @@ namespace IMAP_Server.Services
             users =JsonSerializer.Deserialize< Dictionary<string, User>> (jsonString);
             return users;
         }
+
+        public static List<EmailMessage> ParseEmails()
+        {
+            string jsonString = File.ReadAllText("Emails.json");
+            var emails = JsonSerializer.Deserialize<List<EmailMessage>>(jsonString);
+            return emails;
+        }
     }
 }

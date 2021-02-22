@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using IMAP.Shared;
-using IMAP.Shared.Models;
+using IMAP_Server.Models;
 
 namespace IMAP_Server.Services
 {

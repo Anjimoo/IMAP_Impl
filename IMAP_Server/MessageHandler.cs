@@ -4,7 +4,6 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
 using IMAP.Shared;
-using IMAP.Shared.Models;
 using IMAP_Server.CommandModels;
 
 namespace IMAP_Server

@@ -1,5 +1,4 @@
 ﻿using IMAP.Shared;
-using IMAP.Shared.Models;
 using IMAP_Server.Models;
 using Serilog;
 using System;
