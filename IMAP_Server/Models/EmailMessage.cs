@@ -7,9 +7,7 @@ namespace IMAP_Server.Models
 {
     public class EmailMessage : MimeMessage
     {
-        public int MsgNum { get; set; }    
-        public string J_BCC { get; set; }
-        public string J_BCC_ADDRESS { get; set; }
+        public int MsgNum { get; set; }       
         public Dictionary<string, bool> Flags {get;set;}  = new Dictionary<string, bool>();
 
         public EmailMessage()

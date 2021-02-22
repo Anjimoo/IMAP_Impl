@@ -23,7 +23,7 @@ namespace IMAP_Server.Models
         public Mailbox()
         {
             AllowedUsers = new List<string>();
-            EmailMessages = JsonParser.ParseEmails();
+            EmailMessages = JsonParser.CreateEmails();
             supportedFlags = new List<string>();
             supportedFlags.AddRange(PermanentFlags.PermaFlags);
             supportedFlags.Add(Flags.DRAFT);
