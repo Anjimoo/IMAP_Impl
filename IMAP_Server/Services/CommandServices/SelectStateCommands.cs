@@ -84,10 +84,12 @@ namespace IMAP_Server.CommandModels
                             {
                                 if (number == email.MsgNum)
                                 {
-                                    Server.mailBoxes[command[3]].EmailMessages.Add(email);
+                                    int count = Server.mailBoxes[command[3]].EmailMessages.Count();
+                                    Server.mailBoxes[command[3]].EmailMessages.Add(email.GetCopy(++count));      
                                 }
                             }
                         }
+                        connectionState.SendToStream($"{command[0]} OK - UID command completed");
                     }
                 }
             }
@@ -153,7 +155,7 @@ namespace IMAP_Server.CommandModels
                 string response = "";
                 foreach (var message in messages)
                 {
-                    response += $"{message}";
+                    response += $"{message} ";
                 }
 
                 connectionState.SendToStream($"* SEARCH {response}");

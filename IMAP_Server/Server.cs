@@ -138,6 +138,7 @@ namespace IMAP_Server
         {
             mailBoxes = new Dictionary<string, Mailbox>();
             mailBoxes.Add("Jimoo@gmail.com", new Mailbox() { mailboxName = "Jimoo@gmail.com" });
+            mailBoxes.Add("hod@gmail.com", new Mailbox() { mailboxName = "hod@gmail.com" });
         }
         private void GenerateUsers()
         {

@@ -1,4 +1,5 @@
 ﻿using IMAP_Server.Models;
+using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Net.Sockets;
@@ -97,6 +98,7 @@ namespace IMAP_Server
             response += Environment.NewLine;
             try
             {
+                Log.Logger.Information($"SENT RESPONSE : {response}");
                 Byte[] reply = System.Text.Encoding.UTF8.GetBytes(response);
                 var ignored = Stream.WriteAsync(reply, 0, reply.Length);
                 
@@ -121,6 +123,7 @@ namespace IMAP_Server
                 i = await Stream.ReadAsync(bytes, 0, bytes.Length);
                 string hex = BitConverter.ToString(bytes);
                 data = Encoding.UTF8.GetString(bytes, 0, i);
+                Log.Logger.Information($"RECEIVED : {data}");
             }
             catch (Exception ex)
             {

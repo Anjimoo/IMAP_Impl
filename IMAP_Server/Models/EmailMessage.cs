@@ -34,5 +34,34 @@ namespace IMAP_Server.Models
         {
             Flags[flagName] = false;
         }
+
+        public EmailMessage GetCopy(int messageNumber)
+        {
+            var newEmail = new EmailMessage();
+            newEmail.MsgNum = messageNumber;
+            foreach (var bcc in Bcc)
+            {
+                newEmail.Bcc.Add(bcc.Clone());
+            }
+            foreach (var cc in Cc)
+            {
+                newEmail.Cc.Add(cc.Clone());
+            }
+            foreach (var from in From)
+            {
+                newEmail.From.Add(from.Clone());
+            }
+            foreach (var to in To)
+            {
+                newEmail.To.Add(to.Clone());
+            }
+            newEmail.Subject = Subject;
+            newEmail.Body = new TextPart()
+            {
+                Text = TextBody
+            };
+
+            return newEmail;
+        }
     }
 }

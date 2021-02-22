@@ -33,7 +33,7 @@ namespace IMAP_Server.Services
             List<EmailMessage> emailMessages = new List<EmailMessage>();
 
             var emails = JsonSerializer.Deserialize<List<EmailModel>>(File.ReadAllText("Emails.json"));
-            
+            int count = 1;
             foreach(var email in emails)
             {
                 var message = new EmailMessage();
@@ -46,6 +46,7 @@ namespace IMAP_Server.Services
                 {
                     Text = email.TextBody
                 };
+                message.MsgNum = count++;
                 emailMessages.Add(message);     
             }
             return emailMessages;

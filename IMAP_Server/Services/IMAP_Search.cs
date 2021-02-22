@@ -60,10 +60,9 @@ namespace IMAP_Server.Services
             switch (searchCriterias[0])
             {
                 case ALL:
-                    int count = 1;
                     foreach (var email in _connection.SelectedMailBox.EmailMessages)
                     {
-                        messages.Add(count++);
+                        messages.Add(email.MsgNum);
                     }
                     break;
                 case ANSWERED:
@@ -105,10 +104,9 @@ namespace IMAP_Server.Services
                 case NOT:
                     var messagesWithSearchKey = Search(searchCriterias.Skip(1).ToArray(), connection); //check messages with search key
                     List<int> emailsNumbers = new List<int>();
-                    int i = 1;
                     foreach(var email in _connection.SelectedMailBox.EmailMessages)
                     {
-                        emailsNumbers.Add(i++);
+                        emailsNumbers.Add(email.MsgNum);
                     }
                     var nonIntersect = emailsNumbers.Except(messagesWithSearchKey); //check messages that doest not have search key
                     break;
@@ -184,12 +182,11 @@ namespace IMAP_Server.Services
         private static List<int> CheckFlaggedMessage(string flag, bool flagged)
         {
             List<int> messages = new List<int>();
-            int count = 1;
             foreach (var email in _connection.SelectedMailBox.EmailMessages)
             {
                 if (email.Flags[flag] == flagged)
                 {
-                    messages.Add(count++);
+                    messages.Add(email.MsgNum);
                 }
                 
             }
@@ -206,17 +203,16 @@ namespace IMAP_Server.Services
         {
             List<int> messages = new List<int>();
             if (DateTime.TryParse(date, out DateTime parsedDate))
-            {
-                int count = 1;
+            {      
                 foreach (var email in _connection.SelectedMailBox.EmailMessages)
                 {
                     if (criteria == BEFORE && email.Date < parsedDate)
                     {
-                        messages.Add(count++);
+                        messages.Add(email.MsgNum);
                     }
                     else if (criteria == SINCE && email.Date > parsedDate)
                     {
-                        messages.Add(count++);
+                        messages.Add(email.MsgNum);
                     }
                 }
             }
@@ -237,16 +233,14 @@ namespace IMAP_Server.Services
             List<int> messages = new List<int>();
             foreach (var email in _connection.SelectedMailBox.EmailMessages)
             {
-                
-                int count = 1;
                 var emailBytes = Encoding.UTF8.GetBytes(email.TextBody);
                 if (criteria == LARGER && emailBytes.Length > sizeInOctets)
                 {
-                    messages.Add(count++);
+                    messages.Add(email.MsgNum);
                 }
                 else if (criteria == SMALLER && emailBytes.Length < sizeInOctets)
                 {
-                    messages.Add(count++);
+                    messages.Add(email.MsgNum);
                 }
             }
             return messages;
@@ -260,7 +254,6 @@ namespace IMAP_Server.Services
         private static List<int> CheckInnerText(string criteria, string subStringToFind)
         {
             List<int> messages = new List<int>();
-            int count = 1;
             foreach (var email in _connection.SelectedMailBox.EmailMessages)
             {
                 if (criteria == TO)
@@ -269,17 +262,17 @@ namespace IMAP_Server.Services
                     {
                         if (to.Name.Contains(subStringToFind))
                         {
-                            messages.Add(count++);
+                            messages.Add(email.MsgNum);
                         }
                     }                
                 }
                 else if (criteria == TEXT && email.TextBody.Contains(subStringToFind))
                 {
-                    messages.Add(count++);
+                    messages.Add(email.MsgNum);
                 }
                 else if (criteria == SUBJECT && email.Subject.Contains(subStringToFind))
                 {
-                    messages.Add(count++);
+                    messages.Add(email.MsgNum);
                 }
                 //else if (criteria == BODY && (email.Body. .Contains(subStringToFind)))//need to add Header
                 //{
@@ -291,7 +284,7 @@ namespace IMAP_Server.Services
                     {
                         if (cc.Name.Contains(subStringToFind))
                         {
-                            messages.Add(count++);
+                            messages.Add(email.MsgNum);
                         }
                     }                
                 }
@@ -301,7 +294,7 @@ namespace IMAP_Server.Services
                     {
                         if (bcc.Name.Contains(subStringToFind))
                         {
-                            messages.Add(count++);
+                            messages.Add(email.MsgNum);
                         }
                     }
                 }
@@ -311,7 +304,7 @@ namespace IMAP_Server.Services
                     {
                         if (from.Name.Contains(subStringToFind))
                         {
-                            messages.Add(count++);
+                            messages.Add(email.MsgNum);
                         }
                     }                 
                 }
