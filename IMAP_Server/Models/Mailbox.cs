@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using IMAP_Server.Models;
+using IMAP_Server.Services;
 
 namespace IMAP_Server.Models
 {
@@ -22,7 +24,7 @@ namespace IMAP_Server.Models
         {
             Parent = null;
             AllowedUsers = new List<string>();
-            EmailMessages = new List<EmailMessage>();
+            EmailMessages = JsonParser.ParseEmails();
             supportedFlags = new List<string>();
             supportedFlags.AddRange(PermanentFlags.PermaFlags);
             supportedFlags.Add(Flags.DRAFT);
