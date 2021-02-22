@@ -34,7 +34,7 @@ namespace IMAP_Server.CommandModels
                 {
                     if (mb.Value.mailboxName == command[2])
                     {
-                        connectionState.SendToStream($"NO CREATE: Mailbox already exists in that name");
+                        connectionState.SendToStream(command[0] + $"NO CREATE: Mailbox already exists in that name");
                         return;
                     }
                 }
@@ -44,39 +44,20 @@ namespace IMAP_Server.CommandModels
                 if (command[2].Contains('/'))
                 {
                     string[] hierarchy = command[2].Split('/');
-                    //for (int i = 0; i < hierarchy.Length; i++)
-                    //{
-                    //    if (Server.mailBoxes.TryGetValue(hierarchy[i], out var parentMailbox))
-                    //    {
-                    //        mailbox = new Mailbox(parentMailbox);
-                    //        mailbox.mailboxName = parentMailbox.mailboxName + "/" + hierarchy[i + 1];
-                    //        Server.mailBoxes.Add(mailbox.mailboxName, mailbox);
-                    //        connectionState.SendToStream($"OK CREATE Completed: {mailbox.mailboxName} Successfully created");
-                    //        return;
-                    //    }
-                    //    else
-                    //    {
-                    //        mailbox = new Mailbox(new Mailbox() { mailboxName = hierarchy[i] });
-                    //        mailbox.mailboxName = parentMailbox.mailboxName + "/" + hierarchy[i + 1];
-                    //        Server.mailBoxes.Add(mailbox.mailboxName, mailbox);
-                    //        connectionState.SendToStream($"OK CREATE Completed: {mailbox.mailboxName} Successfully created");
-                    //        return;
-                    //    }
-                    //}
-                        Array.Resize(ref hierarchy, hierarchy.Length - 1);
-                        string father = string.Join('/', hierarchy);
-                        command[2] = father;
-                        Create(command, connectionState);
-                    
+                    Array.Resize(ref hierarchy, hierarchy.Length - 1);
+                    string father = string.Join('/', hierarchy);
+                    command[2] = father;
+                    Create(command, connectionState);
+
                 }
                 //else
                 //{
-                    //mailbox = new Mailbox();
-                    //mailbox.mailboxName = command[2];
-                    mailbox.mailboxSize = 50000;
-                    mailbox.AllowedUsers.Add(connectionState.Username);
-                    Server.mailBoxes.Add(mailbox.mailboxName, mailbox);
-                    connectionState.SendToStream($"OK CREATE Completed: {mailbox.mailboxName} Successfully created");
+                //mailbox = new Mailbox();
+                //mailbox.mailboxName = command[2];
+                mailbox.mailboxSize = 50000;
+                mailbox.AllowedUsers.Add(connectionState.Username);
+                Server.mailBoxes.Add(mailbox.mailboxName, mailbox);
+                connectionState.SendToStream(command[0] + $"OK CREATE Completed: {mailbox.mailboxName} Successfully created");
                 //}
             }
             else
@@ -96,12 +77,12 @@ namespace IMAP_Server.CommandModels
                         if (mb.Value.AllowedUsers.Contains(connectionState.Username))
                         {
                             Server.mailBoxes.Remove(mb.Value.mailboxName);
-                            connectionState.SendToStream($"OK DELETE Completed: {mb.Value.mailboxName} Successfully removed");
+                            connectionState.SendToStream(command[0] + $"OK DELETE Completed: {mb.Value.mailboxName} Successfully removed");
                             return;
                         }
                         else
                         {
-                            connectionState.SendToStream($"NO DELETE: Access denided for the username {connectionState.Username}!");
+                            connectionState.SendToStream(command[0] + $"NO DELETE: Access denided for the username {connectionState.Username}!");
                             return;
 
                         }
@@ -115,7 +96,7 @@ namespace IMAP_Server.CommandModels
             }
         }
 
-        public static void Examine(string[] command, Connection connectionState)
+        public async static void Examine(string[] command, Connection connectionState)
         {
             if (command.Length == EXAMINE_SPLIT) //check if command is legal
             {
@@ -153,6 +134,8 @@ namespace IMAP_Server.CommandModels
                         mailboxFlagList += " " + flag;
                     }
                     connectionState.SendToStream($"* FLAGS {mailboxFlagList}");
+                    await Task.Delay(500);
+                    connectionState.SendToStream($"{command[0]} OK [READ-ONLY] EXAMINE completed");
                 }
                 else
                 {
@@ -220,8 +203,8 @@ namespace IMAP_Server.CommandModels
                         }
                     }
                     connectionState.SendToStream($"* {c} RECENT");
-                    //TODO - Finish select
-                    if(mailbox.EmailMessages.Count==0)
+
+                    if (mailbox.EmailMessages.Count == 0)
                     {
                         connectionState.SendToStream($"* OK No message is first unseen");
                     }
@@ -238,7 +221,7 @@ namespace IMAP_Server.CommandModels
                     }
                     connectionState.SendToStream($"* OK [PERMFLAGS {permflaglist}]");
                     string mailboxFlagList = "";
-                    foreach(var flag in mailbox.supportedFlags)
+                    foreach (var flag in mailbox.supportedFlags)
                     {
                         mailboxFlagList += " " + flag;
                     }
@@ -272,7 +255,7 @@ namespace IMAP_Server.CommandModels
                 {
                     if (mb.Key == command[2])
                     {
-                        if(Server.subscriberMailboxes.Add(mb.Value))
+                        if (Server.subscriberMailboxes.Add(mb.Value))
                             connectionState.SendToStream($"{command[0]} OK - {mb.Key} subscribed");
                         else
                             connectionState.SendToStream($"{command[0]} NO - {mb.Key} already subscribed");
