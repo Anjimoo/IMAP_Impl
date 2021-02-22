@@ -19,68 +19,64 @@ namespace IMAP_Server.CommandModels
         private const int RENAME_SPLIT = 4;
         private const int SUBSCRIBE_SPLIT = 3;
         private const int UNSUBSCRIBE_SPLIT = 3;
+        private const int APPEND_MIN_SPLIT = 4;        
+        private const int APPEND_MAX_SPLIT = 6;
+        private const int LIST_SPLIT = 4;
+        private const int LSUB_SPLIT = 4;
+        private const int STATUS_SPLIT = 4;
 
         //TODO - Look for CATENATE extension
         public static void Append(string[] command, Connection connectionState)
         {
-
+            if ((command.Length>=APPEND_MIN_SPLIT&&command.Length<=APPEND_MAX_SPLIT)  && connectionState.Authentificated)
+            {
+                // ******************************** TODO: UNFINISHED
+                //***************************************************
+            }
+            else
+            {
+                connectionState.SendToStream($"{command[0]} BAD - command unknown or arguments invalid");
+            }
         }
 
         public static void Create(string[] command, Connection connectionState)
         {
-            if (command.Length == CREATE_SPLIT)
+            if (command.Length == CREATE_SPLIT && connectionState.Authentificated)
             {
                 foreach (KeyValuePair<string, Mailbox> mb in Server.mailBoxes)
                 {
                     if (mb.Value.mailboxName == command[2])
                     {
-                        connectionState.SendToStream($"NO CREATE: Mailbox already exists in that name");
+                        connectionState.SendToStream(command[0] + $"NO CREATE: Mailbox already exists in that name");
                         return;
                     }
                 }
                 Mailbox mailbox;
+                mailbox = new Mailbox();
+                mailbox.mailboxName = command[2];
                 if (command[2].Contains('/'))
                 {
                     string[] hierarchy = command[2].Split('/');
-                    for (int i = 0; i < hierarchy.Length; i++)
-                    {
-                        if (Server.mailBoxes.TryGetValue(hierarchy[i], out var parentMailbox))
-                        {
-                            mailbox = new Mailbox(parentMailbox);
-                            mailbox.mailboxName = parentMailbox.mailboxName + "/" + hierarchy[i + 1];
-                            Server.mailBoxes.Add(mailbox.mailboxName, mailbox);
-                            connectionState.SendToStream($"OK CREATE Completed: {mailbox.mailboxName} Successfully created");
-                            return;
-                        }
-                        else
-                        {
-                            mailbox = new Mailbox(new Mailbox() { mailboxName = hierarchy[i] });
-                            mailbox.mailboxName = parentMailbox.mailboxName + "/" + hierarchy[i + 1];
-                            Server.mailBoxes.Add(mailbox.mailboxName, mailbox);
-                            connectionState.SendToStream($"OK CREATE Completed: {mailbox.mailboxName} Successfully created");
-                            return;
-                        }
-                    }
+                    Array.Resize(ref hierarchy, hierarchy.Length - 1);
+                    string father = string.Join('/', hierarchy);
+                    command[2] = father;
+                    Create(command, connectionState);
+
                 }
-                else
-                {
-                    mailbox = new Mailbox();
-                    mailbox.mailboxName = command[2];
-                    mailbox.mailboxSize = 50000;
-                    mailbox.AllowedUsers.Add(connectionState.Username);
-                    Server.mailBoxes.Add(mailbox.mailboxName, mailbox);
-                    connectionState.SendToStream($"OK CREATE Completed: {mailbox.mailboxName} Successfully created");
-                }
+                mailbox.mailboxSize = 50000;
+                mailbox.AllowedUsers.Add(connectionState.Username);
+                Server.mailBoxes.Add(mailbox.mailboxName, mailbox);
+                connectionState.SendToStream(command[0] + $"OK CREATE Completed: {mailbox.mailboxName} Successfully created");
             }
             else
             {
-                connectionState.SendToStream(command[0] + "  BAD - command unknown or arguments invalid");
+                connectionState.SendToStream($"{command[0]} BAD - command unknown or arguments invalid");
             }
         }
 
         public static void Delete(string[] command, Connection connectionState)
         {
-            if (command.Length == DELETE_SPLIT)
+            if (command.Length == DELETE_SPLIT && connectionState.Authentificated)
             {
                 foreach (KeyValuePair<string, Mailbox> mb in Server.mailBoxes)
                 {
@@ -89,12 +85,12 @@ namespace IMAP_Server.CommandModels
                         if (mb.Value.AllowedUsers.Contains(connectionState.Username))
                         {
                             Server.mailBoxes.Remove(mb.Value.mailboxName);
-                            connectionState.SendToStream($"OK DELETE Completed: {mb.Value.mailboxName} Successfully removed");
+                            connectionState.SendToStream(command[0] + $"OK DELETE Completed: {mb.Value.mailboxName} Successfully removed");
                             return;
                         }
                         else
                         {
-                            connectionState.SendToStream($"NO DELETE: Access denided for the username {connectionState.Username}!");
+                            connectionState.SendToStream(command[0] + $"NO DELETE: Access denided for the username {connectionState.Username}!");
                             return;
 
                         }
@@ -104,13 +100,13 @@ namespace IMAP_Server.CommandModels
             }
             else
             {
-                connectionState.SendToStream(command[0] + "  BAD - command unknown or arguments invalid");
+                connectionState.SendToStream($"{command[0]} BAD - command unknown or arguments invalid");
             }
         }
 
-        public static void Examine(string[] command, Connection connectionState)
+        public async static void Examine(string[] command, Connection connectionState)
         {
-            if (command.Length == EXAMINE_SPLIT) //check if command is legal
+            if (command.Length == EXAMINE_SPLIT && connectionState.Authentificated) //check if command is legal
             {
 
                 if (Server.mailBoxes.TryGetValue(command[2], out var mailbox)) //check if chosen mailbox is present
@@ -146,6 +142,8 @@ namespace IMAP_Server.CommandModels
                         mailboxFlagList += " " + flag;
                     }
                     connectionState.SendToStream($"* FLAGS {mailboxFlagList}");
+                    await Task.Delay(500);
+                    connectionState.SendToStream($"{command[0]} OK [READ-ONLY] EXAMINE completed");
                 }
                 else
                 {
@@ -162,18 +160,34 @@ namespace IMAP_Server.CommandModels
         //TODO - Requires a param named "reference name" and I have no clue what exactly is it.
         public static void List(string[] command, Connection connectionState)
         {
-
+            if (command.Length==LIST_SPLIT && connectionState.Authentificated)
+            {
+                // ******************************** TODO: UNFINISHED
+                //***************************************************
+            }
+            else
+            {
+                connectionState.SendToStream($"{command[0]} BAD - command unknown or arguments invalid");
+            }
         }
 
         //TODO - Requires a param named "reference name" and I have no clue what exactly is it.
         public static void Lsub(string[] command, Connection connectionState)
         {
-
+            if (command.Length == LSUB_SPLIT && connectionState.Authentificated)
+            {
+                // ******************************** TODO: UNFINISHED
+                //***************************************************
+            }
+            else
+            {
+                connectionState.SendToStream($"{command[0]} BAD - command unknown or arguments invalid");
+            }
         }
 
         public static void Rename(string[] command, Connection connectionState)
         {
-            if (command.Length == RENAME_SPLIT)
+            if (command.Length == RENAME_SPLIT && connectionState.Authentificated)
             {
                 if (Server.mailBoxes.TryGetValue(command[2], out var mailbox))
                 {
@@ -185,13 +199,13 @@ namespace IMAP_Server.CommandModels
             }
             else
             {
-                connectionState.SendToStream(command[0] + "  BAD - command unknown or arguments invalid");
+                connectionState.SendToStream($"{command[0]} BAD - command unknown or arguments invalid");
             }
         }
 
         public async static void Select(string[] command, Connection connectionState)
         {
-            if (command.Length == SELECT_SPLIT) //check if command is legal
+            if (command.Length == SELECT_SPLIT && connectionState.Authentificated) //check if command is legal
             {
 
                 if (Server.mailBoxes.TryGetValue(command[2], out var mailbox)) //check if chosen mailbox is present
@@ -213,8 +227,8 @@ namespace IMAP_Server.CommandModels
                         }
                     }
                     connectionState.SendToStream($"* {c} RECENT");
-                    //TODO - Finish select
-                    if(mailbox.EmailMessages.Count==0)
+
+                    if (mailbox.EmailMessages.Count == 0)
                     {
                         connectionState.SendToStream($"* OK No message is first unseen");
                     }
@@ -231,7 +245,7 @@ namespace IMAP_Server.CommandModels
                     }
                     connectionState.SendToStream($"* OK [PERMFLAGS {permflaglist}]");
                     string mailboxFlagList = "";
-                    foreach(var flag in mailbox.supportedFlags)
+                    foreach (var flag in mailbox.supportedFlags)
                     {
                         mailboxFlagList += " " + flag;
                     }
@@ -254,18 +268,26 @@ namespace IMAP_Server.CommandModels
         //TODO - Requires more than 2 params, just like Search but more lightweight
         public static void Status(string[] command, Connection connectionState)
         {
-
+            if (command.Length == STATUS_SPLIT && connectionState.Authentificated)
+            {
+                // ******************************** TODO: UNFINISHED
+                //***************************************************
+            }
+            else
+            {
+                connectionState.SendToStream($"{command[0]} BAD - command unknown or arguments invalid");
+            }
         }
 
         public static void Subscribe(string[] command, Connection connectionState)
         {
-            if (command.Length == SUBSCRIBE_SPLIT)
+            if (command.Length == SUBSCRIBE_SPLIT && connectionState.Authentificated)
             {
                 foreach (KeyValuePair<string, Mailbox> mb in Server.mailBoxes)
                 {
                     if (mb.Key == command[2])
                     {
-                        if(Server.subscriberMailboxes.Add(mb.Value))
+                        if (Server.subscriberMailboxes.Add(mb.Value))
                             connectionState.SendToStream($"{command[0]} OK - {mb.Key} subscribed");
                         else
                             connectionState.SendToStream($"{command[0]} NO - {mb.Key} already subscribed");
@@ -282,7 +304,7 @@ namespace IMAP_Server.CommandModels
 
         public static void Unsubscribe(string[] command, Connection connectionState)
         {
-            if (command.Length == UNSUBSCRIBE_SPLIT)
+            if (command.Length == UNSUBSCRIBE_SPLIT && connectionState.Authentificated)
             {
                 foreach (Mailbox mb in Server.subscriberMailboxes)
                 {
