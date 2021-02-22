@@ -19,7 +19,7 @@ namespace IMAP_Server.CommandModels
         private const int RENAME_SPLIT = 4;
         private const int SUBSCRIBE_SPLIT = 3;
         private const int UNSUBSCRIBE_SPLIT = 3;
-        private const int APPEND_MIN_SPLIT = 4;        
+        private const int APPEND_MIN_SPLIT = 4;
         private const int APPEND_MAX_SPLIT = 6;
         private const int LIST_SPLIT = 4;
         private const int LSUB_SPLIT = 4;
@@ -28,7 +28,7 @@ namespace IMAP_Server.CommandModels
         //TODO - Look for CATENATE extension
         public static void Append(string[] command, Connection connectionState)
         {
-            if ((command.Length>=APPEND_MIN_SPLIT&&command.Length<=APPEND_MAX_SPLIT)  && connectionState.Authentificated)
+            if ((command.Length >= APPEND_MIN_SPLIT && command.Length <= APPEND_MAX_SPLIT) && connectionState.Authentificated)
             {
                 // ******************************** TODO: UNFINISHED
                 //***************************************************
@@ -43,30 +43,43 @@ namespace IMAP_Server.CommandModels
         {
             if (command.Length == CREATE_SPLIT && connectionState.Authentificated)
             {
-                foreach (KeyValuePair<string, Mailbox> mb in Server.mailBoxes)
+                bool created = CreateRecursive(command[2], connectionState);
+                if (created)
                 {
-                    if (mb.Value.mailboxName == command[2])
-                    {
-                        connectionState.SendToStream(command[0] + $"NO CREATE: Mailbox already exists in that name");
-                        return;
-                    }
+                    connectionState.SendToStream(command[0] + $"OK CREATE Completed: {command[2]} Successfully created");
                 }
-                Mailbox mailbox;
-                mailbox = new Mailbox();
-                mailbox.mailboxName = command[2];
-                if (command[2].Contains('/'))
+                else
                 {
-                    string[] hierarchy = command[2].Split('/');
-                    Array.Resize(ref hierarchy, hierarchy.Length - 1);
-                    string father = string.Join('/', hierarchy);
-                    command[2] = father;
-                    Create(command, connectionState);
-
+                    connectionState.SendToStream(command[0] + $"NO CREATE: Mailbox already exists in that path");
                 }
-                mailbox.mailboxSize = 50000;
-                mailbox.AllowedUsers.Add(connectionState.Username);
-                Server.mailBoxes.Add(mailbox.mailboxName, mailbox);
-                connectionState.SendToStream(command[0] + $"OK CREATE Completed: {mailbox.mailboxName} Successfully created");
+                //foreach (KeyValuePair<string, Mailbox> mb in Server.mailBoxes)
+                //{
+                //    if (mb.Value.mailboxName == command[2])
+                //    {
+                //        connectionState.SendToStream(command[0] + $"NO CREATE: Mailbox already exists in that name");
+                //        return;
+                //    }
+                //}
+                //Mailbox mailbox;
+                //mailbox = new Mailbox();
+                //if (command[2].Contains('/'))
+                //{
+                //    string[] hierarchy = command[2].Split('/');
+                //    mailbox.mailboxName = hierarchy[hierarchy.Length - 1];
+                //    mailbox.Path = string.Join('/', mailbox.mailboxName);
+                //    Array.Resize(ref hierarchy, hierarchy.Length - 1);
+                //    string father = string.Join('/', hierarchy);
+                //    command[2] = father;
+                //    Create(command, connectionState);
+                //}
+                //else
+                //{
+                //    mailbox.mailboxName = command[2];
+                //}
+                //mailbox.mailboxSize = 50000;
+                //mailbox.AllowedUsers.Add(connectionState.Username);
+                //Server.mailBoxes.Add(mailbox.mailboxName, mailbox);
+                //connectionState.SendToStream(command[0] + $"OK CREATE Completed: {mailbox.mailboxName} Successfully created");
             }
             else
             {
@@ -78,14 +91,14 @@ namespace IMAP_Server.CommandModels
         {
             if (command.Length == DELETE_SPLIT && connectionState.Authentificated)
             {
-                foreach (KeyValuePair<string, Mailbox> mb in Server.mailBoxes)
-                {
-                    if (mb.Value.mailboxName == command[2])
+                //foreach (KeyValuePair<string, Mailbox> mb in Server.mailBoxes)
+                //{
+                    if (Server.mailBoxes.TryGetValue(command[2], out var mb))
                     {
-                        if (mb.Value.AllowedUsers.Contains(connectionState.Username))
+                        if (mb.AllowedUsers.Contains(connectionState.Username))
                         {
-                            Server.mailBoxes.Remove(mb.Value.mailboxName);
-                            connectionState.SendToStream(command[0] + $"OK DELETE Completed: {mb.Value.mailboxName} Successfully removed");
+                            Server.mailBoxes.Remove(mb.Path);
+                            connectionState.SendToStream(command[0] + $"OK DELETE Completed: {mb.mailboxName} Successfully removed");
                             return;
                         }
                         else
@@ -95,7 +108,7 @@ namespace IMAP_Server.CommandModels
 
                         }
                     }
-                }
+                //}
                 connectionState.SendToStream($"NO DELETE: Mailbox was not found");
             }
             else
@@ -160,10 +173,14 @@ namespace IMAP_Server.CommandModels
         //TODO - Requires a param named "reference name" and I have no clue what exactly is it.
         public static void List(string[] command, Connection connectionState)
         {
-            if (command.Length==LIST_SPLIT && connectionState.Authentificated)
+            if (command.Length == LIST_SPLIT && connectionState.Authentificated)
             {
                 // ******************************** TODO: UNFINISHED
                 //***************************************************
+                if (command[3].Contains('/'))
+                {
+                    connectionState.SendToStream($@"* LIST (\Noselect) ");
+                }
             }
             else
             {
@@ -283,17 +300,14 @@ namespace IMAP_Server.CommandModels
         {
             if (command.Length == SUBSCRIBE_SPLIT && connectionState.Authentificated)
             {
-                foreach (KeyValuePair<string, Mailbox> mb in Server.mailBoxes)
-                {
-                    if (mb.Key == command[2])
+                    if (Server.mailBoxes.TryGetValue(command[2], out var mb))
                     {
-                        if (Server.subscriberMailboxes.Add(mb.Value))
-                            connectionState.SendToStream($"{command[0]} OK - {mb.Key} subscribed");
+                        if (Server.subscriberMailboxes.Add(mb))
+                            connectionState.SendToStream($"{command[0]} OK - {mb.Path} subscribed");
                         else
-                            connectionState.SendToStream($"{command[0]} NO - {mb.Key} already subscribed");
+                            connectionState.SendToStream($"{command[0]} NO - {mb.Path} already subscribed");
                         return;
                     }
-                }
                 connectionState.SendToStream($"{command[0]} NO - Folder not found");
             }
             else
@@ -306,21 +320,58 @@ namespace IMAP_Server.CommandModels
         {
             if (command.Length == UNSUBSCRIBE_SPLIT && connectionState.Authentificated)
             {
-                foreach (Mailbox mb in Server.subscriberMailboxes)
-                {
-                    if (mb.mailboxName == command[2])
+                //foreach (Mailbox mb in Server.subscriberMailboxes)
+                //{
+                    if (Server.mailBoxes.TryGetValue(command[2], out var mb))
                     {
                         Server.subscriberMailboxes.Remove(mb);
-                        connectionState.SendToStream($"{command[0]} OK - {mb.mailboxName} unsubscribed");
+                        connectionState.SendToStream($"{command[0]} OK - {mb.Path} unsubscribed");
                         return;
                     }
-                }
+                //}
                 connectionState.SendToStream($"{command[0]} NO - Folder not found");
             }
             else
             {
                 connectionState.SendToStream($"{command[0]} BAD - command unknown or arguments invalid");
             }
+        }
+
+        private static bool CreateRecursive(string path, Connection connectionState)
+        {
+
+            //foreach (KeyValuePair<string, Mailbox> mb in Server.mailBoxes)
+            //{
+            //    if (mb.Value.Path == path)
+            //    {
+            //        return false;
+            //    }
+            //}
+            if (Server.mailBoxes.TryGetValue(path, out _))
+            {
+                return false;
+            }
+            Mailbox mailbox = new Mailbox();
+            if (path.Contains('/'))
+            {
+                string[] hierarchy = path.Split('/');
+                mailbox.mailboxName = hierarchy[hierarchy.Length - 1];
+                mailbox.Path = path;
+                Array.Resize(ref hierarchy, hierarchy.Length - 1);
+                string father = string.Join('/', hierarchy);
+                CreateRecursive(father, connectionState);
+            }
+
+            else
+            {
+                mailbox.mailboxName = path;
+                mailbox.Path = path;
+            }
+            mailbox.mailboxSize = 50000;
+            mailbox.AllowedUsers.Add(connectionState.Username);
+            Server.mailBoxes.Add(mailbox.Path, mailbox);//works with mailboxPath but it breaks the rest of the commands (they need to refer to the full path)
+
+            return true;
         }
     }
 }
