@@ -169,7 +169,7 @@ namespace IMAP_Client.ViewModels
         {
             try
             {
-                await MainWindowViewModel._connection.SendMessage($"{TaggingService.Tag} RENAME {MailBox} {NewMailBox}", _eventAggregator);
+                await MainWindowViewModel._connection.SendMessage($"{TaggingService.Tag} RENAME {OldMailBox} {NewMailBox}", _eventAggregator);
             }
             catch (Exception e)
             {
