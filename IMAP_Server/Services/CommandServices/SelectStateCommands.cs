@@ -17,29 +17,28 @@ namespace IMAP_Server.CommandModels
         private const int CHECK_SPLIT = 2;
         private const int STORE_SPLIT = 4;
         private const int UID_SPLIT = 4;
-        private const int SEARCH_SPLIT =3;
         private const int COPY_SPLIT = 4;
-        private const int EXPUNGE_SPLIT =2;
+        private const int EXPUNGE_SPLIT = 2;
         private const int FETCH_SPLIT = 4;
 
 
         public static void Check(string[] command, Connection connectionState)
         {
-            if(connectionState.SelectedState || command.Length != CHECK_SPLIT)
+            if (connectionState.SelectedState && command.Length == CHECK_SPLIT)
             {
-                //  TODO: UNFINISHED
+                // ******************************** TODO: UNFINISHED
+                //***************************************************
             }
             else
             {
                 connectionState.SendToStream($"{command[0]} BAD - command unknown or arguments invalid");
             }
-            
+
         }
         public static void Close(string[] command, Connection connectionState)
         {
-            if (connectionState.SelectedState || command.Length!=CLOSE_SPLIT )
+            if (connectionState.SelectedState && command.Length == CLOSE_SPLIT)
             {
-
 
                 if (connectionState.SelectedMailBox.EmailMessages.Count != 0)
                 {
@@ -67,7 +66,7 @@ namespace IMAP_Server.CommandModels
         }
         public static void Copy(string[] command, Connection connectionState)
         {
-            if (connectionState.SelectedState || command.Length != COPY_SPLIT)
+            if (connectionState.SelectedState && command.Length == COPY_SPLIT)
             {
                 if (command.Length > 2)
                 {
@@ -96,44 +95,45 @@ namespace IMAP_Server.CommandModels
             {
                 connectionState.SendToStream($"{command[0]} BAD - command unknown or arguments invalid");
             }
-            
+
         }
         public static void Expunge(string[] command, Connection connectionState)
-        {  
-         if(connectionState.SelectedState || command.Length != EXPUNGE_SPLIT)
-            {
-            
-            if (connectionState.SelectedMailBox.EmailMessages.Count != 0)
+        {
+            if (connectionState.SelectedState && command.Length == EXPUNGE_SPLIT)
             {
 
-                foreach (EmailMessage em in connectionState.SelectedMailBox.EmailMessages)
+                if (connectionState.SelectedMailBox.EmailMessages.Count != 0)
                 {
-                    if (em.Flags.TryGetValue(@"\Deleted", out var deleted))
+
+                    foreach (EmailMessage em in connectionState.SelectedMailBox.EmailMessages)
                     {
-                        if (deleted)
+                        if (em.Flags.TryGetValue(@"\Deleted", out var deleted))
                         {
-                            int deletedUID = em.UniqueID;
-                            connectionState.SelectedMailBox.EmailMessages.Remove(em);
-                            connectionState.SendToStream($"{command[0]} {deletedUID} EXPUNGE");
+                            if (deleted)
+                            {
+                                int deletedUID = em.UniqueID;
+                                connectionState.SelectedMailBox.EmailMessages.Remove(em);
+                                connectionState.SendToStream($"{command[0]} {deletedUID} EXPUNGE");
+                            }
                         }
                     }
                 }
+                connectionState.SendToStream($"{command[0]} OK EXPUNGE completed");
             }
-            connectionState.SendToStream($"{command[0]} OK EXPUNGE completed");
-           }
             else
             {
                 connectionState.SendToStream($"{command[0]} BAD - no search criteria specified");
             }
-        
-        
-        
+
+
+
         }
         public static void Fetch(string[] command, Connection connectionState)
         {
-            if(connectionState.SelectedState || command.Length != FETCH_SPLIT)
+            if (connectionState.SelectedState && command.Length == FETCH_SPLIT)
             {
-                //  TODO: UNFINISHED
+                // ******************************** TODO: UNFINISHED
+                //***************************************************
             }
             else
             {
@@ -147,33 +147,31 @@ namespace IMAP_Server.CommandModels
         /// <param name="connectionState"></param>
         public static void Search(string[] command, Connection connectionState)
         {
-            if (connectionState.SelectedState || command.Length != SEARCH_SPLIT)
+            if (connectionState.SelectedState && command.Length > SEARCH_MINSPLIT)
+            {
+                var messages = IMAP_Search.Search(command.Skip(2).ToArray(), connectionState);
+                string response = "";
+                foreach (var message in messages)
                 {
-                if (command.Length > SEARCH_MINSPLIT)
-                {
-                    var messages = IMAP_Search.Search(command.Skip(2).ToArray(), connectionState);
-                    string response = "";
-                    foreach (var message in messages)
-                    {
-                        response += $"{message}";
-                    }
-
-                    connectionState.SendToStream($"* SEARCH {response}");
-                    connectionState.SendToStream($"{command[0]} OK SEARCH completed");
+                    response += $"{message}";
                 }
+
+                connectionState.SendToStream($"* SEARCH {response}");
+                connectionState.SendToStream($"{command[0]} OK SEARCH completed");
             }
             else
             {
                 connectionState.SendToStream($"{command[0]} BAD - no search criteria specified");
             }
-            
+
         }
         public static void Store(string[] command, Connection connectionState)
         {
 
-            if (connectionState.SelectedState || command.Length != STORE_SPLIT)
+            if (connectionState.SelectedState && command.Length == STORE_SPLIT)
             {
-                //  TODO: UNFINISHED
+                // ******************************** TODO: UNFINISHED
+                //***************************************************
             }
             else
             {
@@ -183,9 +181,10 @@ namespace IMAP_Server.CommandModels
         public static void UID(string[] command, Connection connectionState)
         {
 
-            if (connectionState.SelectedState || command.Length != UID_SPLIT)
+            if (connectionState.SelectedState && command.Length == UID_SPLIT)
             {
-                //  TODO: UNFINISHED
+                // ******************************** TODO: UNFINISHED
+                //***************************************************
             }
             else
             {

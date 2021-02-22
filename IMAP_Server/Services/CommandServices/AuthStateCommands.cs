@@ -19,16 +19,29 @@ namespace IMAP_Server.CommandModels
         private const int RENAME_SPLIT = 4;
         private const int SUBSCRIBE_SPLIT = 3;
         private const int UNSUBSCRIBE_SPLIT = 3;
+        private const int APPEND_MIN_SPLIT = 4;        
+        private const int APPEND_MAX_SPLIT = 6;
+        private const int LIST_SPLIT = 4;
+        private const int LSUB_SPLIT = 4;
+        private const int STATUS_SPLIT = 4;
 
         //TODO - Look for CATENATE extension
         public static void Append(string[] command, Connection connectionState)
         {
-
+            if ((command.Length>=APPEND_MIN_SPLIT&&command.Length<=APPEND_MAX_SPLIT)  && connectionState.Authentificated)
+            {
+                // ******************************** TODO: UNFINISHED
+                //***************************************************
+            }
+            else
+            {
+                connectionState.SendToStream($"{command[0]} BAD - command unknown or arguments invalid");
+            }
         }
 
         public static void Create(string[] command, Connection connectionState)
         {
-            if (command.Length == CREATE_SPLIT)
+            if (command.Length == CREATE_SPLIT && connectionState.Authentificated)
             {
                 foreach (KeyValuePair<string, Mailbox> mb in Server.mailBoxes)
                 {
@@ -50,25 +63,20 @@ namespace IMAP_Server.CommandModels
                     Create(command, connectionState);
 
                 }
-                //else
-                //{
-                //mailbox = new Mailbox();
-                //mailbox.mailboxName = command[2];
                 mailbox.mailboxSize = 50000;
                 mailbox.AllowedUsers.Add(connectionState.Username);
                 Server.mailBoxes.Add(mailbox.mailboxName, mailbox);
                 connectionState.SendToStream(command[0] + $"OK CREATE Completed: {mailbox.mailboxName} Successfully created");
-                //}
             }
             else
             {
-                connectionState.SendToStream(command[0] + "  BAD - command unknown or arguments invalid");
+                connectionState.SendToStream($"{command[0]} BAD - command unknown or arguments invalid");
             }
         }
 
         public static void Delete(string[] command, Connection connectionState)
         {
-            if (command.Length == DELETE_SPLIT)
+            if (command.Length == DELETE_SPLIT && connectionState.Authentificated)
             {
                 foreach (KeyValuePair<string, Mailbox> mb in Server.mailBoxes)
                 {
@@ -92,13 +100,13 @@ namespace IMAP_Server.CommandModels
             }
             else
             {
-                connectionState.SendToStream(command[0] + "  BAD - command unknown or arguments invalid");
+                connectionState.SendToStream($"{command[0]} BAD - command unknown or arguments invalid");
             }
         }
 
         public async static void Examine(string[] command, Connection connectionState)
         {
-            if (command.Length == EXAMINE_SPLIT) //check if command is legal
+            if (command.Length == EXAMINE_SPLIT && connectionState.Authentificated) //check if command is legal
             {
 
                 if (Server.mailBoxes.TryGetValue(command[2], out var mailbox)) //check if chosen mailbox is present
@@ -152,18 +160,34 @@ namespace IMAP_Server.CommandModels
         //TODO - Requires a param named "reference name" and I have no clue what exactly is it.
         public static void List(string[] command, Connection connectionState)
         {
-
+            if (command.Length==LIST_SPLIT && connectionState.Authentificated)
+            {
+                // ******************************** TODO: UNFINISHED
+                //***************************************************
+            }
+            else
+            {
+                connectionState.SendToStream($"{command[0]} BAD - command unknown or arguments invalid");
+            }
         }
 
         //TODO - Requires a param named "reference name" and I have no clue what exactly is it.
         public static void Lsub(string[] command, Connection connectionState)
         {
-
+            if (command.Length == LSUB_SPLIT && connectionState.Authentificated)
+            {
+                // ******************************** TODO: UNFINISHED
+                //***************************************************
+            }
+            else
+            {
+                connectionState.SendToStream($"{command[0]} BAD - command unknown or arguments invalid");
+            }
         }
 
         public static void Rename(string[] command, Connection connectionState)
         {
-            if (command.Length == RENAME_SPLIT)
+            if (command.Length == RENAME_SPLIT && connectionState.Authentificated)
             {
                 if (Server.mailBoxes.TryGetValue(command[2], out var mailbox))
                 {
@@ -175,13 +199,13 @@ namespace IMAP_Server.CommandModels
             }
             else
             {
-                connectionState.SendToStream(command[0] + "  BAD - command unknown or arguments invalid");
+                connectionState.SendToStream($"{command[0]} BAD - command unknown or arguments invalid");
             }
         }
 
         public async static void Select(string[] command, Connection connectionState)
         {
-            if (command.Length == SELECT_SPLIT) //check if command is legal
+            if (command.Length == SELECT_SPLIT && connectionState.Authentificated) //check if command is legal
             {
 
                 if (Server.mailBoxes.TryGetValue(command[2], out var mailbox)) //check if chosen mailbox is present
@@ -244,12 +268,20 @@ namespace IMAP_Server.CommandModels
         //TODO - Requires more than 2 params, just like Search but more lightweight
         public static void Status(string[] command, Connection connectionState)
         {
-
+            if (command.Length == STATUS_SPLIT && connectionState.Authentificated)
+            {
+                // ******************************** TODO: UNFINISHED
+                //***************************************************
+            }
+            else
+            {
+                connectionState.SendToStream($"{command[0]} BAD - command unknown or arguments invalid");
+            }
         }
 
         public static void Subscribe(string[] command, Connection connectionState)
         {
-            if (command.Length == SUBSCRIBE_SPLIT)
+            if (command.Length == SUBSCRIBE_SPLIT && connectionState.Authentificated)
             {
                 foreach (KeyValuePair<string, Mailbox> mb in Server.mailBoxes)
                 {
@@ -272,7 +304,7 @@ namespace IMAP_Server.CommandModels
 
         public static void Unsubscribe(string[] command, Connection connectionState)
         {
-            if (command.Length == UNSUBSCRIBE_SPLIT)
+            if (command.Length == UNSUBSCRIBE_SPLIT && connectionState.Authentificated)
             {
                 foreach (Mailbox mb in Server.subscriberMailboxes)
                 {
