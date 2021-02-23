@@ -1,5 +1,5 @@
 ﻿using IMAP.Shared;
-using IMAP.Shared.Services;
+using IMAP_Server.Services;
 using IMAP_Server.Models;
 using System;
 using System.Collections.Generic;
@@ -352,13 +352,22 @@ namespace IMAP_Server.CommandModels
             }
         }
 
-        //TODO - Requires more than 2 params, just like Search but more lightweight
         public static void Status(string[] command, Connection connectionState)
         {
-            if (command.Length == STATUS_SPLIT && connectionState.Authentificated)
+            if (command.Length >= STATUS_SPLIT && connectionState.Authentificated)
             {
-                // ******************************** TODO: UNFINISHED
-                //***************************************************
+                string statusToShow = IMAP_Status.GetStatus(command, connectionState);
+                if(statusToShow == "BAD")
+                {
+                    connectionState.SendToStream($"{command[0]} NO - status failure: no status for that name");
+                    return;
+                }
+                else if(statusToShow == "UNKNOWN_PARAMS")
+                {
+                    connectionState.SendToStream($"{command[0]} NO - status failure: unknown parameters");
+                    return;
+                }
+                connectionState.SendToStream($"* STATUS {command[2]} ({statusToShow})");
             }
             else
             {
