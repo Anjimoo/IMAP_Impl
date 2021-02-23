@@ -130,7 +130,7 @@ namespace IMAP_Client.ViewModels
         {
             try
             {
-                await MainWindowViewModel._connection.SendMessage($"{TaggingService.Tag} STATUS {MailBox} {MailboxNameAndWildCard} ", _eventAggregator);
+                await MainWindowViewModel._connection.SendMessage($"{TaggingService.Tag} STATUS {MailBox} {MailboxNameAndWildCard}", _eventAggregator);
             }
             catch (Exception e)
             {
@@ -143,7 +143,7 @@ namespace IMAP_Client.ViewModels
         {
             try
             {
-                await MainWindowViewModel._connection.SendMessage($"{TaggingService.Tag} LSUB {ReferenceName} {MailboxNameAndWildCard} ", _eventAggregator);
+                await MainWindowViewModel._connection.SendMessage($"{TaggingService.Tag} LSUB {ReferenceName} {MailboxNameAndWildCard}", _eventAggregator);
             }
             catch (Exception e)
             {
@@ -156,7 +156,7 @@ namespace IMAP_Client.ViewModels
         {
             try
             {
-                await MainWindowViewModel._connection.SendMessage($"{TaggingService.Tag} LIST {ReferenceName} {MailboxNameAndWildCard} ", _eventAggregator);
+                await MainWindowViewModel._connection.SendMessage($"{TaggingService.Tag} LIST {ReferenceName} {MailboxNameAndWildCard}", _eventAggregator);
             }
             catch (Exception e)
             {
