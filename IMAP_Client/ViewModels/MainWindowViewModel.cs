@@ -9,6 +9,7 @@ using Prism.Regions;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Timers;
 using System.Windows;
 using System.Windows.Navigation;
 using Unity;
@@ -151,10 +152,14 @@ namespace IMAP_Client.ViewModels
                 _connection.outgoingTag = "*";
                 _connection.outgoingCommand = "CONNECT";
                 _connection.GetMessages(_eventAggregator);
-                await Task.Delay(2000); //waiting 2 seconds because i cant request navigate not from main thread
+                await Task.Delay(2500); //Waiting 2.5 seconds before canceling the connection.
                 if (Connected)
                 {
                     Navigate("NoAuthStateView");
+                }
+                else
+                {
+                    _connection.Disconnect();
                 }
             }
             catch(Exception e)
@@ -163,6 +168,8 @@ namespace IMAP_Client.ViewModels
             }
             
         }
+        
+
         private void ExecuteDisconnect()
         {
             if (Connected)

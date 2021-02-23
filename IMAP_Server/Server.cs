@@ -56,12 +56,13 @@ namespace IMAP_Server
                 {
                     CancellationTokenSource cancellationTokenSourceClient = new CancellationTokenSource();
                     var cancelToken = cancellationTokenSourceClient.Token;
+                    var tcpClient = await _server.AcceptTcpClientAsync();
                     //var tcpClient = await _server.AcceptTcpClientAsync();
-                    _=Task.Run(async () =>
+                    _ =Task.Run(async () =>
                     {
                         try
                         {
-                            using (var tcpClient = await _server.AcceptTcpClientAsync()) //Will be disposed at the end of the "using".
+                            using (tcpClient) //Will be disposed at the end of the "using".
                             {
                                 await HandleConnection(tcpClient, cancellationTokenSourceClient);
                             }
