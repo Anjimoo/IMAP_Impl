@@ -125,7 +125,10 @@ namespace IMAP_Server
                     SelectStateCommands.UID(tempMessage,_connections[currentConnection]);
                     break;
 
-                    //Any other unrecognized command/message sent to the server.
+                //Any other unrecognized command/message sent to the server.
+                case "":
+                    AnyStateCommands.Empty(tempMessage, _connections[currentConnection]);
+                    break;
                 default:
                     AnyStateCommands.Default(tempMessage, _connections[currentConnection]);
                     break;

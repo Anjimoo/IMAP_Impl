@@ -87,6 +87,12 @@ namespace IMAP_Server.CommandModels
             connectionState.SendToStream(BAD(tag));
         }
 
+        public static void Empty(string[] command, Connection connectionState)
+        {
+            string tag = command[0];
+            connectionState.SendToStream("");
+        }
+
 
         public static string OK(string tag, string command)
         {
