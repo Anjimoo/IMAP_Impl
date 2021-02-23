@@ -40,6 +40,33 @@ namespace IMAP_Server.Models
             uniqueIDValidityVal = 0;
         }
 
+        public int GetAllRecents()
+        {
+            int c = 0;
+            foreach(EmailMessage em in EmailMessages)
+            {
+                if(em.Flags.TryGetValue(@"\Recent",out var isRecent))
+                {
+                    if (isRecent)
+                        c++;
+                }
+            }
+            return c;
+        }
 
+        public int GetAllUnseen()
+        {
+            int c = 0;
+            foreach (EmailMessage em in EmailMessages)
+            {
+                if (em.Flags.TryGetValue(@"\Seen", out var isSeen))
+                {
+                    if (!isSeen)
+                        c++;
+                }
+            }
+            return c;
+
+        }
     }
 }
