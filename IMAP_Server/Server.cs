@@ -98,11 +98,11 @@ namespace IMAP_Server
 
             Connection con = new Connection(client, tcpClient, token);
             
-            con.SendToStream($"* OK greetings.");
+            //con.SendToStream($"* OK greetings.");
 
 
             messageHandler._connections.TryAdd(client, con);
-            while (!con.token.IsCancellationRequested)
+            while (true)
             {
                 var command = await con.ReceiveFromStream();
                 if (command != null)
@@ -116,9 +116,9 @@ namespace IMAP_Server
                     //    //Should it not answer the correct format for handling, a Default should be returned as a reponse.
                     //}
                     //else
-                    {
-                        await messageHandler.HandleMessage(command, client);
-                    }
+                    
+                    await messageHandler.HandleMessage(command, client);
+                    
                 }
             }
             con.token.Dispose();
