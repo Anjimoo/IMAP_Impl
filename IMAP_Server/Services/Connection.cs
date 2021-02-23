@@ -107,6 +107,7 @@ namespace IMAP_Server
             {
                 Console.WriteLine(ex.Message);
                 Timer.Dispose();
+                CloseConnection();
             }
         }
 

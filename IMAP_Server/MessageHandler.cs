@@ -21,23 +21,23 @@ namespace IMAP_Server
         //Receives messages and assigns them to the corresponding handling function.
         public async Task HandleMessage(string _message, string currentConnection)
         {
-            if (_message == "")
-            {
-                _message = "* CONNECT";
-            }
-
+            
             _message = _message.Trim();
             string[] tempMessage = _message.Split(' ');
+            string command;
 
-            var command = tempMessage[1];
-            //var tag = tempMessage[0];
+            if (tempMessage.Length>1)
+            {
+                command = tempMessage[1];
+            }
+            else 
+            {
+                command = _message;
+            }
 
             switch (command)
             {
                 //Any state commands
-                case "CONNECT":
-                    //_connections[currentConnection].SendToStream($"{_message[0]} OK greetings.");
-                    break;
                 case "CAPABILITY":
                     AnyStateCommands.Capability(tempMessage, _connections[currentConnection]);
                     break;
