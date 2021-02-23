@@ -108,6 +108,7 @@ namespace IMAP_Client.Services
         public void Disconnect()
         {
             networkStream.Close();
+            networkStream.Dispose();
             tcpClient.Close();
         }
     }

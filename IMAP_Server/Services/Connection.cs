@@ -24,8 +24,26 @@ namespace IMAP_Server
 
         public bool Connected { get; set; } //Don't know if we need this (maybe on client, not on server)
 
+        private int _emptyString = 0;
+        public int EmptyStringsNumber
+        {
+            get
+            {
+                return _emptyString;
+            }
+            set
+            {
+                if (value >2)
+                {
+                    Log.Logger.Information($"Client has sent 3 empty strings in a row. Ending session with {Ip}/{Username}");
+                    CloseConnection();
+                }
+                _emptyString = value;
+            }
+        }
+
         //Booleans to check what the client is able to do..
-        private bool _Authentificated; 
+        private bool _Authentificated;
         public bool Authentificated
         {
             get
@@ -93,21 +111,36 @@ namespace IMAP_Server
 
 
         //A function used to send messages to the client.
-        public void SendToStream(string response)
+        public async Task SendToStream(string response)
         {
-            response += Environment.NewLine;
-            try
+            if (response != "")
             {
-                Log.Logger.Information($"SENT RESPONSE : {response}");
-                Byte[] reply = System.Text.Encoding.UTF8.GetBytes(response);
-                var ignored = Stream.WriteAsync(reply, 0, reply.Length);
-                
+                response += Environment.NewLine;
+                EmptyStringsNumber = 0;
             }
-            catch (Exception ex)
+            else
             {
-                Console.WriteLine(ex.Message);
-                Timer.Dispose();
-                CloseConnection();
+                EmptyStringsNumber++;
+            }
+
+            if (EmptyStringsNumber < 3)
+            {
+                try
+                {
+                    Log.Logger.Information($"SENT RESPONSE : {response}");
+                    Byte[] reply = System.Text.Encoding.UTF8.GetBytes(response);
+                    if (Stream.CanWrite)
+                    {
+                        await Stream.WriteAsync(reply, 0, reply.Length);
+                        await Stream.FlushAsync();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.Message);
+                    Timer.Dispose();
+                    CloseConnection();
+                }
             }
         }
 
