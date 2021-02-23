@@ -66,6 +66,7 @@ namespace IMAP_Client.Services
                         if (response.Contains("BYE"))
                         {
                             ResponseHandler.Bye();
+                            Disconnect();
                             break;
                         }
 
@@ -108,7 +109,6 @@ namespace IMAP_Client.Services
         {
             networkStream.Close();
             tcpClient.Close();
-            tcpClient.Dispose();
         }
     }
 }

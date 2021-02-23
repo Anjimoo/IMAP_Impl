@@ -119,10 +119,10 @@ namespace IMAP_Server
                         await messageHandler.HandleMessage(command, client);
                     }
                 }
-                
             }
             con.token.Dispose();
             messageHandler._connections.Remove(client);
+            Log.Logger.Information($"Client {con.Ip}/{con.Username} is now disconnected.");
         }
 
 
