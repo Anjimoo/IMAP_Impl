@@ -90,6 +90,7 @@ namespace IMAP_Server.Services
                     messages = CheckInnerText(FROM, searchCriterias[1]);
                     break;
                 case HEADER:
+                    CheckInnerText(HEADER, searchCriterias[1]);
                     break;
                 case KEYWORD:
                     break;
@@ -147,7 +148,9 @@ namespace IMAP_Server.Services
                 case TO:
                     messages = CheckInnerText(TO, searchCriterias[1]);
                     break;
-                case UID: break;
+                case UID:
+                    CheckInnerText(UID, searchCriterias[1]);
+                    break;
                 case UNANSWERED:
                     messages = CheckFlaggedMessage(Flags.ANSWERED, false);
                     break;
@@ -307,6 +310,21 @@ namespace IMAP_Server.Services
                             messages.Add(email.MsgNum);
                         }
                     }                 
+                }else if(criteria == HEADER)
+                {
+                    foreach(var header in email.Headers)
+                    {
+                        if (header.Value.Contains(subStringToFind))
+                        {
+                            messages.Add(email.MsgNum);
+                        }
+                    }
+                }else if(criteria == UID)
+                {
+                    if(email.MessageId == subStringToFind)
+                    {
+                        messages.Add(email.MsgNum);
+                    }
                 }
             }
             return messages;
