@@ -10,11 +10,11 @@ namespace IMAP_Server.Services
 {
     public static class IMAP_Status
     {
-        public const string MESSAGES = "MESSAGES";
-        public const string RECENT = "RECENT";
-        public const string UIDNEXT = "UIDNEXT";
-        public const string UIDVALIDITY = "UIDVALIDITY";
-        public const string UNSEEN = "UNSEEN";
+        //public const string MESSAGES = "MESSAGES";
+        //public const string RECENT = "RECENT";
+        //public const string UIDNEXT = "UIDNEXT";
+        //public const string UIDVALIDITY = "UIDVALIDITY";
+        //public const string UNSEEN = "UNSEEN";
 
         public static string GetStatus(string[] commands, Connection connectionState)
         {
@@ -25,21 +25,22 @@ namespace IMAP_Server.Services
                 string[] commandArray = commands.Where((item, index) => (index != 0&&index!=1&&index!=2)).ToArray();
                 for (int i=0; i<commandArray.Length;i++)
                 {
-                    switch(commandArray[i])
+                    if(Enum.TryParse<StatusCommands>(commandArray[i], false, out var command))
+                    switch(command)
                     {
-                        case MESSAGES:
+                        case StatusCommands.MESSAGES:
                             statusForMailbox += "MESSAGES "+mailbox.EmailMessages.Count+" ";
                             break;
-                        case RECENT:
+                        case StatusCommands.RECENT:
                             statusForMailbox += "RECENT " + mailbox.GetAllRecents() + " ";
                             break;
-                        case UIDNEXT:
+                        case StatusCommands.UIDNEXT:
                             statusForMailbox += "UIDNEXT " + mailbox.nextUniqueIDVal + " ";
                             break;
-                        case UIDVALIDITY:
+                        case StatusCommands.UIDVALIDITY:
                             statusForMailbox += "UIDVALID " + mailbox.uniqueIDValidityVal + " ";
                             break;
-                        case UNSEEN:
+                        case StatusCommands.UNSEEN:
                             statusForMailbox += "UNSEEN " + mailbox.GetAllUnseen() + " ";
                             break;
                         default:
