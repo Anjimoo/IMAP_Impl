@@ -177,9 +177,12 @@ namespace IMAP_Server.CommandModels
             {
                 // ******************************** TODO: UNFINISHED
                 //***************************************************
-                if (command[3].Contains('/'))
+                if (command[2] == "" && command[3] == "")
                 {
-                    connectionState.SendToStream($@"* LIST (\Noselect) ");
+                    foreach (KeyValuePair<string, Mailbox> mb in Server.mailBoxes)
+                    {
+                        connectionState.SendToStream($"* LIST () " + mb.Key);
+                    }
                 }
             }
             else

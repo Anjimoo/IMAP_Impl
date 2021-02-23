@@ -42,18 +42,33 @@ namespace IMAP_Server.CommandModels
 
                 if (connectionState.SelectedMailBox.EmailMessages.Count != 0)
                 {
+                    List<EmailMessage> emailsToDelete = new List<EmailMessage>();
                     foreach (EmailMessage em in connectionState.SelectedMailBox.EmailMessages)
                     {
                         if (em.Flags.TryGetValue(@"\Deleted", out var deleted))
                         {
                             if (deleted)
                             {
-                                var deletedUID = em.MessageId;
-                                connectionState.SelectedMailBox.EmailMessages.Remove(em);                                
+
+                                emailsToDelete.Add(em);                    
+                            }
+                        }
+                    }
+                    //deleting emails
+                    foreach (var email in emailsToDelete)
+                    {
+                        connectionState.SelectedMailBox.EmailMessages.Remove(email);
+                        foreach (var mail in connectionState.SelectedMailBox.EmailMessages)
+                        {
+                            //decrease message number for every email that have higher message number then deleted message's number
+                            if (mail.MsgNum > email.MsgNum)
+                            {
+                                mail.MsgNum--;
                             }
                         }
                     }
                 }
+                
 
                 connectionState.SelectedMailBox = null;
                 connectionState.SelectedState = false;
@@ -148,8 +163,7 @@ namespace IMAP_Server.CommandModels
         {
             if (connectionState.SelectedState && command.Length == FETCH_SPLIT)
             {
-                // ******************************** TODO: UNFINISHED
-                //***************************************************
+                IMAP_Fetch.TryFetch(command.Skip(2).ToArray(), connectionState);
             }
             else
             {
