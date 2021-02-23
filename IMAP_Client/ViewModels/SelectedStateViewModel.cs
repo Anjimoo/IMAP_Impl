@@ -110,7 +110,7 @@ namespace IMAP_Client.ViewModels
         {
             try
             {      
-                await MainWindowViewModel._connection.SendMessage($"{TaggingService.Tag} UID {CommandName} {CommandArguments} ", _eventAggregator);
+                await MainWindowViewModel._connection.SendMessage($"{TaggingService.Tag} UID {CommandName} {CommandArguments}", _eventAggregator);
             }
             catch (Exception e)
             {
@@ -123,7 +123,7 @@ namespace IMAP_Client.ViewModels
         {
             try
             {
-                await MainWindowViewModel._connection.SendMessage($"{TaggingService.Tag} COPY {CopySequenceSet} {MailBox} ", _eventAggregator);
+                await MainWindowViewModel._connection.SendMessage($"{TaggingService.Tag} COPY {CopySequenceSet} {MailBox}", _eventAggregator);
             }
             catch (Exception e)
             {
@@ -135,7 +135,7 @@ namespace IMAP_Client.ViewModels
         {
             try
             {
-                await MainWindowViewModel._connection.SendMessage($"{TaggingService.Tag} STORE {StoreSequenceSet} {StoreMessageDataItemName} ", _eventAggregator);
+                await MainWindowViewModel._connection.SendMessage($"{TaggingService.Tag} STORE {StoreSequenceSet} {StoreMessageDataItemName}", _eventAggregator);
             }
             catch (Exception e)
             {
@@ -147,7 +147,7 @@ namespace IMAP_Client.ViewModels
         {
             try
             {
-                await MainWindowViewModel._connection.SendMessage($"{TaggingService.Tag} FETCH {FetchSequenceSet} {FetchMessageDataItem} ", _eventAggregator);
+                await MainWindowViewModel._connection.SendMessage($"{TaggingService.Tag} FETCH {FetchSequenceSet} {FetchMessageDataItem}", _eventAggregator);
             }
             catch (Exception e)
             {
@@ -159,7 +159,7 @@ namespace IMAP_Client.ViewModels
         {
             try
             {
-                await MainWindowViewModel._connection.SendMessage($"{TaggingService.Tag} SEARCH {SearchBox}  ", _eventAggregator);
+                await MainWindowViewModel._connection.SendMessage($"{TaggingService.Tag} SEARCH {SearchBox}", _eventAggregator);
             }
             catch (Exception e)
             {
@@ -171,7 +171,7 @@ namespace IMAP_Client.ViewModels
         {
             try
             {          
-                await MainWindowViewModel._connection.SendMessage($"{TaggingService.Tag} EXPUNGE  ", _eventAggregator);
+                await MainWindowViewModel._connection.SendMessage($"{TaggingService.Tag} EXPUNGE", _eventAggregator);
             }
             catch (Exception e)
             {
@@ -183,7 +183,7 @@ namespace IMAP_Client.ViewModels
         {
             try
             {               
-               await MainWindowViewModel._connection.SendMessage($"{TaggingService.Tag} CLOSE ", _eventAggregator);
+               await MainWindowViewModel._connection.SendMessage($"{TaggingService.Tag} CLOSE", _eventAggregator);
             }
             catch (Exception e)
             {
@@ -195,7 +195,7 @@ namespace IMAP_Client.ViewModels
         {
             try
             {
-                await MainWindowViewModel._connection.SendMessage($"{TaggingService.Tag} CHECK ", _eventAggregator);
+                await MainWindowViewModel._connection.SendMessage($"{TaggingService.Tag} CHECK", _eventAggregator);
             }
             catch (Exception e)
             {

@@ -159,11 +159,11 @@ namespace IMAP_Server.CommandModels
 
 
         }
-        public static void Fetch(string[] command, Connection connectionState)
+        public static void Fetch(string command, Connection connectionState)
         {
-            if (connectionState.SelectedState && command.Length == FETCH_SPLIT)
+            if (connectionState.SelectedState)
             {
-                IMAP_Fetch.TryFetch(command.Skip(2).ToArray(), connectionState);
+                IMAP_Fetch.TryFetch(command, connectionState);
             }
             else
             {
@@ -180,14 +180,22 @@ namespace IMAP_Server.CommandModels
             if (connectionState.SelectedState && command.Length > SEARCH_MINSPLIT)
             {
                 var messages = IMAP_Search.Search(command.Skip(2).ToArray(), connectionState);
-                string response = "";
-                foreach (var message in messages)
+                if (messages.First() != -1)
                 {
-                    response += $"{message} ";
-                }
+                    string response = "";
+                    foreach (var message in messages)
+                    {
+                        response += $"{message} ";
+                    }
 
-                connectionState.SendToStream($"* SEARCH {response}");
-                connectionState.SendToStream($"{command[0]} OK SEARCH completed");
+                    connectionState.SendToStream($"* SEARCH {response}");
+                    connectionState.SendToStream($"{command[0]} OK SEARCH completed");
+                }
+                else
+                {
+                    connectionState.SendToStream($"{command[0]} BAD - this command is not supported");
+                }
+                
             }
             else
             {

@@ -113,7 +113,7 @@ namespace IMAP_Server
                     SelectStateCommands.Expunge(tempMessage,_connections[currentConnection]);
                     break;
                 case "FETCH":
-                    SelectStateCommands.Fetch(tempMessage,_connections[currentConnection]);
+                    SelectStateCommands.Fetch(_message,_connections[currentConnection]);
                     break;
                 case "SEARCH":
                     SelectStateCommands.Search(tempMessage,_connections[currentConnection]);

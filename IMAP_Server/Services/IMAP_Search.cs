@@ -21,123 +21,130 @@ namespace IMAP_Server.Services
         {
             _connection = connection;
             List<int> messages = new List<int>();
-            
-            switch (Enum.Parse<SearchCriterias>(searchCriterias[0]))
+            if(Enum.TryParse<SearchCriterias>(searchCriterias[0], false, out var result))
             {
-                case SearchCriterias.ALL:
-                    foreach (var email in _connection.SelectedMailBox.EmailMessages)
-                    {
-                        messages.Add(email.MsgNum);
-                    }
-                    break;
-                case SearchCriterias.ANSWERED:
-                    messages = CheckFlaggedMessage(Flags.ANSWERED, true);
-                    break;
-                case SearchCriterias.BCC:
-                    messages = CheckInnerText(SearchCriterias.BCC.ToString(), searchCriterias[1]);
-                    break;
-                case SearchCriterias.BEFORE:
-                    messages = CheckMessageDate(SearchCriterias.BEFORE.ToString(), searchCriterias[1]);
-                    break;
-                case SearchCriterias.CC:
-                    messages = CheckInnerText(SearchCriterias.CC.ToString(), searchCriterias[1]);
-                    break;
-                case SearchCriterias.DELETED:
-                    messages = CheckFlaggedMessage(Flags.DELETED, true);
-                    break;
-                case SearchCriterias.DRAFT:
-                    messages = CheckFlaggedMessage(Flags.DRAFT, true);
-                    break;
-                case SearchCriterias.FLAGGED:
-                    messages = CheckFlaggedMessage(Flags.FLAGGED, true);
-                    break;
-                case SearchCriterias.FROM:
-                    messages = CheckInnerText(SearchCriterias.FROM.ToString(), searchCriterias[1]);
-                    break;
-                case SearchCriterias.HEADER:
-                    CheckInnerText(SearchCriterias.HEADER.ToString(), searchCriterias[1]);
-                    break;
-                case SearchCriterias.KEYWORD:
-                    break;
-                case SearchCriterias.LARGER:
-                    messages = CheckSizeOfMessage(searchCriterias[0], Int32.Parse(searchCriterias[1]));
-                    break;
-                case SearchCriterias.NEW:              
-                    var recent = CheckFlaggedMessage(SearchCriterias.RECENT.ToString(), true);
-                    var unseen = CheckFlaggedMessage(SearchCriterias.UNSEEN.ToString(), false);
-                    var newMails = recent.Intersect(unseen);
-                    break;
-                case SearchCriterias.NOT:
-                    var messagesWithSearchKey = Search(searchCriterias.Skip(1).ToArray(), connection); //check messages with search key
-                    List<int> emailsNumbers = new List<int>();
-                    foreach(var email in _connection.SelectedMailBox.EmailMessages)
-                    {
-                        emailsNumbers.Add(email.MsgNum);
-                    }
-                    var nonIntersect = emailsNumbers.Except(messagesWithSearchKey); //check messages that doest not have search key
-                    break;
-                case SearchCriterias.OLD:
-                    var old = CheckFlaggedMessage(SearchCriterias.RECENT.ToString(), false);
-                    break;
-                case SearchCriterias.ON:
-                    messages = CheckMessageDate(SearchCriterias.ON.ToString(), searchCriterias[1]);
-                    break;
-                case SearchCriterias.OR:
-                    
-                    //TO DO 
-                    break;
-                case SearchCriterias.RECENT:
-                    messages = CheckFlaggedMessage(Flags.RECENT, true);
-                    break;
-                case SearchCriterias.SEEN:
-                    messages = CheckFlaggedMessage(Flags.SEEN, true);
-                    break;
-                case SearchCriterias.SENTBEFORE:
-                    break;
-                case SearchCriterias.SENTON:
-                    break;
-                case SearchCriterias.SENTSINCE:
-                    break;
-                case SearchCriterias.SINCE:
-                    messages = CheckMessageDate(SearchCriterias.SINCE.ToString(), searchCriterias[1]);
-                    break;
-                case SearchCriterias.SMALLER:
-                    messages = CheckSizeOfMessage(searchCriterias[0], Int32.Parse(searchCriterias[1]));
-                    break;
-                case SearchCriterias.SUBJECT:
-                    messages = CheckInnerText(SearchCriterias.SUBJECT.ToString(), searchCriterias[1]);
-                    break;
-                case SearchCriterias.TEXT:
-                    messages = CheckInnerText(SearchCriterias.TEXT.ToString(), searchCriterias[1]);
-                    break;
-                case SearchCriterias.TO:
-                    messages = CheckInnerText(SearchCriterias.TO.ToString(), searchCriterias[1]);
-                    break;
-                case SearchCriterias.UID:
-                    CheckInnerText(SearchCriterias.UID.ToString(), searchCriterias[1]);
-                    break;
-                case SearchCriterias.UNANSWERED:
-                    messages = CheckFlaggedMessage(Flags.ANSWERED, false);
-                    break;
-                case SearchCriterias.UNDELETED:
-                    messages = CheckFlaggedMessage(Flags.DELETED, false);
-                    break;
-                case SearchCriterias.UNDRAFT:
-                    messages = CheckFlaggedMessage(Flags.DRAFT, false);
-                    break;
-                case SearchCriterias.UNFLAGGED:
-                    messages = CheckFlaggedMessage(SearchCriterias.FLAGGED.ToString(), false);
-                    break;
-                case SearchCriterias.UNKEYWORD:
-                    messages = CheckFlaggedMessage(searchCriterias[1], false);
-                    break;
-                case SearchCriterias.UNSEEN:
-                    messages = CheckFlaggedMessage(Flags.SEEN, false);
-                    break;
+                switch (result)
+                {
+                    case SearchCriterias.ALL:
+                        foreach (var email in _connection.SelectedMailBox.EmailMessages)
+                        {
+                            messages.Add(email.MsgNum);
+                        }
+                        break;
+                    case SearchCriterias.ANSWERED:
+                        messages = CheckFlaggedMessage(Flags.ANSWERED, true);
+                        break;
+                    case SearchCriterias.BCC:
+                        messages = CheckInnerText(SearchCriterias.BCC.ToString(), searchCriterias[1]);
+                        break;
+                    case SearchCriterias.BEFORE:
+                        messages = CheckMessageDate(SearchCriterias.BEFORE.ToString(), searchCriterias[1]);
+                        break;
+                    case SearchCriterias.CC:
+                        messages = CheckInnerText(SearchCriterias.CC.ToString(), searchCriterias[1]);
+                        break;
+                    case SearchCriterias.DELETED:
+                        messages = CheckFlaggedMessage(Flags.DELETED, true);
+                        break;
+                    case SearchCriterias.DRAFT:
+                        messages = CheckFlaggedMessage(Flags.DRAFT, true);
+                        break;
+                    case SearchCriterias.FLAGGED:
+                        messages = CheckFlaggedMessage(Flags.FLAGGED, true);
+                        break;
+                    case SearchCriterias.FROM:
+                        messages = CheckInnerText(SearchCriterias.FROM.ToString(), searchCriterias[1]);
+                        break;
+                    case SearchCriterias.HEADER:
+                        CheckInnerText(SearchCriterias.HEADER.ToString(), searchCriterias[1]);
+                        break;
+                    case SearchCriterias.KEYWORD:
+                        break;
+                    case SearchCriterias.LARGER:
+                        messages = CheckSizeOfMessage(searchCriterias[0], Int32.Parse(searchCriterias[1]));
+                        break;
+                    case SearchCriterias.NEW:
+                        var recent = CheckFlaggedMessage(SearchCriterias.RECENT.ToString(), true);
+                        var unseen = CheckFlaggedMessage(SearchCriterias.UNSEEN.ToString(), false);
+                        var newMails = recent.Intersect(unseen);
+                        break;
+                    case SearchCriterias.NOT:
+                        var messagesWithSearchKey = Search(searchCriterias.Skip(1).ToArray(), connection); //check messages with search key
+                        List<int> emailsNumbers = new List<int>();
+                        foreach (var email in _connection.SelectedMailBox.EmailMessages)
+                        {
+                            emailsNumbers.Add(email.MsgNum);
+                        }
+                        var nonIntersect = emailsNumbers.Except(messagesWithSearchKey); //check messages that doest not have search key
+                        break;
+                    case SearchCriterias.OLD:
+                        var old = CheckFlaggedMessage(SearchCriterias.RECENT.ToString(), false);
+                        break;
+                    case SearchCriterias.ON:
+                        messages = CheckMessageDate(SearchCriterias.ON.ToString(), searchCriterias[1]);
+                        break;
+                    case SearchCriterias.OR:
 
-                default:
-                    break;
+                        //TO DO 
+                        break;
+                    case SearchCriterias.RECENT:
+                        messages = CheckFlaggedMessage(Flags.RECENT, true);
+                        break;
+                    case SearchCriterias.SEEN:
+                        messages = CheckFlaggedMessage(Flags.SEEN, true);
+                        break;
+                    case SearchCriterias.SENTBEFORE:
+                        break;
+                    case SearchCriterias.SENTON:
+                        break;
+                    case SearchCriterias.SENTSINCE:
+                        break;
+                    case SearchCriterias.SINCE:
+                        messages = CheckMessageDate(SearchCriterias.SINCE.ToString(), searchCriterias[1]);
+                        break;
+                    case SearchCriterias.SMALLER:
+                        messages = CheckSizeOfMessage(searchCriterias[0], Int32.Parse(searchCriterias[1]));
+                        break;
+                    case SearchCriterias.SUBJECT:
+                        messages = CheckInnerText(SearchCriterias.SUBJECT.ToString(), searchCriterias[1]);
+                        break;
+                    case SearchCriterias.TEXT:
+                        messages = CheckInnerText(SearchCriterias.TEXT.ToString(), searchCriterias[1]);
+                        break;
+                    case SearchCriterias.TO:
+                        messages = CheckInnerText(SearchCriterias.TO.ToString(), searchCriterias[1]);
+                        break;
+                    case SearchCriterias.UID:
+                        CheckInnerText(SearchCriterias.UID.ToString(), searchCriterias[1]);
+                        break;
+                    case SearchCriterias.UNANSWERED:
+                        messages = CheckFlaggedMessage(Flags.ANSWERED, false);
+                        break;
+                    case SearchCriterias.UNDELETED:
+                        messages = CheckFlaggedMessage(Flags.DELETED, false);
+                        break;
+                    case SearchCriterias.UNDRAFT:
+                        messages = CheckFlaggedMessage(Flags.DRAFT, false);
+                        break;
+                    case SearchCriterias.UNFLAGGED:
+                        messages = CheckFlaggedMessage(SearchCriterias.FLAGGED.ToString(), false);
+                        break;
+                    case SearchCriterias.UNKEYWORD:
+                        messages = CheckFlaggedMessage(searchCriterias[1], false);
+                        break;
+                    case SearchCriterias.UNSEEN:
+                        messages = CheckFlaggedMessage(Flags.SEEN, false);
+                        break;
+
+                    default:
+                        break;
+                }
             }
+            else
+            {
+                messages.Add(-1);
+            }
+
             return messages;
         }
 

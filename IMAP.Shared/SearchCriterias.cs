@@ -4,7 +4,6 @@ using System.Text;
 
 namespace IMAP.Shared
 {
-    [Flags]
     public enum SearchCriterias
     {
         ALL,
