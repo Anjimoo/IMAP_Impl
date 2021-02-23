@@ -111,7 +111,7 @@ namespace IMAP_Server
 
 
         //A function used to send messages to the client.
-        public async Task SendToStream(string response)
+        public void SendToStream(string response)
         {
             if (response != "")
             {
@@ -131,8 +131,8 @@ namespace IMAP_Server
                     Byte[] reply = System.Text.Encoding.UTF8.GetBytes(response);
                     if (Stream.CanWrite)
                     {
-                        await Stream.WriteAsync(reply, 0, reply.Length);
-                        await Stream.FlushAsync();
+                        Stream.WriteAsync(reply, 0, reply.Length);
+                        Stream.FlushAsync();
                     }
                 }
                 catch (Exception ex)

@@ -157,10 +157,7 @@ namespace IMAP_Client.ViewModels
                 {
                     Navigate("NoAuthStateView");
                 }
-                else
-                {
-                    _connection.Disconnect();
-                }
+       
             }
             catch(Exception e)
             {

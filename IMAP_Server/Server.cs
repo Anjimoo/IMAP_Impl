@@ -11,6 +11,7 @@ using System.Threading;
 using IMAP_Server.Services;
 using System.Threading.Tasks;
 using MimeKit;
+using IMAP_Server.CommandModels;
 
 namespace IMAP_Server
 {
@@ -97,8 +98,17 @@ namespace IMAP_Server
 
 
             Connection con = new Connection(client, tcpClient, token);
-            
-            //con.SendToStream($"* OK greetings.");
+
+            string greeting = $"* OK [";
+
+            foreach (var cap in AnyStateCommands.capabilities)
+            {
+                greeting += $"{cap} ";
+            }
+
+            greeting += $"]";
+
+            con.SendToStream(greeting);
 
 
             messageHandler._connections.TryAdd(client, con);
