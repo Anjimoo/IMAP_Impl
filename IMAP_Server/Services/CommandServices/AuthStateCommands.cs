@@ -337,7 +337,7 @@ namespace IMAP_Server.CommandModels
                         mailboxFlagList += " " + flag;
                     }
                     connectionState.SendToStream($"* FLAGS {mailboxFlagList}");
-                    await Task.Delay(500);
+                    //await Task.Delay(500);
                     connectionState.SendToStream($"{command[0]} OK [READ-WRITE] SELECT completed");
                 }
                 else
