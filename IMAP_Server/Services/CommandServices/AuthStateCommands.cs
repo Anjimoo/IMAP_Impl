@@ -144,7 +144,7 @@ namespace IMAP_Server.CommandModels
         {
             if (command.Length == LIST_SPLIT && connectionState.Authentificated)
             {
-                if (command[2] == "" && command[3] == "")
+                if (command[2] == "\"\"" && command[3] == "\"\"")
                 {
                     foreach (KeyValuePair<string, Mailbox> mb in Server.mailBoxes)
                     {
@@ -152,7 +152,7 @@ namespace IMAP_Server.CommandModels
                     }
                     connectionState.SendToStream($"{command[0]} OK LIST completed");
                 }
-                else if (command[2] == "" && command[3] != "")
+                else if (command[2] == "\"\"" && command[3] != "\"\"")
                 {
                     foreach (KeyValuePair<string, Mailbox> mb in Server.mailBoxes)
                     {
@@ -169,7 +169,7 @@ namespace IMAP_Server.CommandModels
                         }
                     }
                 }
-                else if (command[2] != "" && (command[3] == "*" || command[3] == "%"))
+                else if (command[2] != "\"\"" && (command[3] == "*" || command[3] == "%"))
                 {
                     bool found = false;
                     foreach (KeyValuePair<string, Mailbox> mb in Server.mailBoxes)
@@ -268,7 +268,7 @@ namespace IMAP_Server.CommandModels
         {
             if (command.Length == LSUB_SPLIT && connectionState.Authentificated)
             {
-                if(command[2]==""&&command[3]=="")
+                if(command[2]== "\"\"" && command[3]== "\"\"")
                 {
                     foreach(Mailbox mb in Server.subscriberMailboxes)
                     {
