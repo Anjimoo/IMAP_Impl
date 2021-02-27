@@ -111,7 +111,7 @@ namespace IMAP_Server
 
 
             messageHandler._connections.TryAdd(client, con);
-            while (true)
+            while (!con.token.IsCancellationRequested)
             {
                 var command = await con.ReceiveFromStream();
                 if (command != null)

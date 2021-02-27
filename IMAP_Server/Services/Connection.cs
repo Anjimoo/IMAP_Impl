@@ -138,7 +138,6 @@ namespace IMAP_Server
                 catch (Exception ex)
                 {
                     Console.WriteLine(ex.Message);
-                    Timer.Dispose();
                     CloseConnection();
                 }
             }
@@ -161,8 +160,11 @@ namespace IMAP_Server
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Either client logged out, net problem or a Timeout: " + ex.Message);
-                Timer.Dispose();
+                Log.Logger.Information("Either client logged out, net problem or a Timeout, disconnecting. ");// + ex.Message);
+                try
+                {
+                }
+                catch { }
                 CloseConnection();
             }
 
@@ -180,11 +182,13 @@ namespace IMAP_Server
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                Log.Logger.Error(ex.Message);
             }
 
+            Timer.Dispose();
             Stream.Dispose();
             connection.Close();
+
         }
 
     }
