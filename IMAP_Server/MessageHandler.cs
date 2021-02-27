@@ -32,7 +32,14 @@ namespace IMAP_Server
             }
             else 
             {
-                command = _message;
+                if (_message == "") //Some clients like sending empty strings.
+                {
+                    command = _message;
+                }
+                else //No command should have 1 argument (it's possible while server is in expecting-output mode - not handles here)
+                {
+                    command = "DEFAULT";
+                }
             }
 
             switch (command)
