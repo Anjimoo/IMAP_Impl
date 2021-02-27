@@ -1,4 +1,5 @@
 ﻿using IMAP.Shared;
+using IMAP_Server.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -39,59 +40,19 @@ namespace IMAP_Server.Services
                             }
                             _connection.SendToStream(response);
                             break;
-                        case MessageAttributes.BODY:
+                        case MessageAttributes.BODY: 
 
-                            if (fetchTokens[2] == "HEADER.FIELDS" && fetchTokens.Length > 3)
+                            if (fetchTokens[2] == "HEADER.FIELDS" && fetchTokens.Length > 3) //FETCH ONLY SPECIFIED PARTS FROM HEADER.FIELDS
                             {
-                                for (int i = 3; i < fetchTokens.Length; i++)
-                                {
-                                    switch (Enum.Parse<SearchCriterias>(fetchTokens[i]))
-                                    {
-                                        case SearchCriterias.BCC:
-                                            foreach(var bcc in message.Bcc)
-                                            {
-                                                response += $"BCC: {bcc.Name}{Environment.NewLine}";
-                                            }
-                                            break;
-                                        case SearchCriterias.BODY:
-                                            response += $"Body: {message.Body}{Environment.NewLine}";
-                                            break;
-                                        case SearchCriterias.CC:
-                                            foreach (var cc in message.Cc)
-                                            {
-                                                response += $"CC: {cc.Name}{Environment.NewLine}";
-                                            }
-                                            break;
-                                        case SearchCriterias.FROM:
-                                            foreach (var from in message.From)
-                                            {
-                                                response += $"From: {from.Name}{Environment.NewLine}";
-                                            }
-                                            break;
-                                        case SearchCriterias.SUBJECT:
-                                            response += $"Subject: {message.Subject}{Environment.NewLine}";
-                                            break;
-                                        case SearchCriterias.TEXT:
-                                            response += $"Text: {message.TextBody}{Environment.NewLine}";
-                                            break;
-                                        case SearchCriterias.TO:
-                                            foreach (var to in message.To)
-                                            {
-                                                response += $"To: {to.Name}{Environment.NewLine}";
-                                            }
-                                            break;
-                                        case SearchCriterias.UID:
-                                            response += $"UID: {message.MessageId}{Environment.NewLine}";
-                                            break;
-                                        case SearchCriterias.DATE:
-                                            response += $"Date: {message.Date.ToLocalTime()}{Environment.NewLine}";
-                                            break;
-                                        default:
-                                            break;
-                                    }
-                                }
-                                _connection.SendToStream(response);
+                                response = FetchBodyParts(fetchTokens, message, response);
+                                
                             }
+                            else if(fetchTokens.Length == 3) //FETCH ALL PARTS FROM HEADER.FIELDS
+                            {
+                                string[] tempFetchTokens = { fetchTokens[0], fetchTokens[1], fetchTokens[2], "TEXT", "BODY", "BCC", "CC", "FROM", "TO", "DATE", "UID" };
+                                response = FetchBodyParts(tempFetchTokens, message, response);
+                            }
+                            _connection.SendToStream(response);
                             break;
                         default:
                             break;
@@ -166,6 +127,65 @@ namespace IMAP_Server.Services
                 }
             }
             return fetchTokens;
+        }
+        /// <summary>
+        /// Fetching parts of body header.fields
+        /// </summary>
+        /// <param name="fetchTokens"></param>
+        /// <param name="message"></param>
+        /// <param name="response"></param>
+        /// <returns></returns>
+        private static string FetchBodyParts(string[] fetchTokens, EmailMessage message, string response)
+        {
+            for (int i = 3; i < fetchTokens.Length; i++)
+            {
+                switch (Enum.Parse<SearchCriterias>(fetchTokens[i]))
+                {
+
+                    case SearchCriterias.BCC:
+                        foreach (var bcc in message.Bcc)
+                        {
+                            response += $"BCC: {bcc.Name}{Environment.NewLine}";
+                        }
+                        break;
+                    case SearchCriterias.BODY:
+                        response += $"Body: {message.Body}{Environment.NewLine}";
+                        break;
+                    case SearchCriterias.CC:
+                        foreach (var cc in message.Cc)
+                        {
+                            response += $"CC: {cc.Name}{Environment.NewLine}";
+                        }
+                        break;
+                    case SearchCriterias.FROM:
+                        foreach (var from in message.From)
+                        {
+                            response += $"From: {from.Name}{Environment.NewLine}";
+                        }
+                        break;
+                    case SearchCriterias.SUBJECT:
+                        response += $"Subject: {message.Subject}{Environment.NewLine}";
+                        break;
+                    case SearchCriterias.TEXT:
+                        response += $"Text: {message.TextBody}{Environment.NewLine}";
+                        break;
+                    case SearchCriterias.TO:
+                        foreach (var to in message.To)
+                        {
+                            response += $"To: {to.Name}{Environment.NewLine}";
+                        }
+                        break;
+                    case SearchCriterias.UID:
+                        response += $"UID: {message.MessageId}{Environment.NewLine}";
+                        break;
+                    case SearchCriterias.DATE:
+                        response += $"Date: {message.Date.ToLocalTime()}{Environment.NewLine}";
+                        break;
+                    default:
+                        break;
+                }
+            }
+            return response;
         }
     }
 }
