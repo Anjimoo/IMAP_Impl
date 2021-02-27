@@ -45,8 +45,8 @@ namespace IMAP_Server.CommandModels
         {
             string tag = command[0];
             string cmd = command[1];
-            string username = command[2];
-            string password = command[3];
+            string username = command[2].Replace("\"", "");
+            string password = command[3].Replace("\"", "");
 
             Log.Logger.Information($"{cmd} request by {connectionState.Ip}/{connectionState.Username}");
 

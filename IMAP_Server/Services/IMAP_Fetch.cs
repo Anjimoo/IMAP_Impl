@@ -30,6 +30,10 @@ namespace IMAP_Server.Services
                     response = $"* {message.MsgNum} FETCH {command}{Environment.NewLine}";
                     switch (fetchCriterion)
                     {
+                        case MessageAttributes.UID:
+                            response += $"{message.MessageId}";
+                            _connection.SendToStream(response);
+                            break;
                         case MessageAttributes.FLAGS:
                             foreach(var flag in message.Flags)
                             {
@@ -73,7 +77,7 @@ namespace IMAP_Server.Services
         {
             string[] sequenceSet = sequence.Split(':');
             List<int> sequenceList = new List<int>();
-            if (sequenceSet.Length >= 2)
+            if (sequenceSet.Length == 2)
             {
                 int secondElement;
                 if (sequenceSet[1] == "*")
@@ -91,6 +95,19 @@ namespace IMAP_Server.Services
                 for (int i = 0; i <= numberOfElements; i++)
                 {
                     sequenceList.Add(firstElement++);
+                }
+            }else if(sequenceSet.Length == 1)
+            {
+                if(Int32.Parse(sequenceSet[0]) == _connection.SelectedMailBox.EmailMessages.Count)
+                {
+                    for(int i = 0; i< _connection.SelectedMailBox.EmailMessages.Count; i++)
+                    {
+                        sequenceList.Add(i);
+                    }
+                }
+                else
+                {
+                    sequenceList.Add(Int32.Parse(sequenceSet[0]));
                 }
             }
             return sequenceList;
