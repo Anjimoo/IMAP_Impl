@@ -111,7 +111,7 @@ namespace IMAP_Server
 
 
             messageHandler._connections.TryAdd(client, con);
-            while (true)
+            while (!con.token.IsCancellationRequested)
             {
                 var command = await con.ReceiveFromStream();
                 if (command != null)
@@ -123,10 +123,14 @@ namespace IMAP_Server
                     //    //and the client. Should we have enough time, we might implement this.
 
                     //    //Should it not answer the correct format for handling, a Default should be returned as a reponse.
+
+                    //    //if(server is not expecting user input with no spaces)
+                       
                     //}
                     //else
-                    
-                    await messageHandler.HandleMessage(command, client);
+                    //{
+                        await messageHandler.HandleMessage(command, client);
+                    //}
                     
                 }
             }

@@ -33,16 +33,23 @@ namespace IMAP_Server.CommandModels
             string cmd = command[1];
             Log.Logger.Information($"{cmd} request by {connectionState.Ip}/{connectionState.Username}");
 
-            string response = "*";
-
-            foreach (var cap in capabilities)
+            if (command.Length == 2)
             {
-                response+=$" {cap}";
-            }
+                string response = "*";
 
-            connectionState.SendToStream(response);
-            connectionState.SendToStream(OK(tag, cmd));
-            Log.Logger.Information($"{cmd} list sent to {connectionState.Ip}/{connectionState.Username}");
+                foreach (var cap in capabilities)
+                {
+                    response += $" {cap}";
+                }
+
+                connectionState.SendToStream(response);
+                connectionState.SendToStream(OK(tag, cmd));
+                Log.Logger.Information($"{cmd} list sent to {connectionState.Ip}/{connectionState.Username}");
+            }
+            else
+            {
+                connectionState.SendToStream(BAD(tag));
+            }
         }
 
         /// <summary>
@@ -55,14 +62,20 @@ namespace IMAP_Server.CommandModels
             string cmd = command[1];
             Log.Logger.Information($"{cmd} request by {connectionState.Ip}/{connectionState.Username}");
 
-            connectionState.Authentificated = false;
+            if (command.Length == 2)
+            {
+                connectionState.Authentificated = false;
 
-            connectionState.SendToStream("* BYE IMAP4rev1 Server logging out");
-            connectionState.SendToStream($"{tag} OK - LOGOUT completed");
-            connectionState.CloseConnection();
+                connectionState.SendToStream("* BYE IMAP4rev1 Server logging out");
+                connectionState.SendToStream($"{tag} OK - LOGOUT completed");
+                connectionState.CloseConnection();
+                Log.Logger.Information($"{cmd} sent to {connectionState.Ip}/{connectionState.Username}");
 
-
-            Log.Logger.Information($"{cmd} sent to {connectionState.Ip}/{connectionState.Username}");
+            }
+            else
+            {
+                connectionState.SendToStream(BAD(tag));
+            }
         }
 
         public static void NOOP(string[] command, Connection connectionState)
@@ -71,10 +84,16 @@ namespace IMAP_Server.CommandModels
             string cmd = command[1];
             Log.Logger.Information($"{cmd} request by {connectionState.Ip}");
 
-            connectionState.ResetTimeout();
-            connectionState.SendToStream($"{tag} OK - NOOP completed. Timeout countdown is now back to 10 minutes.");
-
-            Log.Logger.Information($"{cmd} request by {connectionState.Ip} was approved, connection timeout countdown has been reset.");
+            if (command.Length == 2)
+            {
+                connectionState.ResetTimeout();
+                connectionState.SendToStream($"{tag} OK - NOOP completed. Timeout countdown is now back to 10 minutes.");
+                Log.Logger.Information($"{cmd} request by {connectionState.Ip} was approved, connection timeout countdown has been reset.");
+            }
+            else
+            {
+                connectionState.SendToStream(BAD(tag));
+            }
 
         }
 
