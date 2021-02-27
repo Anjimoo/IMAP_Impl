@@ -143,7 +143,23 @@ namespace IMAP_Client.ViewModels
         {
             try
             {
-                await MainWindowViewModel._connection.SendMessage($"{TaggingService.Tag} LSUB {ReferenceName} {MailboxNameAndWildCard}", _eventAggregator);
+                if ((ReferenceName != null || ReferenceName != "") && (MailboxNameAndWildCard != null || MailboxNameAndWildCard != ""))
+                {
+                    await MainWindowViewModel._connection.SendMessage($"{TaggingService.Tag} LSUB {ReferenceName} {MailboxNameAndWildCard}", _eventAggregator);
+                }
+                else if ((ReferenceName != null || ReferenceName != "") && (MailboxNameAndWildCard != null || MailboxNameAndWildCard != ""))
+                {
+                    await MainWindowViewModel._connection.SendMessage($"{TaggingService.Tag} LSUB {ReferenceName} \"\"", _eventAggregator);
+                }
+                else if((ReferenceName != null || ReferenceName != "") && (MailboxNameAndWildCard != null || MailboxNameAndWildCard != ""))
+                {
+                    await MainWindowViewModel._connection.SendMessage($"{TaggingService.Tag} LSUB \"\" {MailboxNameAndWildCard}", _eventAggregator);
+                }
+                else if((ReferenceName != null || ReferenceName != "") && (MailboxNameAndWildCard != null || MailboxNameAndWildCard != ""))
+                {
+                    await MainWindowViewModel._connection.SendMessage($"{TaggingService.Tag} LSUB \"\" \"\"", _eventAggregator);
+                }
+
             }
             catch (Exception e)
             {
@@ -156,7 +172,23 @@ namespace IMAP_Client.ViewModels
         {
             try
             {
-                await MainWindowViewModel._connection.SendMessage($"{TaggingService.Tag} LIST {ReferenceName} {MailboxNameAndWildCard}", _eventAggregator);
+                if ((ReferenceName != null|| ReferenceName != "") && (MailboxNameAndWildCard != null||MailboxNameAndWildCard!=""))
+                {
+                    await MainWindowViewModel._connection.SendMessage($"{TaggingService.Tag} LIST {ReferenceName} {MailboxNameAndWildCard}", _eventAggregator);
+                }
+                else if ((ReferenceName != null || ReferenceName != "") && (MailboxNameAndWildCard == null || MailboxNameAndWildCard == ""))
+                {
+                    await MainWindowViewModel._connection.SendMessage($"{TaggingService.Tag} LIST {ReferenceName} \"\"", _eventAggregator);
+                }
+                else if ((ReferenceName == null || ReferenceName == "") && (MailboxNameAndWildCard != null || MailboxNameAndWildCard != ""))
+                {
+                    await MainWindowViewModel._connection.SendMessage($"{TaggingService.Tag} LIST \"\" {MailboxNameAndWildCard}", _eventAggregator);
+                }
+                else if ((ReferenceName == null || ReferenceName != "") && (MailboxNameAndWildCard == null || MailboxNameAndWildCard != ""))
+                {
+                    await MainWindowViewModel._connection.SendMessage($"{TaggingService.Tag} LIST \"\" \"\"", _eventAggregator);
+                }
+
             }
             catch (Exception e)
             {

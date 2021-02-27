@@ -52,34 +52,6 @@ namespace IMAP_Server.CommandModels
                 {
                     connectionState.SendToStream(command[0] + $"NO CREATE: Mailbox already exists in that path");
                 }
-                //foreach (KeyValuePair<string, Mailbox> mb in Server.mailBoxes)
-                //{
-                //    if (mb.Value.mailboxName == command[2])
-                //    {
-                //        connectionState.SendToStream(command[0] + $"NO CREATE: Mailbox already exists in that name");
-                //        return;
-                //    }
-                //}
-                //Mailbox mailbox;
-                //mailbox = new Mailbox();
-                //if (command[2].Contains('/'))
-                //{
-                //    string[] hierarchy = command[2].Split('/');
-                //    mailbox.mailboxName = hierarchy[hierarchy.Length - 1];
-                //    mailbox.Path = string.Join('/', mailbox.mailboxName);
-                //    Array.Resize(ref hierarchy, hierarchy.Length - 1);
-                //    string father = string.Join('/', hierarchy);
-                //    command[2] = father;
-                //    Create(command, connectionState);
-                //}
-                //else
-                //{
-                //    mailbox.mailboxName = command[2];
-                //}
-                //mailbox.mailboxSize = 50000;
-                //mailbox.AllowedUsers.Add(connectionState.Username);
-                //Server.mailBoxes.Add(mailbox.mailboxName, mailbox);
-                //connectionState.SendToStream(command[0] + $"OK CREATE Completed: {mailbox.mailboxName} Successfully created");
             }
             else
             {
@@ -91,8 +63,6 @@ namespace IMAP_Server.CommandModels
         {
             if (command.Length == DELETE_SPLIT && connectionState.Authentificated)
             {
-                //foreach (KeyValuePair<string, Mailbox> mb in Server.mailBoxes)
-                //{
                     if (Server.mailBoxes.TryGetValue(command[2], out var mb))
                     {
                         if (mb.AllowedUsers.Contains(connectionState.Username))
@@ -108,7 +78,6 @@ namespace IMAP_Server.CommandModels
 
                         }
                     }
-                //}
                 connectionState.SendToStream($"NO DELETE: Mailbox was not found");
             }
             else
@@ -170,18 +139,121 @@ namespace IMAP_Server.CommandModels
 
         }
 
-        //TODO - Requires a param named "reference name" and I have no clue what exactly is it.
+        //TODO - FIX ANY ISSUES THAT NEEDS TO BE ADDRESSED
         public static void List(string[] command, Connection connectionState)
         {
             if (command.Length == LIST_SPLIT && connectionState.Authentificated)
             {
-                // ******************************** TODO: UNFINISHED
-                //***************************************************
-                if (command[2] == "" && command[3] == "")
+                if (command[2] == "\"\"" && command[3] == "\"\"")
                 {
                     foreach (KeyValuePair<string, Mailbox> mb in Server.mailBoxes)
                     {
                         connectionState.SendToStream($"* LIST () " + mb.Key);
+                    }
+                    connectionState.SendToStream($"{command[0]} OK LIST completed");
+                }
+                else if (command[2] == "\"\"" && command[3] != "\"\"")
+                {
+                    foreach (KeyValuePair<string, Mailbox> mb in Server.mailBoxes)
+                    {
+                        if (mb.Key == command[3] || mb.Key.Contains(command[3])||mb.Value.mailboxName.Contains(command[3]))
+                        {
+                            connectionState.SendToStream($"* LIST () " + command[3]);
+                            connectionState.SendToStream($"{command[0]} OK LIST completed");
+                            break;
+                        }
+                        else
+                        {
+                            connectionState.SendToStream($"{command[0]} NO - list failure: can't list that reference or name111");
+                            break;
+                        }
+                    }
+                }
+                else if (command[2] != "\"\"" && (command[3] == "*" || command[3] == "%"))
+                {
+                    bool found = false;
+                    foreach (KeyValuePair<string, Mailbox> mb in Server.mailBoxes)
+                    {
+                        if (mb.Key.Contains(command[2]))
+                        {
+                            found = true;
+                            string[] trimmed = mb.Key.Split("/");
+                            if (trimmed[0] == command[2])
+                            {
+                                string repath = string.Join('/', trimmed);
+                                connectionState.SendToStream($"* LIST () " + repath);
+                            }
+                            else
+                            {
+                                int sindex = 0;
+                                for (int i = 0; i < trimmed.Length; i++)
+                                {
+                                    if (trimmed[i] == command[2])
+                                    {
+                                        sindex = i;
+                                        break;
+                                    }
+                                }
+                                if (sindex != 0)
+                                {
+                                    if (command[3] == "*")
+                                        trimmed = trimmed.Where((item, index) => index >= sindex).ToArray();
+                                    else
+                                        trimmed = trimmed.Where((item, index) => (index >= sindex && index <= sindex + 1)).ToArray();
+                                    string repath = string.Join('/', trimmed);
+                                    connectionState.SendToStream($"* LIST () " + repath);
+                                }
+                            }
+                        }
+                        //else
+                        //{
+                        //    connectionState.SendToStream($"{command[0]} NO - list failure: can't list that reference or name22222");
+                        //}
+                    }
+                    if (found)
+                        connectionState.SendToStream($"{command[0]} OK LIST completed");
+                    else
+                        connectionState.SendToStream($"{command[0]}NO - list failure: can't list that reference or name22222");
+                }
+                else
+                {
+                    bool found = false, neighbours = false;
+                    foreach (KeyValuePair<string, Mailbox> mb in Server.mailBoxes)
+                    {
+                        if (mb.Key.Contains(command[2])&&mb.Key.Contains(command[3]))
+                        {
+                            found = true;
+                            string[] trimmed = mb.Key.Split("/");
+                            int index = 0, nextIndex = 0;
+                            for(int i=0;i<trimmed.Length;i++)
+                            {
+                                if(trimmed[i]==command[2])
+                                {
+                                    if(trimmed[i+1]==command[3])
+                                    {
+                                        neighbours = true;
+                                        index = i;
+                                        nextIndex = i + 1;
+                                        break;
+                                    }
+                                }
+                            }
+                            if(index==nextIndex)
+                            {
+                                connectionState.SendToStream($"{command[0]} NO - list failure: can't list that reference or name333");
+                                break;
+                            }
+                            else
+                            {
+                                string repath = string.Join('/', trimmed[index], trimmed[nextIndex]);
+                                connectionState.SendToStream($"* LIST () " + repath);
+                                break;
+                            }
+                        }
+                    }
+                    if(found&&neighbours)
+                    {
+                        connectionState.SendToStream($"{command[0]} OK LIST completed");
                     }
                 }
             }
@@ -191,13 +263,19 @@ namespace IMAP_Server.CommandModels
             }
         }
 
-        //TODO - Requires a param named "reference name" and I have no clue what exactly is it.
+        //TODO - Finish it
         public static void Lsub(string[] command, Connection connectionState)
         {
             if (command.Length == LSUB_SPLIT && connectionState.Authentificated)
             {
-                // ******************************** TODO: UNFINISHED
-                //***************************************************
+                if(command[2]== "\"\"" && command[3]== "\"\"")
+                {
+                    foreach(Mailbox mb in Server.subscriberMailboxes)
+                    {
+                        connectionState.SendToStream($"* LIST () " + mb.mailboxName);
+                    }
+                    connectionState.SendToStream($"{command[0]} OK LIST completed");
+                }
             }
             else
             {
@@ -224,14 +302,6 @@ namespace IMAP_Server.CommandModels
                     {
                         connectionState.SendToStream(command[0] + "NO - Renaming Failed");
                     }
-                    //    mailbox.Path = command[3];
-                    //    if(!command[3].Contains('/'))
-                    //    {
-                    //        mailbox.mailboxName = command[3];
-                    //    }
-                    //    Server.mailBoxes.Remove(command[2]);
-                    //    Server.mailBoxes.Add(command[3], mailbox);
-                    //    connectionState.SendToStream(command[0] + "OK - rename completed");
                 }
                 else
                 {
@@ -337,7 +407,6 @@ namespace IMAP_Server.CommandModels
                         mailboxFlagList += " " + flag;
                     }
                     connectionState.SendToStream($"* FLAGS {mailboxFlagList}");
-                    await Task.Delay(500);
                     connectionState.SendToStream($"{command[0]} OK [READ-WRITE] SELECT completed");
                 }
                 else
@@ -399,15 +468,12 @@ namespace IMAP_Server.CommandModels
         {
             if (command.Length == UNSUBSCRIBE_SPLIT && connectionState.Authentificated)
             {
-                //foreach (Mailbox mb in Server.subscriberMailboxes)
-                //{
                     if (Server.mailBoxes.TryGetValue(command[2], out var mb))
                     {
                         Server.subscriberMailboxes.Remove(mb);
                         connectionState.SendToStream($"{command[0]} OK - {mb.Path} unsubscribed");
                         return;
                     }
-                //}
                 connectionState.SendToStream($"{command[0]} NO - Folder not found");
             }
             else
@@ -418,14 +484,6 @@ namespace IMAP_Server.CommandModels
 
         private static bool CreateRecursive(string path, Connection connectionState)
         {
-
-            //foreach (KeyValuePair<string, Mailbox> mb in Server.mailBoxes)
-            //{
-            //    if (mb.Value.Path == path)
-            //    {
-            //        return false;
-            //    }
-            //}
             if (Server.mailBoxes.TryGetValue(path, out _))
             {
                 return false;
@@ -448,7 +506,7 @@ namespace IMAP_Server.CommandModels
             }
             mailbox.mailboxSize = 50000;
             mailbox.AllowedUsers.Add(connectionState.Username);
-            Server.mailBoxes.Add(mailbox.Path, mailbox);//works with mailboxPath but it breaks the rest of the commands (they need to refer to the full path)
+            Server.mailBoxes.Add(mailbox.Path, mailbox);
 
             return true;
         }

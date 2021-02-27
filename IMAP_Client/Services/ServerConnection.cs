@@ -70,7 +70,11 @@ namespace IMAP_Client.Services
                             break;
                         }
 
-                        if (response.Split(' ')[0] == outgoingTag)
+                        var responseTokens = response.Split(Environment.NewLine);
+                        responseTokens = responseTokens.Where(i => i != "").ToArray();
+                        
+
+                        if (responseTokens.Last().Split(' ')[0] == outgoingTag)
                         {
                             //Here we can handle a server result (it means that the command execution is finished
                             //on server side and we can start handle its result on the server).
