@@ -40,6 +40,7 @@ namespace IMAP.Shared
         UNDRAFT,
         UNFLAGGED,
         UNKEYWORD,
-        UNSEEN
+        UNSEEN,
+        DATE
     }
 }

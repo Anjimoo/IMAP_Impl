@@ -161,13 +161,22 @@ namespace IMAP_Server.CommandModels
         }
         public static void Fetch(string command, Connection connectionState)
         {
+            var tag = command.Split(' ').First();
             if (connectionState.SelectedState)
             {
-                IMAP_Fetch.TryFetch(command, connectionState);
+                if(IMAP_Fetch.TryFetch(command, connectionState))
+                {
+
+                    connectionState.SendToStream($"{tag} OK FETCH completed");
+                }
+                else
+                {
+                    connectionState.SendToStream($"{tag} NO - fetch error: can’t fetch that data");
+                }
             }
             else
             {
-                connectionState.SendToStream($"{command[0]} BAD - command unknown or arguments invalid");
+                connectionState.SendToStream($"{tag} BAD - command unknown or arguments invalid");
             }
         }
         /// <summary>
