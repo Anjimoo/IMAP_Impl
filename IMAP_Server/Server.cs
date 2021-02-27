@@ -58,7 +58,6 @@ namespace IMAP_Server
                     CancellationTokenSource cancellationTokenSourceClient = new CancellationTokenSource();
                     var cancelToken = cancellationTokenSourceClient.Token;
                     var tcpClient = await _server.AcceptTcpClientAsync();
-                    //var tcpClient = await _server.AcceptTcpClientAsync();
                     _ =Task.Run(async () =>
                     {
                         try
@@ -148,8 +147,8 @@ namespace IMAP_Server
         private void CreateMailBoxes()
         {
             mailBoxes = new Dictionary<string, Mailbox>();
-            mailBoxes.Add("Jimoo@gmail.com", new Mailbox() { mailboxName = "Jimoo@gmail.com" });
-            mailBoxes.Add("hod@gmail.com", new Mailbox() { mailboxName = "hod@gmail.com" });
+            mailBoxes.Add("jimoo", new Mailbox() { mailboxName = "jimoo" });
+            mailBoxes.Add("hod", new Mailbox() { mailboxName = "hod" });
         }
         private void GenerateUsers()
         {
