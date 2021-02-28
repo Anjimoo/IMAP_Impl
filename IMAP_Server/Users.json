@@ -1,10 +1,14 @@
 {
-  "Anton": {
-    "Username": "anton",
+  "anton": {
+    "Username": "anton@localhost",
     "Password": "123"
   },
-  "Hod" : {
-    "Username": "hod",
+  "hod": {
+    "Username": "hod@localhost",
+    "Password": "123"
+  },
+  "test": {
+    "Username": "test@localhost",
     "Password": "123"
   }
 }
