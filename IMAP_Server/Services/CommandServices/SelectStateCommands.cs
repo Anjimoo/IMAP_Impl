@@ -239,13 +239,22 @@ namespace IMAP_Server.CommandModels
                 }else if (command.ToLower().Contains("search"))
                 {
                     var gnoinie = IMAP_Fetch.ParseFetchCommand(command);
-                    var messages = IMAP_Search.Search(gnoinie.Skip(1).ToArray(), connectionState);
-                    if (messages.First() != -1)
+                    var messagesNums = IMAP_Search.Search(gnoinie.Skip(1).ToArray(), connectionState);
+                    if (messagesNums.First() != -1)
                     {
+
                         string response = "";
-                        foreach (var message in messages)
+                        foreach (var messageNum in messagesNums)
                         {
-                            response += $"{message} ";
+                            foreach(var message in connectionState.SelectedMailBox.EmailMessages)
+                            {
+                                if(message.MsgNum == messageNum)
+                                {
+                                    response += $"{message.MessageId} ";
+                                    break;
+                                }
+                            }
+                            
                         }
 
                         connectionState.SendToStream($"* SEARCH {response}");
