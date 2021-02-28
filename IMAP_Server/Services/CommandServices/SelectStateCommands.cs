@@ -153,7 +153,7 @@ namespace IMAP_Server.CommandModels
             }
             else
             {
-                connectionState.SendToStream($"{command[0]} BAD - no search criteria specified");
+                connectionState.SendToStream($"{command[0]} BAD - command unknown or arguments invalid");
             }
 
 
