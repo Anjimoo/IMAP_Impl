@@ -68,12 +68,12 @@ namespace IMAP_Server.CommandModels
                         if (mb.AllowedUsers.Contains(connectionState.Username))
                         {
                             Server.mailBoxes.Remove(mb.Path);
-                            connectionState.SendToStream(command[0] + $"OK DELETE Completed: {mb.mailboxName} Successfully removed");
+                            connectionState.SendToStream($"{command[0]} OK DELETE Completed: {mb.mailboxName} Successfully removed");
                             return;
                         }
                         else
                         {
-                            connectionState.SendToStream(command[0] + $"NO DELETE: Access denided for the username {connectionState.Username}!");
+                            connectionState.SendToStream($"{command[0]} NO DELETE: Access denided for the username {connectionState.Username}!");
                             return;
 
                         }
