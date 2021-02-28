@@ -86,7 +86,7 @@ namespace IMAP_Server.CommandModels
             }
             else
             {
-                connectionState.SendToStream(bad);
+                connectionState.SendToStream(no);
             }
 
             Log.Logger.Information($"{cmd} response sent to {connectionState.Ip}/{connectionState.Username}");
