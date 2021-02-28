@@ -130,7 +130,7 @@ namespace IMAP_Client.ViewModels
         {
             try
             {
-                await MainWindowViewModel._connection.SendMessage($"{TaggingService.Tag} STATUS {MailBox} {StatusDateNames}", _eventAggregator);
+                await MainWindowViewModel._connection.SendMessage($"{TaggingService.Tag} STATUS {StatusMailBox} {StatusDateNames}", _eventAggregator);
             }
             catch (Exception e)
             {
