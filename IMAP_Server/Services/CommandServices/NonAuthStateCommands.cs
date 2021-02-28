@@ -46,6 +46,11 @@ namespace IMAP_Server.CommandModels
             string tag = command[0];
             string cmd = command[1];
             string username = command[2].Replace("\"", "");
+            if (username.EndsWith("@localhost"))
+            {
+                username = username.Split("@")[0];
+            }
+            username = username.ToLower();
             string password = command[3].Replace("\"", "");
 
             Log.Logger.Information($"{cmd} request by {connectionState.Ip}/{connectionState.Username}");
@@ -57,7 +62,7 @@ namespace IMAP_Server.CommandModels
 
             if (!connectionState.Authentificated) //Only non-authenticated may use these commands.
             {
-                if (!ValidationService.ValidateUsername(username) || command.Length > LOGIN_SPLIT)
+                if (!ValidationService.ValidateUsername(username) || command.Length != LOGIN_SPLIT)
                 {
                     connectionState.SendToStream(bad);
                 }
@@ -81,7 +86,7 @@ namespace IMAP_Server.CommandModels
             }
             else
             {
-                connectionState.SendToStream(bad);
+                connectionState.SendToStream(no);
             }
 
             Log.Logger.Information($"{cmd} response sent to {connectionState.Ip}/{connectionState.Username}");

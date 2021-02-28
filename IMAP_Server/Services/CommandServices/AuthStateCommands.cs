@@ -46,11 +46,11 @@ namespace IMAP_Server.CommandModels
                 bool created = CreateRecursive(command[2], connectionState);
                 if (created)
                 {
-                    connectionState.SendToStream(command[0] + $"OK CREATE Completed: {command[2]} Successfully created");
+                    connectionState.SendToStream($"{command[0]} OK CREATE Completed: {command[2]} Successfully created");
                 }
                 else
                 {
-                    connectionState.SendToStream(command[0] + $"NO CREATE: Mailbox already exists in that path");
+                    connectionState.SendToStream($"{command[0]} NO CREATE: Mailbox already exists in that path");
                 }
             }
             else
@@ -68,17 +68,17 @@ namespace IMAP_Server.CommandModels
                         if (mb.AllowedUsers.Contains(connectionState.Username))
                         {
                             Server.mailBoxes.Remove(mb.Path);
-                            connectionState.SendToStream(command[0] + $"OK DELETE Completed: {mb.mailboxName} Successfully removed");
+                            connectionState.SendToStream($"{command[0]} OK DELETE Completed: {mb.mailboxName} Successfully removed");
                             return;
                         }
                         else
                         {
-                            connectionState.SendToStream(command[0] + $"NO DELETE: Access denided for the username {connectionState.Username}!");
+                            connectionState.SendToStream($"{command[0]} NO DELETE: Access denided for the username {connectionState.Username}!");
                             return;
 
                         }
                     }
-                connectionState.SendToStream($"NO DELETE: Mailbox was not found");
+                connectionState.SendToStream($"{command[0]} NO DELETE: Mailbox was not found");
             }
             else
             {
@@ -291,23 +291,23 @@ namespace IMAP_Server.CommandModels
             {
                 if (Server.mailBoxes.TryGetValue(command[3], out _))
                 {
-                    connectionState.SendToStream(command[0] + "NO - Folder already exists");
+                    connectionState.SendToStream($"{command[0]} NO - Folder already exists");
                     return;
                 }
                 if (Server.mailBoxes.TryGetValue(command[2], out var mailbox))
                 {
                     if(RenameRecursive(command[2], command[3], connectionState))
                     {
-                        connectionState.SendToStream(command[0] + "OK - rename completed");
+                        connectionState.SendToStream($"{command[0]} OK - rename completed");
                     }
                     else
                     {
-                        connectionState.SendToStream(command[0] + "NO - Renaming Failed");
+                        connectionState.SendToStream($"{command[0]} NO - Renaming Failed");
                     }
                 }
                 else
                 {
-                    connectionState.SendToStream(command[0] + "NO - Folder already exists");
+                    connectionState.SendToStream($"{command[0]} NO - Folder already exists");
                 }
 
             }
