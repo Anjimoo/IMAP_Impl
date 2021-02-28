@@ -21,9 +21,9 @@ namespace IMAP_Client.Services
             networkStream = tcpClient.GetStream();
         }
 
-        public string outgoingTag=""; //The last tag sent.
-        public string outgoingCommand=""; //The last command sent.
-        string wholeServerResponse=""; //The whole response for a command as one block of string.
+        public string outgoingTag = ""; //The last tag sent.
+        public string outgoingCommand = ""; //The last command sent.
+        string wholeServerResponse = ""; //The whole response for a command as one block of string.
 
         public async Task SendMessage(String message, IEventAggregator _eventAggregator = null)
         {
@@ -54,12 +54,14 @@ namespace IMAP_Client.Services
 
             Task.Run(async () =>
             {
-                while (true) 
+
+                // Read the Tcp Server Response Bytes.
+                try
                 {
-                    // Read the Tcp Server Response Bytes.
-                    try
+                    Int32 bytes;
+                    while ((bytes = await networkStream.ReadAsync(data, 0, data.Length)) != 0)
                     {
-                        Int32 bytes = await networkStream.ReadAsync(data, 0, data.Length);
+                        //Int32 bytes = await networkStream.ReadAsync(data, 0, data.Length);
                         response = System.Text.Encoding.UTF8.GetString(data, 0, bytes);
                         _eventAggregator?.GetEvent<UpdateUserConsole>().Publish(response);
 
@@ -72,7 +74,7 @@ namespace IMAP_Client.Services
 
                         var responseTokens = response.Split(Environment.NewLine);
                         responseTokens = responseTokens.Where(i => i != "").ToArray();
-                        
+
 
                         if (responseTokens.Last().Split(' ')[0] == outgoingTag)
                         {
@@ -93,17 +95,17 @@ namespace IMAP_Client.Services
                         {
                             //Illegal server response.
                         }
-
-                    }
-                    catch (Exception ex)
-                    {
-                        System.Windows.MessageBox.Show("You are now disconnected from the server.");
-                        Disconnect();
-                        ResponseHandler.Bye();
-                        //System.Windows.MessageBox.Show(ex.Message);
-                        break;
                     }
                 }
+                catch (Exception ex)
+                {
+                    System.Windows.MessageBox.Show("You are now disconnected from the server.");
+                    Disconnect();
+                    ResponseHandler.Bye();
+                    //System.Windows.MessageBox.Show(ex.Message);
+                    //break;
+                }
+
 
             });
         }

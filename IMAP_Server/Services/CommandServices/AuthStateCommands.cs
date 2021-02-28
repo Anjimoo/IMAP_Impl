@@ -259,7 +259,8 @@ namespace IMAP_Server.CommandModels
             //}
             //else
             //{
-            connectionState.SendToStream($"* LSUB () . #news.comp.mail.misc");
+            connectionState.SendToStream($"* LSUB () / jimoo");
+            connectionState.SendToStream($"* LSUB () / INBOX");
             connectionState.SendToStream($"{command[0]} OK LIST completed");
             //connectionState.SendToStream($"{command[0]} BAD - command unknown or arguments invalid");
             //}
@@ -270,14 +271,14 @@ namespace IMAP_Server.CommandModels
         {
             if (command.Length == LSUB_SPLIT && connectionState.Authentificated)
             {
-                if(command[2]== "\"\"" && command[3]== "\"\"")
-                {
+                //if(command[2]== "\"\"" && command[3]== "\"\"")
+                //{
                     foreach(Mailbox mb in Server.subscriberMailboxes)
                     {
                         connectionState.SendToStream($"* LIST () " + mb.mailboxName);
                     }
                     connectionState.SendToStream($"{command[0]} OK LIST completed");
-                }
+                //}
             }
             else
             {
@@ -364,6 +365,7 @@ namespace IMAP_Server.CommandModels
 
         public async static void Select(string[] command, Connection connectionState)
         {
+            command[2] = command[2].Replace("\"", "");
             if (command.Length == SELECT_SPLIT && connectionState.Authentificated) //check if command is legal
             {
 

@@ -28,7 +28,7 @@ namespace IMAP_Server
 
             if (tempMessage.Length>1)
             {
-                command = tempMessage[1];
+                command = tempMessage[1].ToUpper();
             }
             else 
             {
@@ -129,7 +129,7 @@ namespace IMAP_Server
                     SelectStateCommands.Store(tempMessage, _connections[currentConnection]);
                     break;
                 case "UID":
-                    SelectStateCommands.UID(tempMessage,_connections[currentConnection]);
+                    SelectStateCommands.UID(_message,_connections[currentConnection]);
                     break;
 
                 //Any other unrecognized command/message sent to the server.

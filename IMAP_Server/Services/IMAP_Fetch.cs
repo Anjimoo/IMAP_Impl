@@ -17,17 +17,33 @@ namespace IMAP_Server.Services
         /// </summary>
         /// <param name="command"></param>
         /// <param name="connection"></param>
-        public static bool TryFetch(string command, Connection connection)
+        public static bool TryFetch(string command, Connection connection, bool isUID)
         {
             var fetchTokens = ParseFetchCommand(command).ToArray();
             _connection = connection;
-            var sequenceSet = GetSequenceSet(fetchTokens.First());
-            string response = "";  
-            if (Enum.TryParse<MessageAttributes>(fetchTokens[1], out var fetchCriterion))
+            string messageAttribute;
+            List<int> sequenceSet;
+            if (isUID)
+            {
+                sequenceSet = GetSequenceSet((string)fetchTokens.GetValue(1));
+                messageAttribute = fetchTokens[2].ToUpper();
+            }
+            else
+            {
+                sequenceSet = GetSequenceSet(fetchTokens.First());
+                messageAttribute = fetchTokens[1].ToUpper();
+            }
+
+            string response = "";
+            if (Enum.TryParse<MessageAttributes>(messageAttribute, out var fetchCriterion))
             {
                 foreach (var message in _connection.SelectedMailBox.EmailMessages)
-                {     
+                {
                     response = $"* {message.MsgNum} FETCH {command}{Environment.NewLine}";
+                    if (isUID)
+                    {
+                        response = $"* {message.MsgNum} FETCH ({messageAttribute} (";
+                    }
                     switch (fetchCriterion)
                     {
                         case MessageAttributes.UID:
@@ -35,23 +51,31 @@ namespace IMAP_Server.Services
                             _connection.SendToStream(response);
                             break;
                         case MessageAttributes.FLAGS:
-                            foreach(var flag in message.Flags)
+                            foreach (var flag in message.Flags)
                             {
-                                if(flag.Value == true)
+                                if (flag.Value == true && !isUID)
                                 {
                                     response += $"{flag.Key}{Environment.NewLine}";
-                                }                              
+                                }
+                                else if (isUID)
+                                {
+                                    response += $"{flag.Key} ";
+                                }
+                            }
+                            if (isUID)
+                            {
+                                response += $") UID {message.MessageId})";
                             }
                             _connection.SendToStream(response);
                             break;
-                        case MessageAttributes.BODY: 
+                        case MessageAttributes.BODY:
 
                             if (fetchTokens[2] == "HEADER.FIELDS" && fetchTokens.Length > 3) //FETCH ONLY SPECIFIED PARTS FROM HEADER.FIELDS
                             {
                                 response = FetchBodyParts(fetchTokens, message, response);
-                                
+
                             }
-                            else if(fetchTokens.Length == 3) //FETCH ALL PARTS FROM HEADER.FIELDS
+                            else if (fetchTokens.Length == 3) //FETCH ALL PARTS FROM HEADER.FIELDS
                             {
                                 string[] tempFetchTokens = { fetchTokens[0], fetchTokens[1], fetchTokens[2], "TEXT", "BODY", "BCC", "CC", "FROM", "TO", "DATE", "UID" };
                                 response = FetchBodyParts(tempFetchTokens, message, response);
@@ -63,7 +87,8 @@ namespace IMAP_Server.Services
                     }
                 }
                 return true;
-            }else
+            }
+            else
             {
                 return false;
             }
@@ -96,11 +121,12 @@ namespace IMAP_Server.Services
                 {
                     sequenceList.Add(firstElement++);
                 }
-            }else if(sequenceSet.Length == 1)
+            }
+            else if (sequenceSet.Length == 1)
             {
-                if(Int32.Parse(sequenceSet[0]) == _connection.SelectedMailBox.EmailMessages.Count)
+                if (Int32.Parse(sequenceSet[0]) == _connection.SelectedMailBox.EmailMessages.Count)
                 {
-                    for(int i = 0; i< _connection.SelectedMailBox.EmailMessages.Count; i++)
+                    for (int i = 0; i < _connection.SelectedMailBox.EmailMessages.Count; i++)
                     {
                         sequenceList.Add(i);
                     }
@@ -125,7 +151,7 @@ namespace IMAP_Server.Services
             {
                 for (int i = 2; i < tempCommands.Length; i++)
                 {
-                    var token = tempCommands[i].Replace('[', ' ').Replace(']', ' ').Replace('(', ' ').Replace(')', ' ');
+                    var token = tempCommands[i].Replace('[', ' ').Replace(']', ' ').Replace('(', ' ').Replace(')', ' ').Replace('\"', ' ');
                     var splittedTokens = token.Split(' ');
                     if (splittedTokens.Length > 1)
                     {

@@ -113,9 +113,9 @@ namespace IMAP_Server
             messageHandler._connections.TryAdd(client, con);
             while (!con.token.IsCancellationRequested)
             {
-                var command = await con.ReceiveFromStream();
-                if (command != null)
-                {
+                var command = await con.ReceiveFromStream(messageHandler, client);
+                //if (command != null)
+                //{
                     //if (command.Split(' ').Length == 1)
                     //{
                     //    //Here would go user input that consists of only 1 block of string. This is possible in the 
@@ -129,10 +129,10 @@ namespace IMAP_Server
                     //}
                     //else
                     //{
-                        await messageHandler.HandleMessage(command, client);
+                        //await messageHandler.HandleMessage(command, client);
                     //}
                     
-                }
+                //}
             }
             con.token.Dispose();
             messageHandler._connections.Remove(client);
@@ -151,6 +151,7 @@ namespace IMAP_Server
         private void CreateMailBoxes()
         {
             mailBoxes = new Dictionary<string, Mailbox>();
+            mailBoxes.Add("INBOX", new Mailbox() { mailboxName = "INBOX" });
             mailBoxes.Add("jimoo", new Mailbox() { mailboxName = "jimoo" });
             mailBoxes.Add("hod", new Mailbox() { mailboxName = "hod" });
         }

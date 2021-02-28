@@ -11,6 +11,7 @@ namespace IMAP_Server.Services
     public static class IMAP_Search
     { 
         private static Connection _connection;
+        private static string _searchParameter;
         /// <summary>
         /// Searches messages in email box by specified criterias
         /// </summary>
@@ -21,9 +22,22 @@ namespace IMAP_Server.Services
         {
             _connection = connection;
             List<int> messages = new List<int>();
-            if(Enum.TryParse<SearchCriterias>(searchCriterias[0], false, out var result))
+            List<SearchCriterias> searchTokens = new List<SearchCriterias>();
+            
+            foreach (var criteria in searchCriterias)
             {
-                switch (result)
+                if (Enum.TryParse<SearchCriterias>(criteria, false, out var parsedCriteria))
+                {
+                    searchTokens.Add(parsedCriteria);
+                }
+                else
+                {
+                    _searchParameter = criteria;
+                    messages.Add(-1);
+                }
+            }
+            foreach(var token in searchTokens) {
+                switch (token)
                 {
                     case SearchCriterias.ALL:
                         foreach (var email in _connection.SelectedMailBox.EmailMessages)
@@ -35,13 +49,13 @@ namespace IMAP_Server.Services
                         messages = CheckFlaggedMessage(Flags.ANSWERED, true);
                         break;
                     case SearchCriterias.BCC:
-                        messages = CheckInnerText(SearchCriterias.BCC.ToString(), searchCriterias[1]);
+                        messages = CheckInnerText(SearchCriterias.BCC.ToString(), _searchParameter);
                         break;
                     case SearchCriterias.BEFORE:
-                        messages = CheckMessageDate(SearchCriterias.BEFORE.ToString(), searchCriterias[1]);
+                        messages = CheckMessageDate(SearchCriterias.BEFORE.ToString(), _searchParameter);
                         break;
                     case SearchCriterias.CC:
-                        messages = CheckInnerText(SearchCriterias.CC.ToString(), searchCriterias[1]);
+                        messages = CheckInnerText(SearchCriterias.CC.ToString(), _searchParameter);
                         break;
                     case SearchCriterias.DELETED:
                         messages = CheckFlaggedMessage(Flags.DELETED, true);
@@ -53,15 +67,15 @@ namespace IMAP_Server.Services
                         messages = CheckFlaggedMessage(Flags.FLAGGED, true);
                         break;
                     case SearchCriterias.FROM:
-                        messages = CheckInnerText(SearchCriterias.FROM.ToString(), searchCriterias[1]);
+                        messages = CheckInnerText(SearchCriterias.FROM.ToString(), _searchParameter);
                         break;
                     case SearchCriterias.HEADER:
-                        CheckInnerText(SearchCriterias.HEADER.ToString(), searchCriterias[1]);
+                        CheckInnerText(SearchCriterias.HEADER.ToString(), _searchParameter);
                         break;
                     case SearchCriterias.KEYWORD:
                         break;
                     case SearchCriterias.LARGER:
-                        messages = CheckSizeOfMessage(searchCriterias[0], Int32.Parse(searchCriterias[1]));
+                        messages = CheckSizeOfMessage(searchCriterias[0], Int32.Parse(_searchParameter));
                         break;
                     case SearchCriterias.NEW:
                         var recent = CheckFlaggedMessage(SearchCriterias.RECENT.ToString(), true);
@@ -81,7 +95,7 @@ namespace IMAP_Server.Services
                         var old = CheckFlaggedMessage(SearchCriterias.RECENT.ToString(), false);
                         break;
                     case SearchCriterias.ON:
-                        messages = CheckMessageDate(SearchCriterias.ON.ToString(), searchCriterias[1]);
+                        messages = CheckMessageDate(SearchCriterias.ON.ToString(), _searchParameter);
                         break;
                     case SearchCriterias.OR:
 
@@ -100,22 +114,22 @@ namespace IMAP_Server.Services
                     case SearchCriterias.SENTSINCE:
                         break;
                     case SearchCriterias.SINCE:
-                        messages = CheckMessageDate(SearchCriterias.SINCE.ToString(), searchCriterias[1]);
+                        messages = CheckMessageDate(SearchCriterias.SINCE.ToString(), _searchParameter);
                         break;
                     case SearchCriterias.SMALLER:
-                        messages = CheckSizeOfMessage(searchCriterias[0], Int32.Parse(searchCriterias[1]));
+                        messages = CheckSizeOfMessage(searchCriterias[0], Int32.Parse(_searchParameter));
                         break;
                     case SearchCriterias.SUBJECT:
-                        messages = CheckInnerText(SearchCriterias.SUBJECT.ToString(), searchCriterias[1]);
+                        messages = CheckInnerText(SearchCriterias.SUBJECT.ToString(), _searchParameter);
                         break;
                     case SearchCriterias.TEXT:
-                        messages = CheckInnerText(SearchCriterias.TEXT.ToString(), searchCriterias[1]);
+                        messages = CheckInnerText(SearchCriterias.TEXT.ToString(), _searchParameter);
                         break;
                     case SearchCriterias.TO:
-                        messages = CheckInnerText(SearchCriterias.TO.ToString(), searchCriterias[1]);
+                        messages = CheckInnerText(SearchCriterias.TO.ToString(), _searchParameter);
                         break;
                     case SearchCriterias.UID:
-                        CheckInnerText(SearchCriterias.UID.ToString(), searchCriterias[1]);
+                        CheckInnerText(SearchCriterias.UID.ToString(), _searchParameter);
                         break;
                     case SearchCriterias.UNANSWERED:
                         messages = CheckFlaggedMessage(Flags.ANSWERED, false);
@@ -140,10 +154,8 @@ namespace IMAP_Server.Services
                         break;
                 }
             }
-            else
-            {
-                messages.Add(-1);
-            }
+            
+
 
             return messages;
         }

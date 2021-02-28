@@ -164,7 +164,7 @@ namespace IMAP_Server.CommandModels
             var tag = command.Split(' ').First();
             if (connectionState.SelectedState)
             {
-                if(IMAP_Fetch.TryFetch(command, connectionState))
+                if(IMAP_Fetch.TryFetch(command, connectionState, false))
                 {
 
                     connectionState.SendToStream($"{tag} OK FETCH completed");
@@ -225,17 +225,41 @@ namespace IMAP_Server.CommandModels
                 connectionState.SendToStream($"{command[0]} BAD - command unknown or arguments invalid");
             }
         }
-        public static void UID(string[] command, Connection connectionState)
+        public static void UID(string command, Connection connectionState)
         {
-
-            if (connectionState.SelectedState && command.Length == UID_SPLIT)
+            var tag = command.Split(' ').First();
+            if (connectionState.SelectedState )
             {
-                // ******************************** TODO: UNFINISHED
-                //***************************************************
+                if (command.ToLower().Contains("fetch"))
+                {
+                    if(IMAP_Fetch.TryFetch(command, connectionState, true))
+                    {
+                        connectionState.SendToStream($"{tag} UID FETCH completed");
+                    }
+                }else if (command.ToLower().Contains("search"))
+                {
+                    var gnoinie = IMAP_Fetch.ParseFetchCommand(command);
+                    var messages = IMAP_Search.Search(gnoinie.Skip(1).ToArray(), connectionState);
+                    if (messages.First() != -1)
+                    {
+                        string response = "";
+                        foreach (var message in messages)
+                        {
+                            response += $"{message} ";
+                        }
+
+                        connectionState.SendToStream($"* SEARCH {response}");
+                        connectionState.SendToStream($"{command[0]} OK SEARCH completed");
+                    }
+                    else
+                    {
+                        connectionState.SendToStream($"{command[0]} BAD - this command is not supported");
+                    }
+                }
             }
             else
             {
-                connectionState.SendToStream($"{command[0]} BAD - command unknown or arguments invalid");
+                connectionState.SendToStream($"{tag} BAD - command unknown or arguments invalid");
             }
         }
     }

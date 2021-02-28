@@ -144,19 +144,26 @@ namespace IMAP_Server
         }
 
         //A function used to receive messages form the client (used in a loop).
-        public async Task<string> ReceiveFromStream()
+        public async Task<string> ReceiveFromStream(MessageHandler messageHandler, string client)
         {
             ResetTimeout();
 
             string data = null;
-            Byte[] bytes = new Byte[512];
+            Byte[] bytes = new Byte[4096];
             int i = 0;
             try
             {
-                i = await Stream.ReadAsync(bytes, 0, bytes.Length);
-                string hex = BitConverter.ToString(bytes);
-                data = Encoding.UTF8.GetString(bytes, 0, i);
-                Log.Logger.Information($"RECEIVED : {data}");
+                while((i = await Stream.ReadAsync(bytes, 0, bytes.Length)) != 0)
+                {
+                    string hex = BitConverter.ToString(bytes);
+                    data = Encoding.UTF8.GetString(bytes, 0, i);
+                    Log.Logger.Information($"RECEIVED : {data}");
+                    if (data != null)
+                    {                     
+                        await messageHandler.HandleMessage(data, client);
+                    }
+                }
+                token.Cancel();           
             }
             catch (Exception ex)
             {
