@@ -170,21 +170,29 @@ namespace IMAP_Client.ViewModels
 
         private async void ExecuteLIST()
         {
+            if(ReferenceName==null)
+            {
+                ReferenceName = "";
+            }
+            if(MailboxNameAndWildCard==null)
+            { 
+                MailboxNameAndWildCard = "";
+            }
             try
             {
-                if ((ReferenceName != null|| ReferenceName != "") && (MailboxNameAndWildCard != null||MailboxNameAndWildCard!=""))
+                if (( ReferenceName != "") && (MailboxNameAndWildCard!=""))
                 {
                     await MainWindowViewModel._connection.SendMessage($"{TaggingService.Tag} LIST {ReferenceName} {MailboxNameAndWildCard}", _eventAggregator);
                 }
-                else if ((ReferenceName != null || ReferenceName != "") && (MailboxNameAndWildCard == null || MailboxNameAndWildCard == ""))
+                else if ((ReferenceName != "") && (MailboxNameAndWildCard == ""))
                 {
                     await MainWindowViewModel._connection.SendMessage($"{TaggingService.Tag} LIST {ReferenceName} \"\"", _eventAggregator);
                 }
-                else if ((ReferenceName == null || ReferenceName == "") && (MailboxNameAndWildCard != null || MailboxNameAndWildCard != ""))
+                else if ((ReferenceName == "") && (MailboxNameAndWildCard != ""))
                 {
                     await MainWindowViewModel._connection.SendMessage($"{TaggingService.Tag} LIST \"\" {MailboxNameAndWildCard}", _eventAggregator);
                 }
-                else if ((ReferenceName == null || ReferenceName != "") && (MailboxNameAndWildCard == null || MailboxNameAndWildCard != ""))
+                else if ((ReferenceName != "") && (MailboxNameAndWildCard != ""))
                 {
                     await MainWindowViewModel._connection.SendMessage($"{TaggingService.Tag} LIST \"\" \"\"", _eventAggregator);
                 }

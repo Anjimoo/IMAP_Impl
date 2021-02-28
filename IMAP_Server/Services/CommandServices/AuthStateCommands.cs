@@ -472,9 +472,11 @@ namespace IMAP_Server.CommandModels
             {
                     if (Server.mailBoxes.TryGetValue(command[2], out var mb))
                     {
-                        Server.subscriberMailboxes.Remove(mb);
-                        connectionState.SendToStream($"{command[0]} OK - {mb.Path} unsubscribed");
-                        return;
+                        if(Server.subscriberMailboxes.Remove(mb))
+                            connectionState.SendToStream($"{command[0]} OK - {mb.Path} unsubscribed");
+                        else
+                            connectionState.SendToStream($"{command[0]} NO - Folder not found");
+                    return;
                     }
                 connectionState.SendToStream($"{command[0]} NO - Folder not found");
             }
