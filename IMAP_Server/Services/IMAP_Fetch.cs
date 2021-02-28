@@ -31,7 +31,7 @@ namespace IMAP_Server.Services
                     switch (fetchCriterion)
                     {
                         case MessageAttributes.UID:
-                            response += $"{message.MessageId}";
+                            response += $"UID {message.MessageId}";
                             _connection.SendToStream(response);
                             break;
                         case MessageAttributes.FLAGS:
