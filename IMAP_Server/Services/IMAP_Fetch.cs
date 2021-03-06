@@ -22,7 +22,8 @@ namespace IMAP_Server.Services
             var fetchTokens = ParseFetchCommand(command).ToArray();
             _connection = connection;
             string messageAttribute;
-            List<int> sequenceSet;
+            /*sequence of messages numbers*/
+            List<int> sequenceSet; 
             if (isUID)
             {
                 sequenceSet = GetSequenceSet((string)fetchTokens.GetValue(1));
@@ -33,7 +34,10 @@ namespace IMAP_Server.Services
                 sequenceSet = GetSequenceSet(fetchTokens.First());
                 messageAttribute = fetchTokens[1].ToUpper();
             }
-
+            if(sequenceSet.Last() > _connection.SelectedMailBox.EmailMessages.Count)
+            {
+                return false;
+            }
             string response = "";
             if (Enum.TryParse<MessageAttributes>(messageAttribute, out var fetchCriterion))
             {
@@ -69,7 +73,17 @@ namespace IMAP_Server.Services
                             _connection.SendToStream(response);
                             break;
                         case MessageAttributes.BODY:
-
+                            /*
+                             * The text of a particular body section. The section
+                             * specification is a set of zero or more part specifiers
+                             * delimited by periods. A part specifier is either a part number
+                             * or one of the following: HEADER, HEADER.FIELDS,
+                             * HEADER.FIELDS.NOT, MIME, and TEXT. An empty section
+                             * specification refers to the entire message, including the header.
+                             */
+                            /*
+                             * ONLY WORKS HEADER.FIELDS and all parts of HEADERS
+                             */
                             if (fetchTokens[2] == "HEADER.FIELDS" && fetchTokens.Length > 3) //FETCH ONLY SPECIFIED PARTS FROM HEADER.FIELDS
                             {
                                 response = FetchBodyParts(fetchTokens, message, response);
@@ -101,7 +115,7 @@ namespace IMAP_Server.Services
         public static List<int> GetSequenceSet(string sequence)
         {
             string[] sequenceSet = sequence.Split(':');
-            List<int> sequenceList = new List<int>();
+            List<int> sequenceList = new List<int>(); //sequence numbers of messages
             if (sequenceSet.Length == 2)
             {
                 int secondElement;
