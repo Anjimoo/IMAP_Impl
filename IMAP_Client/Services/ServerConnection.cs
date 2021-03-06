@@ -36,7 +36,7 @@ namespace IMAP_Client.Services
                 await networkStream.WriteAsync(data, 0, data.Length);
 
                 outgoingTag = message.Split(' ')[0];
-                outgoingCommand = message.Split(' ')[1]; //Still didn't handle non-command outgoing messages (i.e encryption keys).
+                outgoingCommand = message.Split(' ')[1]; 
             }
             catch (Exception e)
             {
@@ -93,7 +93,7 @@ namespace IMAP_Client.Services
                         }
                         else
                         {
-                            //Illegal server response.
+                            //Illegal server response. Should usually not be the case.
                         }
                     }
                 }
