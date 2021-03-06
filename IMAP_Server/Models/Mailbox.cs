@@ -53,7 +53,10 @@ namespace IMAP_Server.Models
             }
             return c;
         }
-
+        /// <summary>
+        /// returns all unseen mail messages
+        /// </summary>
+        /// <returns></returns>
         public int GetAllUnseen()
         {
             int c = 0;

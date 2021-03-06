@@ -22,11 +22,11 @@ namespace IMAP_Server
         private int port;
         private TcpListener _server = null;
         private MessageHandler messageHandler;
-
+        /*Registered users*/
         public static Dictionary<string, User> users;
-
+        /*Mail boxes that exist on server*/
         public static Dictionary<string, Mailbox> mailBoxes;
-
+        /*Set of emails that subscribed by users*/
         public static HashSet<Mailbox> subscriberMailboxes;
 
 
@@ -114,25 +114,7 @@ namespace IMAP_Server
             while (!con.token.IsCancellationRequested)
             {
                 var command = await con.ReceiveFromStream(messageHandler, client);
-                //if (command != null)
-                //{
-                    //if (command.Split(' ').Length == 1)
-                    //{
-                    //    //Here would go user input that consists of only 1 block of string. This is possible in the 
-                    //    //case of authentication key - a command that requires back-and-forth communication by the server
-                    //    //and the client. Should we have enough time, we might implement this.
-
-                    //    //Should it not answer the correct format for handling, a Default should be returned as a reponse.
-
-                    //    //if(server is not expecting user input with no spaces)
-                       
-                    //}
-                    //else
-                    //{
-                        //await messageHandler.HandleMessage(command, client);
-                    //}
-                    
-                //}
+                
             }
             con.token.Dispose();
             messageHandler._connections.Remove(client);
@@ -158,23 +140,6 @@ namespace IMAP_Server
         private void GenerateUsers()
         {
             users = JsonParser.ReadUsers();
-
-            //var message = new MimeMessage();
-            //message.From.Add(new MailboxAddress("Joey", "joey@friends.com"));
-            //message.To.Add(new MailboxAddress("Alice", "alice@wonderland.com"));
-            //message.Subject = "How you doin?";
-            
-            //message.Body = new TextPart("plain")
-            //{
-            //    Text = @"Hey Alice,
-
-            //             What are you up to this weekend? Monica is throwing one of her parties on
-            //             Saturday and I was hoping you could make it.
-
-            //             Will you be my +1?
-
-            //             =-- Joey"
-            //};
         }   
     }
 }

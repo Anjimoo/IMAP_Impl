@@ -30,7 +30,7 @@ namespace IMAP_Server.CommandModels
         {
             if ((command.Length >= APPEND_MIN_SPLIT && command.Length <= APPEND_MAX_SPLIT) && connectionState.Authentificated)
             {
-                
+
             }
             else
             {
@@ -73,21 +73,21 @@ namespace IMAP_Server.CommandModels
         {
             if (command.Length == DELETE_SPLIT && connectionState.Authentificated)
             {
-                    if (Server.mailBoxes.TryGetValue(command[2], out var mb))
+                if (Server.mailBoxes.TryGetValue(command[2], out var mb))
+                {
+                    if (mb.AllowedUsers.Contains(connectionState.Username))
                     {
-                        if (mb.AllowedUsers.Contains(connectionState.Username))
-                        {
-                            Server.mailBoxes.Remove(mb.Path);
-                            connectionState.SendToStream($"{command[0]} OK DELETE Completed: {mb.mailboxName} Successfully removed");
-                            return;
-                        }
-                        else
-                        {
-                            connectionState.SendToStream($"{command[0]} NO DELETE: Access denided for the username {connectionState.Username}!");
-                            return;
-
-                        }
+                        Server.mailBoxes.Remove(mb.Path);
+                        connectionState.SendToStream($"{command[0]} OK DELETE Completed: {mb.mailboxName} Successfully removed");
+                        return;
                     }
+                    else
+                    {
+                        connectionState.SendToStream($"{command[0]} NO DELETE: Access denided for the username {connectionState.Username}!");
+                        return;
+
+                    }
+                }
                 connectionState.SendToStream($"{command[0]} NO DELETE: Mailbox was not found");
             }
             else
@@ -281,29 +281,32 @@ namespace IMAP_Server.CommandModels
                 //    }
             }
             else
-                {
+            {
                 //Dummy message so the server could be accessed by firebird client. 
-                    //connectionState.SendToStream($"* LSUB () / jimoo");
-                    //connectionState.SendToStream($"* LSUB () / INBOX");
-                    //connectionState.SendToStream($"{command[0]} OK LIST completed");
+                //connectionState.SendToStream($"* LSUB () / jimoo");
+                //connectionState.SendToStream($"* LSUB () / INBOX");
+                //connectionState.SendToStream($"{command[0]} OK LIST completed");
 
-                    connectionState.SendToStream($"{command[0]} BAD - command unknown or arguments invalid");
-                }
+                connectionState.SendToStream($"{command[0]} BAD - command unknown or arguments invalid");
             }
-
-        //TODO - Finish it
+        }
+        /*DOES NOT WORK PROPERLY*/
+        /*
+         The LSUB command returns a subset of names from the set of names
+        that the user has declared as being "active" or "subscribed".
+        Zero or more untagged LSUB replies are returned. The arguments to
+        LSUB are in the same form as those for LIST.
+         */
         public static void Lsub(string[] command, Connection connectionState)
         {
             if (command.Length == LSUB_SPLIT && connectionState.Authentificated)
             {
-                //if(command[2]== "\"\"" && command[3]== "\"\"")
-                //{
-                    foreach(Mailbox mb in Server.subscriberMailboxes)
-                    {
-                        connectionState.SendToStream($"* LIST () " + mb.mailboxName);
-                    }
-                    connectionState.SendToStream($"{command[0]} OK LIST completed");
-                //}
+
+                foreach (Mailbox mb in Server.subscriberMailboxes)
+                {
+                    connectionState.SendToStream($"* LIST () " + mb.mailboxName);
+                }
+                connectionState.SendToStream($"{command[0]} OK LIST completed");
             }
             else
             {
@@ -328,7 +331,7 @@ namespace IMAP_Server.CommandModels
                 }
                 if (Server.mailBoxes.TryGetValue(command[2], out var mailbox))
                 {
-                    if(RenameRecursive(command[2], command[3], connectionState))
+                    if (RenameRecursive(command[2], command[3], connectionState))
                     {
                         connectionState.SendToStream($"{command[0]} OK - rename completed");
                     }
@@ -478,12 +481,12 @@ namespace IMAP_Server.CommandModels
             if (command.Length >= STATUS_SPLIT && connectionState.Authentificated)
             {
                 string statusToShow = IMAP_Status.GetStatus(command, connectionState);
-                if(statusToShow == "BAD")
+                if (statusToShow == "BAD")
                 {
                     connectionState.SendToStream($"{command[0]} NO - status failure: no status for that name");
                     return;
                 }
-                else if(statusToShow == "UNKNOWN_PARAMS")
+                else if (statusToShow == "UNKNOWN_PARAMS")
                 {
                     connectionState.SendToStream($"{command[0]} NO - status failure: unknown parameters");
                     return;
@@ -510,14 +513,14 @@ namespace IMAP_Server.CommandModels
         {
             if (command.Length == SUBSCRIBE_SPLIT && connectionState.Authentificated)
             {
-                    if (Server.mailBoxes.TryGetValue(command[2], out var mb))
-                    {
-                        if (Server.subscriberMailboxes.Add(mb))
-                            connectionState.SendToStream($"{command[0]} OK - {mb.Path} subscribed");
-                        else
-                            connectionState.SendToStream($"{command[0]} NO - {mb.Path} already subscribed");
-                        return;
-                    }
+                if (Server.mailBoxes.TryGetValue(command[2], out var mb))
+                {
+                    if (Server.subscriberMailboxes.Add(mb))
+                        connectionState.SendToStream($"{command[0]} OK - {mb.Path} subscribed");
+                    else
+                        connectionState.SendToStream($"{command[0]} NO - {mb.Path} already subscribed");
+                    return;
+                }
                 connectionState.SendToStream($"{command[0]} NO - Folder not found");
             }
             else
@@ -535,14 +538,14 @@ namespace IMAP_Server.CommandModels
         {
             if (command.Length == UNSUBSCRIBE_SPLIT && connectionState.Authentificated)
             {
-                    if (Server.mailBoxes.TryGetValue(command[2], out var mb))
-                    {
-                        if(Server.subscriberMailboxes.Remove(mb))
-                            connectionState.SendToStream($"{command[0]} OK - {mb.Path} unsubscribed");
-                        else
-                            connectionState.SendToStream($"{command[0]} NO - Folder not found");
+                if (Server.mailBoxes.TryGetValue(command[2], out var mb))
+                {
+                    if (Server.subscriberMailboxes.Remove(mb))
+                        connectionState.SendToStream($"{command[0]} OK - {mb.Path} unsubscribed");
+                    else
+                        connectionState.SendToStream($"{command[0]} NO - Folder not found");
                     return;
-                    }
+                }
                 connectionState.SendToStream($"{command[0]} NO - Folder not found");
             }
             else
@@ -580,6 +583,6 @@ namespace IMAP_Server.CommandModels
             return true;
         }
 
-        
+
     }
 }

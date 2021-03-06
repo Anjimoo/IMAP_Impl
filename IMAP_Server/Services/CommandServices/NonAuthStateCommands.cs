@@ -16,7 +16,16 @@ namespace IMAP_Server.CommandModels
         private const int AUTHENTICATE_SPLIT = 2;
         private const int STARTTLS_SPLIT = 2;
 
-
+        /*
+         The AUTHENTICATE command indicates a [SASL] authentication
+        mechanism to the server. If the server supports the requested
+        authentication mechanism, it performs an authentication protocol
+        exchange to authenticate and identify the client. It MAY also
+        negotiate an OPTIONAL security layer for subsequent protocol
+        interactions. If the requested authentication mechanism is not
+        supported, the server SHOULD reject the AUTHENTICATE command by
+        sending a tagged NO response.
+         */
         public static void Authenticate(string[] command, Connection connectionState)
         {
             string tag = command[0];
@@ -40,7 +49,15 @@ namespace IMAP_Server.CommandModels
             }
             Log.Logger.Information($"{cmd} response sent to {connectionState.Ip}/{connectionState.Username}");
         }
-
+        /*
+         The LOGIN command identifies the client to the server and carries
+        the plaintext password authenticating this user.
+        A server MAY include a CAPABILITY response code in the tagged OK
+        response to a successful LOGIN command in order to send
+        capabilities automatically. It is unnecessary for a client to
+        send a separate CAPABILITY command if it recognizes these
+        automatic capabilities.
+         */
         public static void Login(string[] command, Connection connectionState)
         {
             string tag = command[0];
@@ -91,7 +108,12 @@ namespace IMAP_Server.CommandModels
 
             Log.Logger.Information($"{cmd} response sent to {connectionState.Ip}/{connectionState.Username}");
         }
-
+        /*
+         A [TLS] negotiation begins immediately after the CRLF at the end
+        of the tagged OK response from the server. Once a client issues a
+        STARTTLS command, it MUST NOT issue further commands until a
+        server response is seen and the [TLS] negotiation is complete.
+         */
         public static void StartTLS(string[] command, Connection connectionState)
         {
             string tag = command[0];

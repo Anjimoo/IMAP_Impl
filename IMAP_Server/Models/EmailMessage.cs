@@ -34,7 +34,11 @@ namespace IMAP_Server.Models
         {
             Flags[flagName] = false;
         }
-
+        /// <summary>
+        /// returns copy of email message
+        /// </summary>
+        /// <param name="messageNumber"></param>
+        /// <returns></returns>
         public EmailMessage GetCopy(int messageNumber)
         {
             var newEmail = new EmailMessage();
