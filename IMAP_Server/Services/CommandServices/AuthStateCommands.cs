@@ -25,20 +25,25 @@ namespace IMAP_Server.CommandModels
         private const int LSUB_SPLIT = 4;
         private const int STATUS_SPLIT = 4;
 
-        //TODO - Look for CATENATE extension
+        /*UNFINISHED*/
         public static void Append(string[] command, Connection connectionState)
         {
             if ((command.Length >= APPEND_MIN_SPLIT && command.Length <= APPEND_MAX_SPLIT) && connectionState.Authentificated)
             {
-                // ******************************** TODO: UNFINISHED
-                //***************************************************
+                
             }
             else
             {
                 connectionState.SendToStream($"{command[0]} BAD - command unknown or arguments invalid");
             }
         }
-
+        /*
+         The CREATE command creates a mailbox with the given name. An OK
+        response is returned only if a new mailbox with that name has been
+        created. It is an error to attempt to create INBOX or a mailbox
+        with a name that refers to an extant mailbox. Any error in
+        creation will return a tagged NO response.
+         */
         public static void Create(string[] command, Connection connectionState)
         {
             if (command.Length == CREATE_SPLIT && connectionState.Authentificated)
@@ -58,7 +63,12 @@ namespace IMAP_Server.CommandModels
                 connectionState.SendToStream($"{command[0]} BAD - command unknown or arguments invalid");
             }
         }
-
+        /*
+         The DELETE command permanently removes the mailbox with the given
+        name. A tagged OK response is returned only if the mailbox has
+        been deleted. It is an error to attempt to delete INBOX or a
+        mailbox name that does not exist.
+         */
         public static void Delete(string[] command, Connection connectionState)
         {
             if (command.Length == DELETE_SPLIT && connectionState.Authentificated)
@@ -85,7 +95,15 @@ namespace IMAP_Server.CommandModels
                 connectionState.SendToStream($"{command[0]} BAD - command unknown or arguments invalid");
             }
         }
-
+        /*
+         The EXAMINE command is identical to SELECT and returns the same
+        output; however, the selected mailbox is identified as read-only.
+        No changes to the permanent state of the mailbox, including
+        per-user state, are permitted; in particular, EXAMINE MUST NOT
+        cause messages to lose the \Recent flag.
+        The text of the tagged OK response to the EXAMINE command MUST
+        begin with the "[READ-ONLY]" response code.
+         */
         public async static void Examine(string[] command, Connection connectionState)
         {
             if (command.Length == EXAMINE_SPLIT && connectionState.Authentificated) //check if command is legal
@@ -138,8 +156,13 @@ namespace IMAP_Server.CommandModels
             }
 
         }
-
-        //TODO - FIX ANY ISSUES THAT NEEDS TO BE ADDRESSED
+        /*
+         The LIST command returns a subset of names from the complete set
+        of all names available to the client. Zero or more untagged LIST
+        replies are returned, containing the name attributes, hierarchy
+        delimiter, and name; see the description of the LIST reply for more detail.
+         */
+        /*DOES NOT WORK AS INTENDED*/
         public static void List(string[] command, Connection connectionState)
         {
             if (command.Length == LIST_SPLIT && connectionState.Authentificated)
@@ -287,7 +310,13 @@ namespace IMAP_Server.CommandModels
                 connectionState.SendToStream($"{command[0]} BAD - command unknown or arguments invalid");
             }
         }
-
+        /*
+         The RENAME command changes the name of a mailbox. A tagged OK
+        response is returned only if the mailbox has been renamed. It is
+        an error to attempt to rename from a mailbox name that does not
+        exist or to a mailbox name that already exists. Any error in
+        renaming will return a tagged NO response.
+         */
         public static void Rename(string[] command, Connection connectionState)
         {
             if (command.Length == RENAME_SPLIT && connectionState.Authentificated)
@@ -319,6 +348,9 @@ namespace IMAP_Server.CommandModels
                 connectionState.SendToStream($"{command[0]} BAD - command unknown or arguments invalid");
             }
         }
+        /*
+         RENAMES NAMES OF ALL SUBFOLDERS IN FOLDER
+         */
         private static bool RenameRecursive(string oldName, string newName, Connection connectionState)
         {
             List<string> toRename = new List<string>();
@@ -364,7 +396,15 @@ namespace IMAP_Server.CommandModels
                 return false;
             }
         }
-
+        /*
+         The SELECT command selects a mailbox so that messages in the
+        mailbox can be accessed. Before returning an OK to the client,
+        the server MUST send the following untagged data to the client.
+        Note that earlier versions of this protocol only required the
+        FLAGS, EXISTS, and RECENT untagged data; consequently, client
+        implementations SHOULD implement default behavior for missing data
+        as discussed with the individual item.
+         */
         public async static void Select(string[] command, Connection connectionState)
         {
             command[2] = command[2].Replace("\"", "");
@@ -426,7 +466,13 @@ namespace IMAP_Server.CommandModels
                 connectionState.SendToStream($"{command[0]} BAD - command unknown or arguments invalid");
             }
         }
-
+        /*
+         The STATUS command requests the status of the indicated mailbox.
+        It does not change the currently selected mailbox, nor does it
+        affect the state of any messages in the queried mailbox (in
+        particular, STATUS MUST NOT cause messages to lose the \Recent
+        flag).
+         */
         public static void Status(string[] command, Connection connectionState)
         {
             if (command.Length >= STATUS_SPLIT && connectionState.Authentificated)
@@ -450,7 +496,16 @@ namespace IMAP_Server.CommandModels
                 connectionState.SendToStream($"{command[0]} BAD - command unknown or arguments invalid");
             }
         }
-
+        /*
+         The SUBSCRIBE command adds the specified mailbox name to the
+        server’s set of "active" or "subscribed" mailboxes as returned by
+        the LSUB command. This command returns a tagged OK response only
+        if the subscription is successful.
+        A server MAY validate the mailbox argument to SUBSCRIBE to verify
+        that it exists. However, it MUST NOT unilaterally remove an
+        existing mailbox name from the subscription list even if a mailbox
+        by that name no longer exists.
+         */
         public static void Subscribe(string[] command, Connection connectionState)
         {
             if (command.Length == SUBSCRIBE_SPLIT && connectionState.Authentificated)
@@ -470,7 +525,12 @@ namespace IMAP_Server.CommandModels
                 connectionState.SendToStream($"{command[0]} BAD - command unknown or arguments invalid");
             }
         }
-
+        /*
+         The UNSUBSCRIBE command removes the specified mailbox name from
+        the server’s set of "active" or "subscribed" mailboxes as returned
+        by the LSUB command. This command returns a tagged OK response
+        only if the unsubscription is successful.
+         */
         public static void Unsubscribe(string[] command, Connection connectionState)
         {
             if (command.Length == UNSUBSCRIBE_SPLIT && connectionState.Authentificated)
@@ -490,7 +550,7 @@ namespace IMAP_Server.CommandModels
                 connectionState.SendToStream($"{command[0]} BAD - command unknown or arguments invalid");
             }
         }
-
+        /*CREATES FOLDERS HIERARCHICALLY*/
         private static bool CreateRecursive(string path, Connection connectionState)
         {
             if (Server.mailBoxes.TryGetValue(path, out _))
