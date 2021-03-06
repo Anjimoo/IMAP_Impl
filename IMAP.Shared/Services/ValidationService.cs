@@ -24,28 +24,5 @@ namespace IMAP.Shared.Services
             return false;
         }
 
-        /// <summary>
-        /// Validates that the password is in a correct format. To be used ONLY on the client side.
-        /// </summary>
-        public static bool ValidatePassword(string password)
-        {
-            /***********************************/
-            //TODO: Finish writing this function.
-            /***********************************/
-
-            return true;
-        }
-
-        /// <summary>
-        /// Validates that the Mailbox name is in a correct format.
-        /// </summary>
-        public static bool ValidateMailboxName(string mailbox)
-        {
-            /***********************************/
-            //TODO: Finish writing this function.
-            /***********************************/
-
-            return true;
-        }
     }
 }
