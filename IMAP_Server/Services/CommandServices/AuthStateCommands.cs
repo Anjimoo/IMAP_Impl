@@ -310,7 +310,7 @@ namespace IMAP_Server.CommandModels
                 }
                 else
                 {
-                    connectionState.SendToStream($"{command[0]} NO - Folder already exists");
+                    connectionState.SendToStream($"{command[0]} NO - Source folder doesn't exists");
                 }
 
             }
