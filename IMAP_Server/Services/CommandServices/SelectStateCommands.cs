@@ -202,7 +202,7 @@ namespace IMAP_Server.CommandModels
                 }
                 else
                 {
-                    connectionState.SendToStream($"{command[0]} BAD - this command is not supported");
+                    connectionState.SendToStream($"{command[0]} NO - search error: can’t search that [CHARSET] or criteria");
                 }
                 
             }
