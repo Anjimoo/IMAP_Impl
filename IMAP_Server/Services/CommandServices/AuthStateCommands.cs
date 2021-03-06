@@ -443,6 +443,7 @@ namespace IMAP_Server.CommandModels
                     return;
                 }
                 connectionState.SendToStream($"* STATUS {command[2]} ({statusToShow})");
+                connectionState.SendToStream($"{command[0]} OK - STATUS completed.");
             }
             else
             {
