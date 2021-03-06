@@ -20,8 +20,8 @@ namespace IMAP_Server.CommandModels
           "CAPABILITY",
           "IMAP4rev1",
           /*"AUTH=PLAIN", "LOGINDISABLED, "STARTTLS */ //Not supported.
-          "CATENATE", 
-          "WITHIN" 
+          /*"CATENATE", 
+          "WITHIN*"*/ 
         };
 
         /// <summary>
