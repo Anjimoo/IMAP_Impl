@@ -142,129 +142,131 @@ namespace IMAP_Server.CommandModels
         //TODO - FIX ANY ISSUES THAT NEEDS TO BE ADDRESSED
         public static void List(string[] command, Connection connectionState)
         {
-            //if (command.Length == LIST_SPLIT && connectionState.Authentificated)
-            //{
-            //    if (command[2] == "\"\"" && command[3] == "\"\"")
-            //    {
-            //        foreach (KeyValuePair<string, Mailbox> mb in Server.mailBoxes)
-            //        {
-            //            connectionState.SendToStream($"* LIST () " + mb.Key);
-            //        }
-            //        connectionState.SendToStream($"{command[0]} OK LIST completed");
-            //    }
-            //    else if (command[2] == "\"\"" && command[3] != "\"\"")
-            //    {
-            //        foreach (KeyValuePair<string, Mailbox> mb in Server.mailBoxes)
-            //        {
-            //            if (mb.Key == command[3] || mb.Key.Contains(command[3])||mb.Value.mailboxName.Contains(command[3]))
-            //            {
-            //                connectionState.SendToStream($"* LIST () " + command[3]);
-            //                connectionState.SendToStream($"{command[0]} OK LIST completed");
-            //                break;
-            //            }
-            //            else
-            //            {
-            //                connectionState.SendToStream($"{command[0]} NO - list failure: can't list that reference or name111");
-            //                break;
-            //            }
-            //        }
-            //    }
-            //    else if (command[2] != "\"\"" && (command[3] == "*" || command[3] == "%"))
-            //    {
-            //        bool found = false;
-            //        foreach (KeyValuePair<string, Mailbox> mb in Server.mailBoxes)
-            //        {
-            //            if (mb.Key.Contains(command[2]))
-            //            {
-            //                found = true;
-            //                string[] trimmed = mb.Key.Split("/");
-            //                if (trimmed[0] == command[2])
-            //                {
-            //                    string repath = string.Join('/', trimmed);
-            //                    connectionState.SendToStream($"* LIST () " + repath);
-            //                }
-            //                else
-            //                {
-            //                    int sindex = 0;
-            //                    for (int i = 0; i < trimmed.Length; i++)
-            //                    {
-            //                        if (trimmed[i] == command[2])
-            //                        {
-            //                            sindex = i;
-            //                            break;
-            //                        }
-            //                    }
-            //                    if (sindex != 0)
-            //                    {
-            //                        if (command[3] == "*")
-            //                            trimmed = trimmed.Where((item, index) => index >= sindex).ToArray();
-            //                        else
-            //                            trimmed = trimmed.Where((item, index) => (index >= sindex && index <= sindex + 1)).ToArray();
-            //                        string repath = string.Join('/', trimmed);
-            //                        connectionState.SendToStream($"* LIST () " + repath);
-            //                    }
-            //                }
-            //            }
-            //            //else
-            //            //{
-            //            //    connectionState.SendToStream($"{command[0]} NO - list failure: can't list that reference or name22222");
-            //            //}
-            //        }
-            //        if (found)
-            //            connectionState.SendToStream($"{command[0]} OK LIST completed");
-            //        else
-            //            connectionState.SendToStream($"{command[0]}NO - list failure: can't list that reference or name22222");
-            //    }
-            //    else
-            //    {
-            //        bool found = false, neighbours = false;
-            //        foreach (KeyValuePair<string, Mailbox> mb in Server.mailBoxes)
-            //        {
-            //            if (mb.Key.Contains(command[2])&&mb.Key.Contains(command[3]))
-            //            {
-            //                found = true;
-            //                string[] trimmed = mb.Key.Split("/");
-            //                int index = 0, nextIndex = 0;
-            //                for(int i=0;i<trimmed.Length;i++)
-            //                {
-            //                    if(trimmed[i]==command[2])
-            //                    {
-            //                        if(trimmed[i+1]==command[3])
-            //                        {
-            //                            neighbours = true;
-            //                            index = i;
-            //                            nextIndex = i + 1;
-            //                            break;
-            //                        }
-            //                    }
-            //                }
-            //                if(index==nextIndex)
-            //                {
-            //                    connectionState.SendToStream($"{command[0]} NO - list failure: can't list that reference or name333");
-            //                    break;
-            //                }
-            //                else
-            //                {
-            //                    string repath = string.Join('/', trimmed[index], trimmed[nextIndex]);
-            //                    connectionState.SendToStream($"* LIST () " + repath);
-            //                    break;
-            //                }
-            //            }
-            //        }
-            //        if(found&&neighbours)
-            //        {
-            //            connectionState.SendToStream($"{command[0]} OK LIST completed");
-            //        }
-            //    }
-            //}
-            //else
-            //{
-            connectionState.SendToStream($"* LSUB () / jimoo");
-            connectionState.SendToStream($"* LSUB () / INBOX");
-            connectionState.SendToStream($"{command[0]} OK LIST completed");
-            //connectionState.SendToStream($"{command[0]} BAD - command unknown or arguments invalid");
-            //}
-        }
+            if (command.Length == LIST_SPLIT && connectionState.Authentificated)
+            {
+                //    if (command[2] == "\"\"" && command[3] == "\"\"")
+                //    {
+                //        foreach (KeyValuePair<string, Mailbox> mb in Server.mailBoxes)
+                //        {
+                //            connectionState.SendToStream($"* LIST () " + mb.Key);
+                //        }
+                //        connectionState.SendToStream($"{command[0]} OK LIST completed");
+                //    }
+                //    else if (command[2] == "\"\"" && command[3] != "\"\"")
+                //    {
+                //        foreach (KeyValuePair<string, Mailbox> mb in Server.mailBoxes)
+                //        {
+                //            if (mb.Key == command[3] || mb.Key.Contains(command[3])||mb.Value.mailboxName.Contains(command[3]))
+                //            {
+                //                connectionState.SendToStream($"* LIST () " + command[3]);
+                //                connectionState.SendToStream($"{command[0]} OK LIST completed");
+                //                break;
+                //            }
+                //            else
+                //            {
+                //                connectionState.SendToStream($"{command[0]} NO - list failure: can't list that reference or name111");
+                //                break;
+                //            }
+                //        }
+                //    }
+                //    else if (command[2] != "\"\"" && (command[3] == "*" || command[3] == "%"))
+                //    {
+                //        bool found = false;
+                //        foreach (KeyValuePair<string, Mailbox> mb in Server.mailBoxes)
+                //        {
+                //            if (mb.Key.Contains(command[2]))
+                //            {
+                //                found = true;
+                //                string[] trimmed = mb.Key.Split("/");
+                //                if (trimmed[0] == command[2])
+                //                {
+                //                    string repath = string.Join('/', trimmed);
+                //                    connectionState.SendToStream($"* LIST () " + repath);
+                //                }
+                //                else
+                //                {
+                //                    int sindex = 0;
+                //                    for (int i = 0; i < trimmed.Length; i++)
+                //                    {
+                //                        if (trimmed[i] == command[2])
+                //                        {
+                //                            sindex = i;
+                //                            break;
+                //                        }
+                //                    }
+                //                    if (sindex != 0)
+                //                    {
+                //                        if (command[3] == "*")
+                //                            trimmed = trimmed.Where((item, index) => index >= sindex).ToArray();
+                //                        else
+                //                            trimmed = trimmed.Where((item, index) => (index >= sindex && index <= sindex + 1)).ToArray();
+                //                        string repath = string.Join('/', trimmed);
+                //                        connectionState.SendToStream($"* LIST () " + repath);
+                //                    }
+                //                }
+                //            }
+                //            //else
+                //            //{
+                //            //    connectionState.SendToStream($"{command[0]} NO - list failure: can't list that reference or name22222");
+                //            //}
+                //        }
+                //        if (found)
+                //            connectionState.SendToStream($"{command[0]} OK LIST completed");
+                //        else
+                //            connectionState.SendToStream($"{command[0]}NO - list failure: can't list that reference or name22222");
+                //    }
+                //    else
+                //    {
+                //        bool found = false, neighbours = false;
+                //        foreach (KeyValuePair<string, Mailbox> mb in Server.mailBoxes)
+                //        {
+                //            if (mb.Key.Contains(command[2])&&mb.Key.Contains(command[3]))
+                //            {
+                //                found = true;
+                //                string[] trimmed = mb.Key.Split("/");
+                //                int index = 0, nextIndex = 0;
+                //                for(int i=0;i<trimmed.Length;i++)
+                //                {
+                //                    if(trimmed[i]==command[2])
+                //                    {
+                //                        if(trimmed[i+1]==command[3])
+                //                        {
+                //                            neighbours = true;
+                //                            index = i;
+                //                            nextIndex = i + 1;
+                //                            break;
+                //                        }
+                //                    }
+                //                }
+                //                if(index==nextIndex)
+                //                {
+                //                    connectionState.SendToStream($"{command[0]} NO - list failure: can't list that reference or name333");
+                //                    break;
+                //                }
+                //                else
+                //                {
+                //                    string repath = string.Join('/', trimmed[index], trimmed[nextIndex]);
+                //                    connectionState.SendToStream($"* LIST () " + repath);
+                //                    break;
+                //                }
+                //            }
+                //        }
+                //        if(found&&neighbours)
+                //        {
+                //            connectionState.SendToStream($"{command[0]} OK LIST completed");
+                //        }
+                //    }
+            }
+            else
+                {
+                //Dummy message so the server could be accessed by firebird client. 
+                    //connectionState.SendToStream($"* LSUB () / jimoo");
+                    //connectionState.SendToStream($"* LSUB () / INBOX");
+                    //connectionState.SendToStream($"{command[0]} OK LIST completed");
+
+                    connectionState.SendToStream($"{command[0]} BAD - command unknown or arguments invalid");
+                }
+            }
 
         //TODO - Finish it
         public static void Lsub(string[] command, Connection connectionState)
