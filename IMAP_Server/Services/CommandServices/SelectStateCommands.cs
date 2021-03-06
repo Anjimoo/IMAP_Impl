@@ -20,14 +20,13 @@ namespace IMAP_Server.CommandModels
         private const int COPY_SPLIT = 4;
         private const int EXPUNGE_SPLIT = 2;
         private const int FETCH_SPLIT = 4;
-
-
+       
         public static void Check(string[] command, Connection connectionState)
         {
             if (connectionState.SelectedState && command.Length == CHECK_SPLIT)
             {
-                // ******************************** TODO: UNFINISHED
-                //***************************************************
+                /* UNFINISHED */
+                
             }
             else
             {
@@ -83,6 +82,11 @@ namespace IMAP_Server.CommandModels
         {
             if (connectionState.SelectedState && command.Length == COPY_SPLIT)
             {
+                if(!Server.mailBoxes.TryGetValue(command[3], out var mailBox))
+                {
+                    connectionState.SendToStream($"{command[0]} NO - copy error: can’t copy those messages or to that name");
+                    return;
+                }
                 if (command.Length > 2)
                 {
                     if (connectionState.SelectedMailBox.EmailMessages.Count > 0)
@@ -93,19 +97,27 @@ namespace IMAP_Server.CommandModels
                         {
                             numbers.Add(Int32.Parse(number));
                         }
+                        if(connectionState.SelectedMailBox.EmailMessages.Count < numbers.Last())
+                        { 
+                            connectionState.SendToStream($"{command[0]} NO - copy error: can’t copy those messages or to that name");
+                            return;
+                        }
                         foreach (var email in connectionState.SelectedMailBox.EmailMessages)
                         {
+                            
                             foreach (var number in numbers)
                             {
                                 if (number == email.MsgNum)
                                 {
                                     int count = Server.mailBoxes[command[3]].EmailMessages.Count();
-                                    Server.mailBoxes[command[3]].EmailMessages.Add(email.GetCopy(++count));      
+                                    Server.mailBoxes[command[3]].EmailMessages.Add(email.GetCopy(++count));
+                                    break;
                                 }
                             }
                         }
-                        connectionState.SendToStream($"{command[0]} OK - UID command completed");
+                        connectionState.SendToStream($"{command[0]} OK - copy completed");
                     }
+                    
                 }
             }
             else
@@ -234,12 +246,12 @@ namespace IMAP_Server.CommandModels
                 {
                     if(IMAP_Fetch.TryFetch(command, connectionState, true))
                     {
-                        connectionState.SendToStream($"{tag} UID FETCH completed");
+                        connectionState.SendToStream($"{tag} OK UID FETCH completed");
                     }
                 }else if (command.ToLower().Contains("search"))
                 {
-                    var gnoinie = IMAP_Fetch.ParseFetchCommand(command);
-                    var messagesNums = IMAP_Search.Search(gnoinie.Skip(1).ToArray(), connectionState);
+                    var commandParams = IMAP_Fetch.ParseFetchCommand(command);
+                    var messagesNums = IMAP_Search.Search(commandParams.Skip(1).ToArray(), connectionState);
                     if (messagesNums.First() != -1)
                     {
 
@@ -258,7 +270,7 @@ namespace IMAP_Server.CommandModels
                         }
 
                         connectionState.SendToStream($"* SEARCH {response}");
-                        connectionState.SendToStream($"{command[0]} OK SEARCH completed");
+                        connectionState.SendToStream($"{command[0]} OK UID completed");
                     }
                     else
                     {
